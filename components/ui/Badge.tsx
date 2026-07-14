@@ -1,0 +1,27 @@
+import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
+
+type BadgeColor = "brick" | "pine" | "slate" | "mustard" | "coral";
+
+interface BadgeProps {
+  color?: BadgeColor;
+  children: ReactNode;
+  className?: string;
+}
+
+const COLOR_CLASS_NAME: Record<BadgeColor, string> = {
+  brick: "bg-brick text-text-on-dark",
+  pine: "bg-pine text-text-on-dark",
+  slate: "bg-slate text-text-on-dark",
+  coral: "bg-coral text-text-on-dark",
+  /* mustard tipis kontrasnya di atas cream (CLAUDE.md §5), diberi outline 0.5px */
+  mustard: "bg-mustard text-text-on-light outline outline-[0.5px] outline-text-on-light",
+};
+
+export function Badge({ color = "pine", children, className }: BadgeProps) {
+  return (
+    <span className={cn("inline-flex items-center px-2 py-0.5 font-mono text-xs font-bold", COLOR_CLASS_NAME[color], className)}>
+      {children}
+    </span>
+  );
+}
