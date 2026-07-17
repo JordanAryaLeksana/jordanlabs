@@ -1,0 +1,29 @@
+"use client";
+
+import { StaggerContainer } from "@/components/motion/StaggerContainer";
+import { StaggerItem } from "@/components/motion/StaggerItem";
+import { Pill } from "@/components/ui/Pill";
+
+const SUGGESTED_PROMPTS = [
+  "What projects have you built?",
+  "What are your skills?",
+  "Can I see your CV?",
+  "How do I get in touch?",
+] as const;
+
+interface SuggestedPromptsProps {
+  onSelect: (prompt: string) => void;
+}
+
+/** Contoh pertanyaan (docs/landing.md §8): klik mengisi input, tidak auto-kirim. */
+export function SuggestedPrompts({ onSelect }: SuggestedPromptsProps) {
+  return (
+    <StaggerContainer className="flex flex-wrap gap-2">
+      {SUGGESTED_PROMPTS.map((prompt) => (
+        <StaggerItem key={prompt}>
+          <Pill onClick={() => onSelect(prompt)}>{prompt}</Pill>
+        </StaggerItem>
+      ))}
+    </StaggerContainer>
+  );
+}

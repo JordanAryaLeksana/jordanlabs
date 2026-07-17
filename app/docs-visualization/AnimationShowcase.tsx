@@ -16,6 +16,7 @@ import { HoverLift } from "@/components/motion/HoverLift";
 import { ParallaxShape } from "@/components/motion/ParallaxShape";
 import { ColorBlockReveal } from "@/components/motion/ColorBlockReveal";
 import { LoadingScreen } from "@/components/layout/LoadingScreen";
+import { INTRO_GREETING_PHRASES } from "@/lib/config/brand";
 
 const STAGGER_ITEM_COLORS = ["bg-coral", "bg-pine", "bg-slate", "bg-mustard"];
 
@@ -163,12 +164,13 @@ export function AnimationShowcase() {
           </Button>
         </div>
         <Typography variant="text" size="sm">
-          Loader penuh layar ~1.5 detik: KineticHeading + progress bar solid tumbuh (bukan spinner), lalu keluar
-          fade+translate seperti transisi film. Main otomatis saat halaman ini pertama dibuka.
+          Isi Fase 1 IntroSequence: tiga sapaan bergantian lewat KineticHeading + progress bar solid yang tumbuh
+          (bukan spinner). Komponen ini murni presentational — urutan fase & keluar-masuknya dikendalikan oleh
+          IntroSequence (lihat Home), di sini hanya isinya yang diputar ulang.
         </Typography>
-        <LoadingScreen key={loaderKey} durationMs={1500}>
-          <span />
-        </LoadingScreen>
+        <div className="relative h-[360px] overflow-hidden">
+          <LoadingScreen key={loaderKey} greetingPhrases={INTRO_GREETING_PHRASES} onComplete={() => {}} />
+        </div>
       </div>
     </div>
   );
