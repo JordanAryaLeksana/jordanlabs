@@ -13,7 +13,7 @@ import { PAGE_ROUTES } from "@/lib/tools/types";
 const CONTENT_PAGE_LINKS = [
   { label: "About", href: PAGE_ROUTES.about },
   { label: "Projects", href: PAGE_ROUTES.projects },
-  { label: "Research", href: PAGE_ROUTES.research },
+  { label: "Experience", href: PAGE_ROUTES.experience },
   { label: "Contact", href: PAGE_ROUTES.contact },
 ] as const;
 

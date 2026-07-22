@@ -15,7 +15,7 @@ interface SuggestedPromptsProps {
   onSelect: (prompt: string) => void;
 }
 
-/** Contoh pertanyaan (docs/landing.md §8): klik mengisi input, tidak auto-kirim. */
+
 export function SuggestedPrompts({ onSelect }: SuggestedPromptsProps) {
   return (
     <StaggerContainer className="flex flex-wrap gap-2">

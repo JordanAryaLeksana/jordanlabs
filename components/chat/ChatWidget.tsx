@@ -15,7 +15,7 @@ interface ChatWidgetProps {
   className?: string;
 }
 
-/** Mengambil seluruh bagian bertipe teks dari sebuah UIMessage dan menggabungkannya jadi satu string untuk ditampilkan di bubble. */
+
 function extractMessageText(message: UIMessage): string {
   return message.parts
     .filter((part) => part.type === "text")

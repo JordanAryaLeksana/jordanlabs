@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { AboutFooter } from "@/components/about/AboutFooter";
 import { AboutProfile } from "@/components/about/AboutProfile";
 import { ExperiencedAs } from "@/components/about/ExperiencedAs";
 import { GitHubActivity } from "@/components/about/GitHubActivity";
 import { TechStack } from "@/components/about/TechStack";
 import { StaticHeader } from "@/components/layout/StaticHeader";
+import { Footer } from "@/components/layout/Footer";
 import { getGitHubRepositories } from "@/lib/about/getGitHubRepositories";
 import { getGitHubContributions } from "@/lib/about/getGitHubContributions";
 import { PROFILE } from "@/lib/config/profile";
@@ -25,7 +25,7 @@ export default async function AboutPage() {
       <ExperiencedAs />
       <TechStack />
       <GitHubActivity repositories={repositories} contributions={contributions} />
-      <AboutFooter />
+      <Footer />
     </main>
   );
 }

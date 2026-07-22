@@ -9,3 +9,7 @@ export const EMAIL_ADDRESS = "jordanaryaleksana41@gmail.com";
 
 export const EMAIL_MAILTO_URL = `mailto:${EMAIL_ADDRESS}`;
 
+export const INSTAGRAM_URL = "";
+export const TIKTOK_URL = "";
+export const DISCORD_URL = "";
+export const DISCORD_USERNAME = "";
