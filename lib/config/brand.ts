@@ -18,3 +18,4 @@ export const INTRO_GREETING_PHRASES = [
   "Every great product starts with an idea.",
   "Let's Build Together.",
 ] as const;
+  

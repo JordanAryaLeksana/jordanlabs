@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type SubmitEvent } from "react";
-import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
 import { motion, useReducedMotion } from "framer-motion";
 import { PaperPlaneRightIcon } from "@phosphor-icons/react";
@@ -10,17 +9,7 @@ import { HexGrid } from "@/components/retro/HexGrid";
 import { IconButton } from "@/components/ui/IconButton";
 import { ChatMessageBubble } from "@/components/chat/ChatMessageBubble";
 import { SuggestedPrompts } from "@/components/chat/SuggestedPrompts";
-
-const OPENING_MESSAGE: UIMessage = {
-  id: "opening",
-  role: "assistant",
-  parts: [
-    {
-      type: "text",
-      text: "Hi, I'm Jordan's AI assistant. Ask me about his experience, skills, or projects — I can pull up the details, or take you straight to the page you need.",
-    },
-  ],
-};
+import { usePortfolioChat } from "@/components/chat/usePortfolioChat";
 
 interface ChatWidgetProps {
   className?: string;
@@ -35,9 +24,7 @@ function extractMessageText(message: UIMessage): string {
 }
 
 export function ChatWidget({ className }: ChatWidgetProps) {
-  const { messages, sendMessage, status } = useChat({
-    messages: [OPENING_MESSAGE],
-  });
+  const { messages, sendMessage, status } = usePortfolioChat();
   const [draftMessage, setDraftMessage] = useState("");
   const prefersReducedMotion = useReducedMotion();
 

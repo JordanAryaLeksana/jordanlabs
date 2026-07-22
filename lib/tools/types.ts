@@ -11,3 +11,17 @@ export const PAGE_ROUTES = {
   research: "/research",
   contact: "/contact",
 } as const;
+
+export const SECTION_IDS = {
+  aboutBackground: "about-background",
+  aboutSkills: "about-skills",
+  aboutExperience: "about-experience",
+} as const;
+
+export const SKILL_CATEGORY_IDS = {
+  frontend: "frontend",
+  backend: "backend",
+  ai: "ai",
+  tooling: "tooling",
+  collaboration: "collaboration",
+} as const;

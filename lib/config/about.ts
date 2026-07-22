@@ -1,0 +1,22 @@
+export const ABOUT_PROFILE = {
+  eyebrow: "Currently focused on",
+  title: "AI Engineer",
+  previousExperience: "Software Engineer",
+  description: [
+    "I’m Jordan Arya Leksana, a software engineer currently focused on AI engineering.",
+    "My software engineering experience shapes how I approach deep learning: not only as a model or experiment, but as a system that needs to be useful, maintainable, and ready to integrate into real applications.",
+  ],
+  experiencedAs:
+    "My background is in building software systems and digital products. Today, I apply that engineering foundation to deep learning and applied AI.",
+  focusAreas: ["Applied AI", "Deep Learning", "Computer Vision"],
+  location: "Surabaya, Indonesia",
+  timezone: "Asia/Jakarta",
+  githubPriority: ["EMQNET", "DermSight"],
+} as const;
+
+export const ABOUT_TECH_STACK = [
+  { id: "core", label: "Core", items: ["Python", "TypeScript", "JavaScript", "SQL", "Go"] },
+  { id: "ai", label: "AI / ML", items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "LangChain"] },
+  { id: "web", label: "Web", items: ["React", "Next.js", "Node.js", "Express", "NestJS", "FastAPI"] },
+  { id: "tooling", label: "Tooling", items: ["Git", "Docker", "Prisma", "Supabase", "Postman", "Ollama", "TensorBoard"] },
+] as const;

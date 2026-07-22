@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { bigHeaderFont, headerFont, paragraphFont } from "@/components/ui/Typography/fonts";
 import "./globals.css";
+import { PortfolioChatProvider } from "@/components/chat/PortfolioChatProvider";
+import { PersistentChatDock } from "@/components/chat/PersistentChatDock";
 
 export const metadata: Metadata = {
   title: "Jordan Arya Leksana — AI & Software Engineer",
@@ -27,7 +29,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <PortfolioChatProvider>
+          {children}
+          <PersistentChatDock />
+        </PortfolioChatProvider>
+      </body>
     </html>
   );
 }
