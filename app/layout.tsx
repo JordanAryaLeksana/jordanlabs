@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { bigHeaderFont, headerFont, paragraphFont } from "@/components/ui/Typography/fonts";
+import { bigHeaderFont, headerFont, paragraphFont } from "@/components/interfaces/ui/Typography/fonts";
 import "./globals.css";
-import { PortfolioChatProvider } from "@/components/chat/PortfolioChatProvider";
-import { PersistentChatDock } from "@/components/chat/PersistentChatDock";
+import { PortfolioChatProvider } from "@/components/pages/chat/PortfolioChatProvider";
+import { PersistentChatDock } from "@/components/pages/chat/PersistentChatDock";
 
 export const metadata: Metadata = {
   title: "Jordan Arya Leksana — AI & Software Engineer",

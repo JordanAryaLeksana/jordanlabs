@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { DemoCard } from "./DemoCard";
-import { Typography } from "@/components/ui/Typography/Typography";
-import { Button } from "@/components/ui/Button";
-import { ColorBlockBar } from "@/components/retro/ColorBlockBar";
-import { HexGrid } from "@/components/retro/HexGrid";
-import { PerspectiveScene } from "@/components/retro/PerspectiveScene";
-import { KineticHeading } from "@/components/retro/KineticHeading";
-import { PreviewCard } from "@/components/retro/PreviewCard";
-import { FadeIn } from "@/components/motion/FadeIn";
-import { StaggerContainer } from "@/components/motion/StaggerContainer";
-import { StaggerItem } from "@/components/motion/StaggerItem";
-import { HoverLift } from "@/components/motion/HoverLift";
-import { ParallaxShape } from "@/components/motion/ParallaxShape";
-import { ColorBlockReveal } from "@/components/motion/ColorBlockReveal";
-import { LoadingScreen } from "@/components/layout/LoadingScreen";
+import { Typography } from "@/components/interfaces/ui/Typography/Typography";
+import { Button } from "@/components/interfaces/ui/Button";
+import { ColorBlockBar } from "@/components/interfaces/retro/ColorBlockBar";
+import { HexGrid } from "@/components/interfaces/retro/HexGrid";
+import { PerspectiveScene } from "@/components/interfaces/retro/PerspectiveScene";
+import { KineticHeading } from "@/components/interfaces/retro/KineticHeading";
+import { PreviewCard } from "@/components/interfaces/retro/PreviewCard";
+import { FadeIn } from "@/components/interfaces/motion/FadeIn";
+import { StaggerContainer } from "@/components/interfaces/motion/StaggerContainer";
+import { StaggerItem } from "@/components/interfaces/motion/StaggerItem";
+import { HoverLift } from "@/components/interfaces/motion/HoverLift";
+import { ParallaxShape } from "@/components/interfaces/motion/ParallaxShape";
+import { ColorBlockReveal } from "@/components/interfaces/motion/ColorBlockReveal";
+import { LoadingScreen } from "@/components/pages/layout/LoadingScreen";
 import { INTRO_GREETING_PHRASES } from "@/lib/config/brand";
 
 const STAGGER_ITEM_COLORS = ["bg-coral", "bg-pine", "bg-slate", "bg-mustard"];

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Typography } from "@/components/ui/Typography/Typography";
-import { Button } from "@/components/ui/Button";
+import { Typography } from "@/components/interfaces/ui/Typography/Typography";
+import { Button } from "@/components/interfaces/ui/Button";
 
 interface DemoCardProps {
   title: string;
