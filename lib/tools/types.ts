@@ -56,4 +56,20 @@ export const PORTOFOLIO_NAMES = [
   "filterSkills",
 ] as const;
 
-export type portofolioName = (typeof PORTOFOLIO_NAMES)[number];
+export type PortofolioToolName = (typeof PORTOFOLIO_NAMES)[number];
+
+export type PageRoute =
+  (typeof PAGE_ROUTES)[keyof typeof PAGE_ROUTES];
+
+export type SectionId =
+  (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
+
+export type SkillCategoryId =
+  (typeof SKILL_CATEGORY_IDS)[keyof typeof SKILL_CATEGORY_IDS];
+
+export type ProjectId =
+  (typeof PROJECT_IDS)[keyof typeof PROJECT_IDS];
+
+export type ProjectSectionId =
+  (typeof PROJECT_SECTION_IDS)[keyof typeof PROJECT_SECTION_IDS];
+
