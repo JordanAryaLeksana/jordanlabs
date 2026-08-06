@@ -1,10 +1,9 @@
 import type { UIMessage } from "ai";
-import { cn } from "@/lib/cn";
+
 import { ChatMessageBubble } from "@/components/pages/chat/ChatMessageBubble";
 import { getMessageText } from "@/components/pages/chat/getMessageText";
-import { getPortfolioToolOutputs } from "@/components/pages/chat/getPortfolioToolOutputs";
-import { ToolResponseBlock } from "@/components/pages/chat/ToolResponseBlock";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
+import { cn } from "@/lib/cn";
 
 interface MessagePartRendererProps {
   message: UIMessage;
@@ -20,30 +19,6 @@ export function MessagePartRenderer({
     return null;
   }
 
-  const role = message.role;
-  const toolResults =
-    getPortfolioToolOutputs(message);
-
-  /*
-   * Output tool mengambil prioritas atas teks model agar prose
-   * tambahan dari model tidak menghasilkan konfirmasi ganda.
-   */
-  if (
-    role === "assistant" &&
-    toolResults.length > 0
-  ) {
-    return (
-      <div className="flex w-full flex-col gap-5">
-        {toolResults.map((result) => (
-          <ToolResponseBlock
-            key={result.id}
-            result={result}
-          />
-        ))}
-      </div>
-    );
-  }
-
   const messageText = getMessageText(message);
 
   if (messageText.trim() === "") {
@@ -54,12 +29,12 @@ export function MessagePartRenderer({
     <article
       className={cn(
         "flex w-full flex-col gap-2",
-        role === "user"
+        message.role === "user"
           ? "items-end"
           : "items-start"
       )}
     >
-      {role === "assistant" ? (
+      {message.role === "assistant" ? (
         <Typography
           as="p"
           variant="text"
@@ -71,7 +46,7 @@ export function MessagePartRenderer({
         </Typography>
       ) : null}
 
-      <ChatMessageBubble role={role}>
+      <ChatMessageBubble role={message.role}>
         {messageText}
       </ChatMessageBubble>
     </article>
