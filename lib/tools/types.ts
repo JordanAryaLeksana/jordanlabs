@@ -41,3 +41,19 @@ export const PROJECT_SECTION_IDS = {
   training: "training",
   evaluation: "evaluation",
 } as const;
+
+export const PORTOFOLIO_NAMES = [
+   "navigateToPage",
+  "scrollToSection",
+  "highlightSection",
+  "openProjectDetail",
+  "showDownloadCard",
+  "openGithub",
+  "openLinkedin",
+  "openProjectDemo",
+  "showContactCard",
+  "filterProjects",
+  "filterSkills",
+] as const;
+
+export type portofolioName = (typeof PORTOFOLIO_NAMES)[number];
