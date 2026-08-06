@@ -1,7 +1,7 @@
 import "server-only"
 
 import { createNavigationTools } from "./navigation"
-export function createPortofolioTools() {
+export function createPortfolioTools() {
     return{
         ...createNavigationTools(),
     }

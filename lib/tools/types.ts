@@ -42,7 +42,7 @@ export const PROJECT_SECTION_IDS = {
   evaluation: "evaluation",
 } as const;
 
-export const PORTOFOLIO_NAMES = [
+export const PORTFOLIO_TOOL_NAMES = [
    "navigateToPage",
   "scrollToSection",
   "highlightSection",
@@ -56,7 +56,7 @@ export const PORTOFOLIO_NAMES = [
   "filterSkills",
 ] as const;
 
-export type PortofolioToolName = (typeof PORTOFOLIO_NAMES)[number];
+export type PortfolioToolName = (typeof PORTFOLIO_TOOL_NAMES)[number];
 
 export type PageRoute =
   (typeof PAGE_ROUTES)[keyof typeof PAGE_ROUTES];

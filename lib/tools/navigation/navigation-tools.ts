@@ -5,6 +5,7 @@ import { tool } from "ai";
 import {
   highlightSectionInputSchema,
   navigateToPageInputSchema,
+  navigateToPageOutputSchema,
   openProjectDetailInputSchema,
   scrollToSectionInputSchema,
 } from "@/lib/tools/navigation/navigation-tool-schemas";
@@ -13,8 +14,9 @@ export function createNavigationTools() {
   return {
     navigateToPage: tool({
       description:
-        "Open one of the available portfolio pages when the visitor asks to navigate to a specific page.",
+        "Open one of the available portfolio pages when the visitor explicitly asks to navigate, visit, open, or go to that page.",
       inputSchema: navigateToPageInputSchema,
+      outputSchema: navigateToPageOutputSchema,
     }),
 
     scrollToSection: tool({
