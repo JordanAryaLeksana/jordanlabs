@@ -148,3 +148,34 @@ body {
   color: var(--fg);
   font-family: var(--font-sans);
 }
+/* Temporary section focus controlled by Jordan AI. */
+[data-ai-highlight="true"] {
+  outline: 3px solid
+    var(
+      --color-frame-green,
+      var(--color-green, currentColor)
+    );
+  outline-offset: -3px;
+  animation:
+    ai-section-highlight
+    480ms
+    var(--ease-retro-bounce, ease-out)
+    2
+    alternate;
+}
+
+@keyframes ai-section-highlight {
+  from {
+    outline-offset: 6px;
+  }
+
+  to {
+    outline-offset: -3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ai-highlight="true"] {
+    animation: none;
+  }
+}

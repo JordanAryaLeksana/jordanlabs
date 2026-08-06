@@ -10,13 +10,13 @@ export function NavigationToolStatus({
 }: NavigationToolStatusProps) {
   const output =
     typeof part.output === "object" &&
-    part.output !== null
+      part.output !== null
       ? (
-          part.output as {
-            status?: unknown;
-            message?: unknown;
-          }
-        )
+        part.output as {
+          status?: unknown;
+          message?: unknown;
+        }
+      )
       : null;
 
   const outputMessage =
@@ -30,12 +30,21 @@ export function NavigationToolStatus({
     part.state === "input-streaming" ||
     part.state === "input-available"
   ) {
-    statusText =
+    if (
       part.type === "tool-navigateToPage"
-        ? "Opening the requested portfolio page…"
-        : "Moving to the requested portfolio section…";
+    ) {
+      statusText =
+        "Opening the requested portfolio page…";
+    } else if (
+      part.type === "tool-scrollToSection"
+    ) {
+      statusText =
+        "Moving to the requested portfolio section…";
+    } else {
+      statusText =
+        "Moving to and highlighting the requested portfolio section…";
+    }
   }
-
   if (part.state === "output-available") {
     if (output?.status === "error") {
       statusText =

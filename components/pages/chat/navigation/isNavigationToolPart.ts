@@ -7,7 +7,8 @@ export type NavigationToolPart =
   MessagePart & {
     type:
       | "tool-navigateToPage"
-      | "tool-scrollToSection";
+      | "tool-scrollToSection"
+      | "tool-highlightSection";
 
     toolCallId: string;
 
@@ -27,6 +28,7 @@ export function isNavigationToolPart(
 ): part is NavigationToolPart {
   return (
     part.type === "tool-navigateToPage" ||
-    part.type === "tool-scrollToSection"
+    part.type === "tool-scrollToSection" ||
+    part.type === "tool-highlightSection"
   );
 }

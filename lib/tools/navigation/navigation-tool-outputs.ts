@@ -11,3 +11,9 @@ export interface ScrollToSectionOutput {
     sectionId?: string;
     message: string;
 }
+
+export interface HighlightSectionOutput {
+    status: "success" | "error";
+    sectionId?: string;
+    message: string;
+}

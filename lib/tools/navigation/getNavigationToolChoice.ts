@@ -1,3 +1,11 @@
+const HIGHLIGHT_COMMAND_PATTERNS = [
+  /\bhighlight\b/i,
+  /\bspotlight\b/i,
+  /\bsorot\b/i,
+  /\btandai\b/i,
+  /\bberi penanda\b/i,
+];
+
 const SCROLL_COMMAND_PATTERNS = [
   /\bscroll\b/i,
   /\bjump to\b/i,
@@ -23,10 +31,26 @@ const PAGE_NAVIGATION_PATTERNS = [
 export function getNavigationToolChoice(
   userText: string
 ) {
+  const isHighlightCommand =
+    HIGHLIGHT_COMMAND_PATTERNS.some(
+      (pattern) => {
+        return pattern.test(userText);
+      }
+    );
+
+  if (isHighlightCommand) {
+    return {
+      type: "tool",
+      toolName: "highlightSection",
+    } as const;
+  }
+
   const isScrollCommand =
-    SCROLL_COMMAND_PATTERNS.some((pattern) => {
-      return pattern.test(userText);
-    });
+    SCROLL_COMMAND_PATTERNS.some(
+      (pattern) => {
+        return pattern.test(userText);
+      }
+    );
 
   if (isScrollCommand) {
     return {
@@ -36,9 +60,11 @@ export function getNavigationToolChoice(
   }
 
   const isPageNavigationCommand =
-    PAGE_NAVIGATION_PATTERNS.some((pattern) => {
-      return pattern.test(userText);
-    });
+    PAGE_NAVIGATION_PATTERNS.some(
+      (pattern) => {
+        return pattern.test(userText);
+      }
+    );
 
   if (isPageNavigationCommand) {
     return {

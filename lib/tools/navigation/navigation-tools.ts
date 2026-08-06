@@ -27,10 +27,10 @@ export function createNavigationTools() {
 
     highlightSection: tool({
       description:
-        "Temporarily highlight a specific portfolio section to direct the visitor's attention.",
-      inputSchema: highlightSectionInputSchema,
+        "Scroll to and temporarily highlight a specific portfolio section when the visitor asks to highlight, mark, or spotlight it.",
+      inputSchema:
+        highlightSectionInputSchema,
     }),
-
     openProjectDetail: tool({
       description:
         "Open the detail page of a documented portfolio project, optionally targeting a specific section.",
