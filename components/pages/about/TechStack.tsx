@@ -8,6 +8,7 @@ import { Badge } from "@/components/interfaces/ui/Badge";
 import { Pill } from "@/components/interfaces/ui/Pill";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { ABOUT_TECH_STACK } from "@/lib/config/about";
+import { SECTION_IDS } from "@/lib/tools/types";
 
 type StackId = (typeof ABOUT_TECH_STACK)[number]["id"];
 
@@ -16,7 +17,11 @@ export function TechStack() {
   const selectedStack = ABOUT_TECH_STACK.find((stack) => stack.id === activeStack) ?? ABOUT_TECH_STACK[0];
 
   return (
-    <Section className="py-8" disableReveal>
+    <Section
+      id={SECTION_IDS.aboutSkills}
+      className="scroll-mt-24 py-8"
+      disableReveal
+    >
       <div className="grid gap-5 border-y border-current/15 py-7 md:grid-cols-[0.7fr_1.3fr] md:items-center">
         <div><Typography as="p" variant="text" size="xs" className="tracking-[0.2em] opacity-55">TECH STACK</Typography><Typography as="h2" variant="header" size="2xl" className="mt-1">Tools I build with</Typography></div>
         <div>

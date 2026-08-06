@@ -1,25 +1,26 @@
 import type { UIMessage } from "ai";
 
 export function getLatestUserText(
-  messages: readonly UIMessage[]
-): string {
-  for (
-    let messageIndex = messages.length - 1;
-    messageIndex >= 0;
-    messageIndex -= 1
-  ) {
-    const message = messages[messageIndex];
+  messages: UIMessage[]
+) {
+  const latestUserMessage = messages
+    .toReversed()
+    .find((message) => {
+      return message.role === "user";
+    });
 
-    if (message.role !== "user") {
-      continue;
-    }
-
-    return message.parts
-      .filter((part) => part.type === "text")
-      .map((part) => part.text)
-      .join(" ")
-      .trim();
+  if (!latestUserMessage) {
+    return "";
   }
 
-  return "";
+  return latestUserMessage.parts
+    .map((part) => {
+      if (part.type !== "text") {
+        return "";
+      }
+
+      return part.text;
+    })
+    .join("\n")
+    .trim();
 }

@@ -2,6 +2,8 @@ import type { UIMessage } from "ai";
 
 import { ChatMessageBubble } from "@/components/pages/chat/ChatMessageBubble";
 import { getMessageText } from "@/components/pages/chat/getMessageText";
+import { isNavigationToolPart } from "@/components/pages/chat/navigation/isNavigationToolPart";
+import { NavigationToolStatus } from "@/components/pages/chat/navigation/NavigationToolStatus";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { cn } from "@/lib/cn";
 
@@ -19,9 +21,25 @@ export function MessagePartRenderer({
     return null;
   }
 
-  const messageText = getMessageText(message);
+  const messageText =
+    getMessageText(message).trim();
 
-  if (messageText.trim() === "") {
+  const navigationToolParts =
+    message.parts.filter(
+      isNavigationToolPart
+    );
+
+  const hasText =
+    messageText !== "";
+
+  const hasNavigationTool =
+    navigationToolParts.length > 0;
+
+  /*
+   * Tool-only assistant messages tidak mempunyai text.
+   * Jangan membuang message selama masih ada tool part.
+   */
+  if (!hasText && !hasNavigationTool) {
     return null;
   }
 
@@ -29,6 +47,7 @@ export function MessagePartRenderer({
     <article
       className={cn(
         "flex w-full flex-col gap-2",
+
         message.role === "user"
           ? "items-end"
           : "items-start"
@@ -46,9 +65,26 @@ export function MessagePartRenderer({
         </Typography>
       ) : null}
 
-      <ChatMessageBubble role={message.role}>
-        {messageText}
-      </ChatMessageBubble>
+      {hasText ? (
+        <ChatMessageBubble
+          role={message.role}
+        >
+          {messageText}
+        </ChatMessageBubble>
+      ) : null}
+
+      {message.role === "assistant"
+        ? navigationToolParts.map(
+            (part) => {
+              return (
+                <NavigationToolStatus
+                  key={part.toolCallId}
+                  part={part}
+                />
+              );
+            }
+          )
+        : null}
     </article>
   );
 }

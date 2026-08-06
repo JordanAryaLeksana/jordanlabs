@@ -1,22 +1,37 @@
 import {
   convertToModelMessages,
-  createUIMessageStreamResponse,
   streamText,
-  toUIMessageStream,
   type UIMessage,
 } from "ai";
 
+import { getLatestUserText } from "@/lib/ai/getLatestUserText";
 import { getChatModel } from "@/lib/ai/model";
 import { buildSystemPrompt } from "@/lib/rag/prompt";
 import { createPortfolioTools } from "@/lib/tools";
+import { getNavigationToolChoice } from "@/lib/tools/navigation/getNavigationToolChoice";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const { messages }: { messages: UIMessage[] } =
-    await request.json();
+  const {
+    messages,
+  }: {
+    messages: UIMessage[];
+  } = await request.json();
 
-  const portfolioTools = createPortfolioTools();
+  const latestUserText =
+    getLatestUserText(messages);
+
+  const navigationToolChoice =
+    getNavigationToolChoice(latestUserText);
+
+  const portfolioTools =
+    createPortfolioTools();
+
+  console.log("Portfolio tool routing:", {
+    latestUserText,
+    navigationToolChoice,
+  });
 
   const result = streamText({
     model: getChatModel(),
@@ -26,46 +41,61 @@ export async function POST(request: Request) {
       messages,
       {
         tools: portfolioTools,
+
+        /*
+         * Safety net agar satu tool call rusak tidak
+         * mengunci seluruh percakapan berikutnya.
+         */
+        ignoreIncompleteToolCalls: true,
       }
     ),
 
     tools: portfolioTools,
 
-    /*
-     * Hanya navigateToPage yang diaktifkan sampai alur
-     * client-forwarded pertama selesai divalidasi.
-     */
-    activeTools: ["navigateToPage"],
+    activeTools: [
+      "navigateToPage",
+      "scrollToSection",
+    ],
+
+    toolChoice: navigationToolChoice,
 
     onStepFinish: ({
       text,
       toolCalls,
       finishReason,
     }) => {
-      console.log("Portfolio navigation step:", {
-        text,
-        toolCalls,
-        finishReason,
-      });
+      console.log(
+        "Portfolio navigation step:",
+        JSON.stringify(
+          {
+            text,
+            toolCalls,
+            finishReason,
+          },
+          null,
+          2
+        )
+      );
     },
 
     onError: ({ error }) => {
-      console.error("streamText gagal:", error);
+      console.error(
+        "streamText gagal:",
+        error
+      );
     },
   });
 
-  return createUIMessageStreamResponse({
-    stream: toUIMessageStream({
-      stream: result.stream,
+  return result.toUIMessageStreamResponse({
+    originalMessages: messages,
 
-      onError: (error) => {
-        console.error(
-          "Stream error diteruskan ke client:",
-          error
-        );
+    onError: (error) => {
+      console.error(
+        "Stream error diteruskan ke client:",
+        error
+      );
 
-        return "Asisten AI sedang tidak bisa dihubungi. Coba lagi sebentar lagi.";
-      },
-    }),
+      return "Asisten AI sedang tidak bisa dihubungi. Coba lagi sebentar lagi.";
+    },
   });
 }

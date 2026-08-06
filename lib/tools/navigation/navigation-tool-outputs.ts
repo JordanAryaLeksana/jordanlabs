@@ -5,3 +5,9 @@ export interface NavigateToPageOutput {
     route?: PageRoute;
     message: string;
 }
+
+export interface ScrollToSectionOutput {
+    status: "success" | "error";
+    sectionId?: string;
+    message: string;
+}

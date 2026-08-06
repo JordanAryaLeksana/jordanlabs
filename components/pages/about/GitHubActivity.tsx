@@ -6,7 +6,6 @@ import { Button } from "@/components/interfaces/ui/Button";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import type { GitHubRepository } from "@/lib/about/githubTypes";
 import { GITHUB_URL } from "@/lib/config/links";
-import { SECTION_IDS } from "@/lib/tools/types";
 import { GitHubRepositoryCard } from "@/components/pages/about/GitHubRepositoryCard";
 import { GitHubContributionGraph } from "@/components/pages/about/GitHubContributionGraph";
 import type { GitHubContributionData } from "@/lib/about/githubContributionTypes";
@@ -15,7 +14,7 @@ interface GitHubActivityProps { repositories: GitHubRepository[] | null; contrib
 
 export function GitHubActivity({ repositories, contributions }: GitHubActivityProps) {
   return (
-    <Section id={SECTION_IDS.aboutSkills} className="border-y border-current/15 py-12">
+    <Section className="border-y border-current/15 py-12">
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <Typography as="p" variant="text" size="xs" className="tracking-[0.22em] opacity-60">PUBLIC WORK / GITHUB</Typography>
