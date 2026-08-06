@@ -7,7 +7,7 @@ import {
   navigateToPageInputSchema,
   openProjectDetailInputSchema,
   scrollToSectionInputSchema,
-} from "@/lib/tools/navigation-tool-schemas";
+} from "@/lib/tools/navigation/navigation-tool-schemas";
 
 export function createNavigationTools() {
   return {

@@ -5,7 +5,7 @@ import type {
     ScrollToSectionInput,
     HighlightSectionInput,
     OpenProjectDetailInput,
-} from "@/lib/tools/navigation-tool-inputs";
+} from "@/lib/tools/navigation/navigation-tool-inputs";
 
 import {
     PAGE_ROUTES,
