@@ -1,9 +1,4 @@
-/**
- * Identifier bersama lintas tool/route/komponen (CLAUDE.md §8): satu-satunya
- * sumber kebenaran supaya schema tool chatbot, route Next.js, dan komponen
- * UI tidak lepas sinkron. Field lain (SECTION_IDS, PROJECT_IDS,
- * SKILL_CATEGORY_IDS) ditambahkan saat halaman yang membutuhkannya dibangun.
- */
+
 export const PAGE_ROUTES = {
   home: "/",
   about: "/about",
@@ -46,3 +41,35 @@ export const PROJECT_SECTION_IDS = {
   training: "training",
   evaluation: "evaluation",
 } as const;
+
+export const PORTFOLIO_TOOL_NAMES = [
+   "navigateToPage",
+  "scrollToSection",
+  "highlightSection",
+  "openProjectDetail",
+  "showDownloadCard",
+  "openGithub",
+  "openLinkedin",
+  "openProjectDemo",
+  "showContactCard",
+  "filterProjects",
+  "filterSkills",
+] as const;
+
+export type PortfolioToolName = (typeof PORTFOLIO_TOOL_NAMES)[number];
+
+export type PageRoute =
+  (typeof PAGE_ROUTES)[keyof typeof PAGE_ROUTES];
+
+export type SectionId =
+  (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
+
+export type SkillCategoryId =
+  (typeof SKILL_CATEGORY_IDS)[keyof typeof SKILL_CATEGORY_IDS];
+
+export type ProjectId =
+  (typeof PROJECT_IDS)[keyof typeof PROJECT_IDS];
+
+export type ProjectSectionId =
+  (typeof PROJECT_SECTION_IDS)[keyof typeof PROJECT_SECTION_IDS];
+

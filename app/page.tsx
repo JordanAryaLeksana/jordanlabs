@@ -1,6 +1,6 @@
-import { IntroSequence } from "@/components/layout/IntroSequence";
-import { StaticHeader } from "@/components/layout/StaticHeader";
-import { ChatWidget } from "@/components/chat/ChatWidget";
+import { IntroSequence } from "@/components/interfaces/ui/IntroSequence";
+import { StaticHeader } from "@/components/interfaces/ui/StaticHeader";
+import { ChatWidget } from "@/components/pages/chat/ChatWidget";
 
 export default function Home() {
   return (

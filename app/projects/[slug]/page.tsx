@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Footer } from "@/components/layout/Footer";
-import { StaticHeader } from "@/components/layout/StaticHeader";
-import { ProjectChapterNavigation } from "@/components/projects/ProjectChapterNavigation";
-import { ProjectDetailContent } from "@/components/projects/ProjectDetailContent";
-import { Typography } from "@/components/ui/Typography/Typography";
+import { Footer } from "@/components/pages/layout/Footer";
+import { StaticHeader } from "@/components/interfaces/ui/StaticHeader";
+import { ProjectChapterNavigation } from "@/components/pages/projects/ProjectChapterNavigation";
+import { ProjectDetailContent } from "@/components/pages/projects/ProjectDetailContent";
+import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { getProject } from "@/lib/projects/getProject";
 import { getProjects } from "@/lib/projects/getProjects";
 

@@ -1,5 +1,15 @@
+import "server-only";
+
 import { ollama } from "ai-sdk-ollama";
 
 export function getChatModel() {
-  return ollama(process.env.OLLAMA_MODEL ?? "qwen3:8b");
+  const modelName = process.env.OLLAMA_MODEL;
+
+  if (!modelName) {
+    throw new Error(
+      "OLLAMA_MODEL belum dikonfigurasi di .env.local."
+    );
+  }
+
+  return ollama(modelName);
 }
