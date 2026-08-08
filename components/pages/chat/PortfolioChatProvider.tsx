@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { executeNavigateToPage } from "@/components/pages/chat/navigation/executeNavigateToPage";
 import { executeScrollToSection } from "@/components/pages/chat/navigation/executeScrollToSection";
 import { executeHighlightSection } from "@/components/pages/chat/navigation/executeHighlightSection";
+import { executeOpenProjectDetail } from "@/components/pages/chat/navigation/executeOpenProjectDetail";
 import { PortfolioChatContext } from "@/components/pages/chat/PortfolioChatContext";
 
 interface PortfolioChatProviderProps {
@@ -228,6 +229,59 @@ export function PortfolioChatProvider({
               status: "error",
               message:
                 "The portfolio section could not be highlighted.",
+            },
+          });
+        }
+
+        return;
+      }
+      if (
+        toolCall.toolName ===
+        "openProjectDetail"
+      ) {
+        try {
+          const output =
+            executeOpenProjectDetail({
+              input: toolCall.input,
+
+              navigate: (target) => {
+                /*
+                 * Result tool disimpan lebih dahulu
+                 * sebelum route berubah.
+                 */
+                window.setTimeout(() => {
+                  router.push(target);
+                }, 0);
+              },
+            });
+
+          addToolOutput({
+            tool: "openProjectDetail",
+            toolCallId: toolCall.toolCallId,
+            output,
+          });
+
+          console.log(
+            "[PortfolioChat] project detail output added:",
+            {
+              toolCallId:
+                toolCall.toolCallId,
+              output,
+            }
+          );
+        } catch (error) {
+          console.error(
+            "[PortfolioChat] project detail execution failed:",
+            error
+          );
+
+          addToolOutput({
+            tool: "openProjectDetail",
+            toolCallId: toolCall.toolCallId,
+            output: {
+              status: "error",
+              message:
+                "The requested project detail could not be opened.",
             },
           });
         }

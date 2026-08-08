@@ -40,9 +40,14 @@ export function NavigationToolStatus({
     ) {
       statusText =
         "Moving to the requested portfolio section…";
-    } else {
+    } else if (
+      part.type === "tool-highlightSection"
+    ) {
       statusText =
         "Moving to and highlighting the requested portfolio section…";
+    } else {
+      statusText =
+        "Opening the requested project detail…";
     }
   }
   if (part.state === "output-available") {

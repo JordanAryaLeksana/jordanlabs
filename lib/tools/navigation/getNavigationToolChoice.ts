@@ -15,6 +15,10 @@ const SCROLL_COMMAND_PATTERNS = [
   /\bgulir ke\b/i,
   /\bscroll ke\b/i,
 ];
+const PROJECT_DETAIL_COMMAND_PATTERNS = [
+  /\b(?:open|view|visit|show|go to)\b.*\b(?:emqnet|dermsight)\b/i,
+  /\b(?:buka|lihat|kunjungi|tampilkan|pergi ke)\b.*\b(?:emqnet|dermsight)\b/i,
+];
 
 const PAGE_NAVIGATION_PATTERNS = [
   /\bopen\b/i,
@@ -72,6 +76,18 @@ export function getNavigationToolChoice(
       toolName: "navigateToPage",
     } as const;
   }
+  const isProjectDetailCommand =
+    PROJECT_DETAIL_COMMAND_PATTERNS.some(
+      (pattern) => {
+        return pattern.test(userText);
+      }
+    );
 
+  if (isProjectDetailCommand) {
+    return {
+      type: "tool",
+      toolName: "openProjectDetail",
+    } as const;
+  }
   return "auto" as const;
 }

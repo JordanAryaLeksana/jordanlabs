@@ -6,17 +6,19 @@ type MessagePart =
 export type NavigationToolPart =
   MessagePart & {
     type:
-      | "tool-navigateToPage"
-      | "tool-scrollToSection"
-      | "tool-highlightSection";
+    | "tool-navigateToPage"
+    | "tool-scrollToSection"
+    | "tool-highlightSection"
+    | "tool-openProjectDetail";
+
 
     toolCallId: string;
 
     state:
-      | "input-streaming"
-      | "input-available"
-      | "output-available"
-      | "output-error";
+    | "input-streaming"
+    | "input-available"
+    | "output-available"
+    | "output-error";
 
     input?: unknown;
     output?: unknown;
@@ -27,8 +29,13 @@ export function isNavigationToolPart(
   part: MessagePart
 ): part is NavigationToolPart {
   return (
-    part.type === "tool-navigateToPage" ||
-    part.type === "tool-scrollToSection" ||
-    part.type === "tool-highlightSection"
+    part.type ===
+    "tool-navigateToPage" ||
+    part.type ===
+    "tool-scrollToSection" ||
+    part.type ===
+    "tool-highlightSection" ||
+    part.type ===
+    "tool-openProjectDetail"
   );
 }

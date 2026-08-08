@@ -33,8 +33,10 @@ export function createNavigationTools() {
     }),
     openProjectDetail: tool({
       description:
-        "Open the detail page of a documented portfolio project, optionally targeting a specific section.",
-      inputSchema: openProjectDetailInputSchema,
+        "Open the detail page of a documented portfolio project. An optional section may target overview, architecture, dataset, training, or evaluation.",
+      inputSchema:
+        openProjectDetailInputSchema,
     }),
+
   };
 }

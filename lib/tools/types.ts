@@ -73,3 +73,10 @@ export type ProjectId =
 export type ProjectSectionId =
   (typeof PROJECT_SECTION_IDS)[keyof typeof PROJECT_SECTION_IDS];
 
+  
+export type ProjectDetailRoute =
+  `/projects/${ProjectId}`;
+
+export type ProjectDetailTarget =
+  | ProjectDetailRoute
+  | `${ProjectDetailRoute}#${ProjectSectionId}`;

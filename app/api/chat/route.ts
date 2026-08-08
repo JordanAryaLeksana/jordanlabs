@@ -56,6 +56,7 @@ export async function POST(request: Request) {
       "navigateToPage",
       "scrollToSection",
       "highlightSection",
+      "openProjectDetail",
     ],
 
     toolChoice: navigationToolChoice,

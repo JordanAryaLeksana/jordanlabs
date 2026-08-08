@@ -17,3 +17,11 @@ export interface HighlightSectionOutput {
     sectionId?: string;
     message: string;
 }
+
+export interface OpenProjectDetailOutput {
+    status: "success" | "error";
+    projectId?: string;
+    sectionId?: string;
+    target?: string;
+    message: string;
+}
