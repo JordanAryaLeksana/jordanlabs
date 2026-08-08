@@ -6,14 +6,17 @@ import {
   type ReactNode,
 } from "react";
 import { useChat } from "@ai-sdk/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import { executeNavigateToPage } from "@/components/pages/chat/navigation/executeNavigateToPage";
 import { executeScrollToSection } from "@/components/pages/chat/navigation/executeScrollToSection";
 import { executeHighlightSection } from "@/components/pages/chat/navigation/executeHighlightSection";
 import { executeOpenProjectDetail } from "@/components/pages/chat/navigation/executeOpenProjectDetail";
 import { PortfolioChatContext } from "@/components/pages/chat/PortfolioChatContext";
-
+import { getSectionPageRoute } from "@/lib/tools/navigation/getSectionPageRoute";
+import { isHighlightSectionInput } from "@/lib/tools/navigation/isHighlightSectionInput";
+import { isScrollToSectionInput } from "@/lib/tools/navigation/isScrollToSectionInput";
+import type { PendingSectionAction } from "@/components/pages/chat/navigation/pendingSectionAction";
 interface PortfolioChatProviderProps {
   children: ReactNode;
 }
@@ -25,7 +28,12 @@ export function PortfolioChatProvider({
   children,
 }: PortfolioChatProviderProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
+  const pendingSectionActionRef =
+    useRef<PendingSectionAction | null>(
+      null
+    );
   /*
    * Callback onToolCall berada di dalam konfigurasi useChat.
    * Ref memastikan callback selalu memakai addToolOutput
@@ -90,29 +98,112 @@ export function PortfolioChatProvider({
         toolCall.toolName === "scrollToSection"
       ) {
         try {
-          const output = executeScrollToSection({
-            input: toolCall.input,
+          if (
+            !isScrollToSectionInput(
+              toolCall.input
+            )
+          ) {
+            addToolOutput({
+              tool: "scrollToSection",
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                status: "error",
+                message:
+                  "The requested portfolio section is invalid.",
+              },
+            });
 
-            findSection: (sectionId) => {
-              return document.getElementById(
-                sectionId
-              );
-            },
-          });
+            return;
+          }
 
-          addToolOutput({
-            tool: "scrollToSection",
-            toolCallId: toolCall.toolCallId,
-            output,
-          });
+          const existingSection =
+            document.getElementById(
+              toolCall.input.sectionId
+            );
 
-          console.log(
-            "[PortfolioChat] scroll output added:",
-            {
-              toolCallId: toolCall.toolCallId,
+          /*
+           * Section ada di halaman aktif.
+           * Tidak perlu navigasi.
+           */
+          if (existingSection) {
+            const output =
+              executeScrollToSection({
+                input: toolCall.input,
+
+                findSection: (sectionId) => {
+                  return document.getElementById(
+                    sectionId
+                  );
+                },
+              });
+
+            addToolOutput({
+              tool: "scrollToSection",
+              toolCallId:
+                toolCall.toolCallId,
               output,
-            }
-          );
+            });
+
+            return;
+          }
+
+          /*
+           * Section tidak ada.
+           * Cari halaman pemiliknya.
+           */
+          const targetRoute =
+            getSectionPageRoute(
+              toolCall.input.sectionId
+            );
+
+          if (!targetRoute) {
+            addToolOutput({
+              tool: "scrollToSection",
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                status: "error",
+                sectionId:
+                  toolCall.input.sectionId,
+                message:
+                  "This section belongs to a project detail. Open a project first.",
+              },
+            });
+
+            return;
+          }
+
+          /*
+           * Kalau sudah di route yang seharusnya
+           * tetapi section tidak ada, jangan loop.
+           */
+          if (pathname === targetRoute) {
+            addToolOutput({
+              tool: "scrollToSection",
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                status: "error",
+                sectionId:
+                  toolCall.input.sectionId,
+                message:
+                  "The requested section is not available on this page.",
+              },
+            });
+
+            return;
+          }
+
+          pendingSectionActionRef.current = {
+            kind: "scroll",
+            toolCallId:
+              toolCall.toolCallId,
+            sectionId:
+              toolCall.input.sectionId,
+          };
+
+          router.push(targetRoute);
         } catch (error) {
           console.error(
             "[PortfolioChat] scroll execution failed:",
@@ -121,7 +212,8 @@ export function PortfolioChatProvider({
 
           addToolOutput({
             tool: "scrollToSection",
-            toolCallId: toolCall.toolCallId,
+            toolCallId:
+              toolCall.toolCallId,
             output: {
               status: "error",
               message:
@@ -133,98 +225,150 @@ export function PortfolioChatProvider({
         return;
       }
       if (
-        toolCall.toolName === "highlightSection"
+        toolCall.toolName ===
+        "highlightSection"
       ) {
         try {
-          /*
-           * Tool call-nya hanya highlightSection,
-           * tetapi client menggabungkan dua aksi:
-           *
-           * 1. Scroll menuju section
-           * 2. Highlight section tersebut
-           */
-          const scrollOutput =
-            executeScrollToSection({
-              input: toolCall.input,
-
-              findSection: (sectionId) => {
-                return document.getElementById(
-                  sectionId
-                );
-              },
-            });
-
-          if (scrollOutput.status === "error") {
-            addToolOutput({
-              tool: "highlightSection",
-              toolCallId: toolCall.toolCallId,
-              output: {
-                status: "error",
-                sectionId: scrollOutput.sectionId,
-                message: scrollOutput.message,
-              },
-            });
-
-            return;
-          }
-
-          const highlightOutput =
-            executeHighlightSection({
-              input: toolCall.input,
-
-              findSection: (sectionId) => {
-                return document.getElementById(
-                  sectionId
-                );
-              },
-            });
-
           if (
-            highlightOutput.status === "error"
+            !isHighlightSectionInput(
+              toolCall.input
+            )
           ) {
             addToolOutput({
               tool: "highlightSection",
-              toolCallId: toolCall.toolCallId,
-              output: highlightOutput,
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                status: "error",
+                message:
+                  "The requested portfolio section is invalid.",
+              },
             });
 
             return;
           }
 
-          const output = {
-            status: "success" as const,
+          const existingSection =
+            document.getElementById(
+              toolCall.input.sectionId
+            );
+
+          /*
+           * Kalau section sudah ada:
+           * scroll + highlight langsung.
+           */
+          if (existingSection) {
+            const scrollOutput =
+              executeScrollToSection({
+                input: toolCall.input,
+
+                findSection: (sectionId) => {
+                  return document.getElementById(
+                    sectionId
+                  );
+                },
+              });
+
+            if (
+              scrollOutput.status === "error"
+            ) {
+              addToolOutput({
+                tool: "highlightSection",
+                toolCallId:
+                  toolCall.toolCallId,
+                output: scrollOutput,
+              });
+
+              return;
+            }
+
+            const highlightOutput =
+              executeHighlightSection({
+                input: toolCall.input,
+
+                findSection: (sectionId) => {
+                  return document.getElementById(
+                    sectionId
+                  );
+                },
+              });
+
+            addToolOutput({
+              tool: "highlightSection",
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                ...highlightOutput,
+
+                message:
+                  highlightOutput.status ===
+                    "success"
+                    ? "The requested section was opened and highlighted."
+                    : highlightOutput.message,
+              },
+            });
+
+            return;
+          }
+
+          const targetRoute =
+            getSectionPageRoute(
+              toolCall.input.sectionId
+            );
+
+          if (!targetRoute) {
+            addToolOutput({
+              tool: "highlightSection",
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                status: "error",
+                sectionId:
+                  toolCall.input.sectionId,
+                message:
+                  "This section belongs to a project detail. Open a project first.",
+              },
+            });
+
+            return;
+          }
+
+          if (pathname === targetRoute) {
+            addToolOutput({
+              tool: "highlightSection",
+              toolCallId:
+                toolCall.toolCallId,
+              output: {
+                status: "error",
+                sectionId:
+                  toolCall.input.sectionId,
+                message:
+                  "The requested section is not available on this page.",
+              },
+            });
+
+            return;
+          }
+
+          pendingSectionActionRef.current = {
+            kind: "highlight",
+            toolCallId:
+              toolCall.toolCallId,
             sectionId:
-              highlightOutput.sectionId,
-            message:
-              "Moved to and highlighted the requested portfolio section.",
+              toolCall.input.sectionId,
           };
 
-          addToolOutput({
-            tool: "highlightSection",
-            toolCallId: toolCall.toolCallId,
-            output,
-          });
-
-          console.log(
-            "[PortfolioChat] highlight output added:",
-            {
-              toolCallId: toolCall.toolCallId,
-              output,
-            }
-          );
+          router.push(targetRoute);
         } catch (error) {
           console.error(
             "[PortfolioChat] highlight execution failed:",
             error
           );
 
-          /*
-           * Walaupun eksekusi client gagal,
-           * tool call tetap harus menerima result.
-           */
           addToolOutput({
             tool: "highlightSection",
-            toolCallId: toolCall.toolCallId,
+            toolCallId:
+              toolCall.toolCallId,
             output: {
               status: "error",
               message:
@@ -301,7 +445,131 @@ export function PortfolioChatProvider({
       );
     },
   });
+  useEffect(() => {
+    const pendingAction =
+      pendingSectionActionRef.current;
 
+    if (!pendingAction) {
+      return;
+    }
+
+    /*
+     * Tunggu browser menyelesaikan commit DOM
+     * halaman yang baru.
+     */
+    const frameId =
+      window.requestAnimationFrame(() => {
+        const addToolOutput =
+          addToolOutputRef.current;
+
+        if (!addToolOutput) {
+          return;
+        }
+
+        if (
+          pendingAction.kind === "scroll"
+        ) {
+          const output =
+            executeScrollToSection({
+              input: {
+                sectionId:
+                  pendingAction.sectionId,
+              },
+
+              findSection: (sectionId) => {
+                return document.getElementById(
+                  sectionId
+                );
+              },
+            });
+
+          addToolOutput({
+            tool: "scrollToSection",
+            toolCallId:
+              pendingAction.toolCallId,
+            output: {
+              ...output,
+
+              message:
+                output.status === "success"
+                  ? "Opened the relevant page and moved to the requested section."
+                  : output.message,
+            },
+          });
+
+          pendingSectionActionRef.current =
+            null;
+
+          return;
+        }
+
+        const scrollOutput =
+          executeScrollToSection({
+            input: {
+              sectionId:
+                pendingAction.sectionId,
+            },
+
+            findSection: (sectionId) => {
+              return document.getElementById(
+                sectionId
+              );
+            },
+          });
+
+        if (
+          scrollOutput.status === "error"
+        ) {
+          addToolOutput({
+            tool: "highlightSection",
+            toolCallId:
+              pendingAction.toolCallId,
+            output: scrollOutput,
+          });
+
+          pendingSectionActionRef.current =
+            null;
+
+          return;
+        }
+
+        const highlightOutput =
+          executeHighlightSection({
+            input: {
+              sectionId:
+                pendingAction.sectionId,
+            },
+
+            findSection: (sectionId) => {
+              return document.getElementById(
+                sectionId
+              );
+            },
+          });
+
+        addToolOutput({
+          tool: "highlightSection",
+          toolCallId:
+            pendingAction.toolCallId,
+          output: {
+            ...highlightOutput,
+
+            message:
+              highlightOutput.status ===
+                "success"
+                ? "Opened the relevant page and highlighted the requested section."
+                : highlightOutput.message,
+          },
+        });
+
+        pendingSectionActionRef.current =
+          null;
+      });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [pathname]);
   useEffect(() => {
     addToolOutputRef.current =
       chat.addToolOutput;

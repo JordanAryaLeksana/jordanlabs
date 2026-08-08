@@ -21,13 +21,14 @@ export function createNavigationTools() {
 
     scrollToSection: tool({
       description:
-        "Scroll to a specific section on the portfolio page that is currently open.",
-      inputSchema: scrollToSectionInputSchema,
+        "Move to a specific portfolio section. The client may open the page containing that section before scrolling to it.",
+      inputSchema:
+        scrollToSectionInputSchema,
     }),
 
     highlightSection: tool({
       description:
-        "Scroll to and temporarily highlight a specific portfolio section when the visitor asks to highlight, mark, or spotlight it.",
+        "Move to and temporarily highlight a specific portfolio section. The client may open the page containing that section first.",
       inputSchema:
         highlightSectionInputSchema,
     }),
