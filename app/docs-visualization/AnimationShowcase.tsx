@@ -30,8 +30,8 @@ export function AnimationShowcase() {
           Animasi
         </Typography>
         <Typography variant="text" size="lg">
-          Bagian atas: animasi bawaan tiap komponen retro/ (CSS manual). Bagian bawah: sistem motion §11 "Cinematic
-          Startup Motion" (Framer Motion) — fade+translate, stagger, hover, scroll reveal, parallax, signature
+          Bagian atas: animasi bawaan tiap komponen retro/ (CSS manual). Bagian bawah: sistem motion §11 &quot;Cinematic
+          Startup Motion&quot; (Framer Motion) — fade+translate, stagger, hover, scroll reveal, parallax, signature
           color-block reveal, dan loading screen.
         </Typography>
       </div>

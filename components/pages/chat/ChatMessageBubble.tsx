@@ -10,6 +10,41 @@ interface ChatMessageBubbleProps {
   children: ReactNode;
 }
 
+function renderInlineFormatting(
+  text: string
+) {
+  const parts = text.split(
+    /(\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g
+  );
+
+  return parts.map(
+    (part, index) => {
+      if (
+        part.startsWith("**") &&
+        part.endsWith("**")
+      ) {
+        return (
+          <strong key={index}>
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      if (
+        part.startsWith("*") &&
+        part.endsWith("*")
+      ) {
+        return (
+          <em key={index}>
+            {part.slice(1, -1)}
+          </em>
+        );
+      }
+
+      return part;
+    }
+  );
+}
 const ALIGNMENT_CLASS_NAME: Record<MessageRole, string> = {
   assistant: "justify-start",
   user: "justify-end",
@@ -27,6 +62,13 @@ export function ChatMessageBubble({
   role,
   children,
 }: ChatMessageBubbleProps) {
+  const content =
+    role === "assistant" &&
+      typeof children === "string"
+      ? renderInlineFormatting(
+        children
+      )
+      : children;
   return (
     <FadeIn
       className={cn("flex", ALIGNMENT_CLASS_NAME[role])}
@@ -45,7 +87,7 @@ export function ChatMessageBubble({
           size="sm"
           className="whitespace-pre-wrap break-words leading-6"
         >
-          {children}
+          {content}
         </Typography>
       </div>
     </FadeIn>
