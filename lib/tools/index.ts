@@ -1,8 +1,17 @@
-import "server-only"
+import "server-only";
 
-import { createNavigationTools } from "./navigation"
+import { createNavigationTools } from "@/lib/tools/navigation";
+import { createResourceTools } from "@/lib/tools/resources";
+import {
+  createProjectContentTools,
+  createSkillContentTools,
+} from "@/lib/tools/content";
+
 export function createPortfolioTools() {
-    return{
-        ...createNavigationTools(),
-    }
+  return {
+    ...createNavigationTools(),
+    ...createResourceTools(),
+    ...createProjectContentTools(),
+    ...createSkillContentTools(),
+  };
 }

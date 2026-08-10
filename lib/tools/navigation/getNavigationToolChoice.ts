@@ -31,7 +31,12 @@ const PAGE_NAVIGATION_PATTERNS = [
   /\bkembali ke\b/i,
   /\bbalik ke\b/i,
 ];
-
+import {
+  PAGE_ROUTES,
+  PROJECT_IDS,
+  type PageRoute,
+  type ProjectId,
+} from "@/lib/tools/types";
 export function getNavigationToolChoice(
   userText: string
 ) {
@@ -90,4 +95,78 @@ export function getNavigationToolChoice(
     } as const;
   }
   return "auto" as const;
+}
+export type DeterministicNavigationAction =
+  | {
+    kind: "route";
+    route: PageRoute;
+    message: string;
+  }
+  | {
+    kind: "project";
+    projectId: ProjectId;
+    message: string;
+  };
+
+export function getDeterministicNavigationAction(
+  userText: string
+): DeterministicNavigationAction | null {
+  const text = userText.trim();
+
+  /*
+   * Project detail harus diperiksa
+   * sebelum generic page navigation.
+   */
+  if (
+    /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan)\b.*\bemqnet\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "project",
+      projectId: PROJECT_IDS.emqnet,
+      message: "Opening EMQNET project…",
+    };
+  }
+
+  if (
+    /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan)\b.*\bdermsight\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "project",
+      projectId: PROJECT_IDS.dermsight,
+      message: "Opening DermSight project…",
+    };
+  }
+
+  if (
+    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bprojects?\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "project",
+      projectId: PROJECT_IDS.dermsight,
+      message: "Opening DermSight project…",
+    };
+  }
+
+  if (
+    /\b(?:go|back|return)\b.*\bhome\b/i.test(
+      text
+    ) ||
+    /\b(?:kembali|balik)\b.*\b(?:home|beranda)\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "route",
+      route: PAGE_ROUTES.home,
+      message: "Going back to the home page…",
+    };
+  }
+
+  return null;
 }

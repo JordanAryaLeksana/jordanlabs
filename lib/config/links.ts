@@ -1,5 +1,8 @@
+export const CV_FILE_NAME =
+  "Jordan Arya Leksana_CV2026.pdf";
 
-export const CV_URL = encodeURI("/Jordan Arya Leksana_CV2026.pdf");
+export const CV_URL =
+  encodeURI(`/${CV_FILE_NAME}`);
 
 export const LINKEDIN_URL = "https://www.linkedin.com/in/jordanaryaleksana";
 

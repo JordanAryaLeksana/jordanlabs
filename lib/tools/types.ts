@@ -23,8 +23,10 @@ export const SECTION_IDS = {
 } as const;
 
 export const SKILL_CATEGORY_IDS = {
+  programming: "programming",
   frontend: "frontend",
   backend: "backend",
+  database: "database",
   ai: "ai",
   tooling: "tooling",
   collaboration: "collaboration",

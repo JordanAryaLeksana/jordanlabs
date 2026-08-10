@@ -17,6 +17,22 @@ import { getSectionPageRoute } from "@/lib/tools/navigation/getSectionPageRoute"
 import { isHighlightSectionInput } from "@/lib/tools/navigation/isHighlightSectionInput";
 import { isScrollToSectionInput } from "@/lib/tools/navigation/isScrollToSectionInput";
 import type { PendingSectionAction } from "@/components/pages/chat/navigation/pendingSectionAction";
+import { isServerExecutedToolName } from "@/lib/tools/isServerExecutedToolName";
+import {
+  PAGE_ROUTES,
+  PROJECT_IDS,
+} from "@/lib/tools/types";
+
+const ALLOWED_PAGE_ROUTES =
+  new Set<string>(
+    Object.values(PAGE_ROUTES)
+  );
+
+const ALLOWED_PROJECT_IDS =
+  new Set<string>(
+    Object.values(PROJECT_IDS)
+  );
+
 interface PortfolioChatProviderProps {
   children: ReactNode;
 }
@@ -43,6 +59,56 @@ export function PortfolioChatProvider({
     useRef<AddToolOutput | null>(null);
 
   const chat = useChat({
+    onData: (part) => {
+      if (
+        part.type !==
+        "data-navigationAction"
+      ) {
+        return;
+      }
+
+      const data = part.data;
+
+      if (
+        typeof data !== "object" ||
+        data === null
+      ) {
+        return;
+      }
+
+      const action = data as {
+        kind?: unknown;
+        route?: unknown;
+        projectId?: unknown;
+      };
+
+      if (
+        action.kind === "route" &&
+        typeof action.route === "string" &&
+        ALLOWED_PAGE_ROUTES.has(
+          action.route
+        )
+      ) {
+        router.push(
+          action.route
+        );
+
+        return;
+      }
+
+      if (
+        action.kind === "project" &&
+        typeof action.projectId ===
+        "string" &&
+        ALLOWED_PROJECT_IDS.has(
+          action.projectId
+        )
+      ) {
+        router.push(
+          `/projects/${action.projectId}`
+        );
+      }
+    },
     onToolCall: ({ toolCall }) => {
       const addToolOutput =
         addToolOutputRef.current;
@@ -432,11 +498,34 @@ export function PortfolioChatProvider({
 
         return;
       }
+      if (
+        isServerExecutedToolName(
+          toolCall.toolName
+        )
+      ) {
+        if (
+          process.env.NODE_ENV ===
+          "development"
+        ) {
+          console.log(
+            "[PortfolioChat] server tool received:",
+            toolCall.toolName
+          );
+        }
+
+        /*
+         * Tidak memanggil addToolOutput.
+         * Tool ini sudah memiliki execute()
+         * dan result-nya dibuat oleh server.
+         */
+        return;
+      }
       console.warn(
         "[PortfolioChat] unhandled tool:",
         toolCall.toolName
       );
     },
+
 
     onError: (error) => {
       console.error(

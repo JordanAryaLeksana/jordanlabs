@@ -1,3 +1,6 @@
+import {
+  SKILLS_BY_CATEGORY,
+} from "@/lib/config/skills";
 export const ABOUT_PROFILE = {
   eyebrow: "Currently focused on",
   title: "AI Engineer",
@@ -15,8 +18,43 @@ export const ABOUT_PROFILE = {
 } as const;
 
 export const ABOUT_TECH_STACK = [
-  { id: "core", label: "Core", items: ["Python", "TypeScript", "JavaScript", "SQL", "Go"] },
-  { id: "ai", label: "AI / ML", items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "LangChain"] },
-  { id: "web", label: "Web", items: ["React", "Next.js", "Node.js", "Express", "NestJS", "FastAPI"] },
-  { id: "tooling", label: "Tooling", items: ["Git", "Docker", "Prisma", "Supabase", "Postman", "Ollama", "TensorBoard"] },
+  {
+    id: "core",
+    label: "Core",
+    items: [
+      ...SKILLS_BY_CATEGORY.programming.items,
+    ],
+  },
+
+  {
+    id: "ai",
+    label: "AI / ML",
+    items: [
+      "TensorFlow",
+      "PyTorch",
+      "Scikit-learn",
+      "OpenCV",
+      "LangChain",
+    ],
+  },
+
+  {
+    id: "web",
+    label: "Web",
+    items: [
+      ...SKILLS_BY_CATEGORY.frontend.items,
+      ...SKILLS_BY_CATEGORY.backend.items.filter(
+        (item) =>
+          item !== "Django"
+      ),
+    ],
+  },
+
+  {
+    id: "tooling",
+    label: "Tooling",
+    items: [
+      ...SKILLS_BY_CATEGORY.tooling.items,
+    ],
+  },
 ] as const;
