@@ -16,24 +16,31 @@ export function filterProjects(
         if (
           input.category !== undefined &&
           project.category !==
-            input.category
+          input.category
         ) {
           return false;
         }
 
         if (
-          input.tag !== undefined &&
-          !project.tags.includes(
-            input.tag
-          )
+          input.tag !== undefined
         ) {
-          return false;
+          const projectTags:
+            readonly string[] =
+            project.tags;
+
+          if (
+            !projectTags.includes(
+              input.tag
+            )
+          ) {
+            return false;
+          }
         }
 
         if (
           input.featured !== undefined &&
           project.featured !==
-            input.featured
+          input.featured
         ) {
           return false;
         }
