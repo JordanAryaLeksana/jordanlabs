@@ -3,6 +3,7 @@
 import {
   useEffect,
   useRef,
+  useLayoutEffect,
   type ReactNode,
 } from "react";
 import { useChat } from "@ai-sdk/react";
@@ -21,8 +22,9 @@ import { isServerExecutedToolName } from "@/lib/tools/isServerExecutedToolName";
 import {
   PAGE_ROUTES,
   PROJECT_IDS,
+  SECTION_IDS,
+  type SectionId,
 } from "@/lib/tools/types";
-
 const ALLOWED_PAGE_ROUTES =
   new Set<string>(
     Object.values(PAGE_ROUTES)
@@ -32,14 +34,20 @@ const ALLOWED_PROJECT_IDS =
   new Set<string>(
     Object.values(PROJECT_IDS)
   );
-
+const ALLOWED_SECTION_IDS =
+  new Set<string>(
+    Object.values(SECTION_IDS)
+  );
 interface PortfolioChatProviderProps {
   children: ReactNode;
 }
 
 type AddToolOutput =
   ReturnType<typeof useChat>["addToolOutput"];
-
+type PendingDeterministicSectionAction = {
+  kind: "scroll" | "highlight";
+  sectionId: SectionId;
+};
 export function PortfolioChatProvider({
   children,
 }: PortfolioChatProviderProps) {
@@ -50,6 +58,10 @@ export function PortfolioChatProvider({
     useRef<PendingSectionAction | null>(
       null
     );
+  const pendingDeterministicSectionActionRef =
+    useRef<
+      PendingDeterministicSectionAction | null
+    >(null);
   /*
    * Callback onToolCall berada di dalam konfigurasi useChat.
    * Ref memastikan callback selalu memakai addToolOutput
@@ -80,6 +92,7 @@ export function PortfolioChatProvider({
         kind?: unknown;
         route?: unknown;
         projectId?: unknown;
+        sectionId?: unknown;
       };
 
       if (
@@ -107,6 +120,114 @@ export function PortfolioChatProvider({
         router.push(
           `/projects/${action.projectId}`
         );
+
+        return;
+      }
+
+      if (
+        (
+          action.kind === "scroll" ||
+          action.kind === "highlight"
+        ) &&
+        typeof action.sectionId ===
+        "string" &&
+        ALLOWED_SECTION_IDS.has(
+          action.sectionId
+        )
+      ) {
+        const sectionId =
+          action.sectionId as SectionId;
+
+        const existingSection =
+          document.getElementById(
+            sectionId
+          );
+
+        /*
+         * Section sudah tersedia
+         * pada halaman aktif.
+         */
+        if (existingSection) {
+          const scrollOutput =
+            executeScrollToSection({
+              input: {
+                sectionId,
+              },
+
+              findSection: (id) =>
+                document.getElementById(
+                  id
+                ),
+            });
+
+          if (
+            scrollOutput.status ===
+            "error"
+          ) {
+            console.error(
+              "[PortfolioChat] deterministic scroll failed:",
+              scrollOutput
+            );
+
+            return;
+          }
+
+          if (
+            action.kind ===
+            "highlight"
+          ) {
+            const highlightOutput =
+              executeHighlightSection({
+                input: {
+                  sectionId,
+                },
+
+                findSection: (id) =>
+                  document.getElementById(
+                    id
+                  ),
+              });
+
+            if (
+              highlightOutput.status ===
+              "error"
+            ) {
+              console.error(
+                "[PortfolioChat] deterministic highlight failed:",
+                highlightOutput
+              );
+            }
+          }
+
+          return;
+        }
+
+        /*
+         * Section ada pada page lain.
+         */
+        const targetRoute =
+          getSectionPageRoute(
+            sectionId
+          );
+
+        if (!targetRoute) {
+          console.error(
+            "[PortfolioChat] deterministic section has no page route:",
+            sectionId
+          );
+
+          return;
+        }
+
+        pendingDeterministicSectionActionRef.current =
+        {
+          kind: action.kind,
+          sectionId,
+        };
+
+        router.push(targetRoute);
+
+        return;
       }
     },
     onToolCall: ({ toolCall }) => {
@@ -127,35 +248,61 @@ export function PortfolioChatProvider({
       );
 
       if (
-        toolCall.toolName === "navigateToPage"
+        toolCall.toolName ===
+        "navigateToPage"
       ) {
-        const output = executeNavigateToPage({
-          input: toolCall.input,
+        try {
+          const output =
+            executeNavigateToPage({
+              input: toolCall.input,
 
-          /*
-           * Navigasi dijadwalkan setelah addToolOutput
-           * mendapat kesempatan memperbarui state chat.
-           */
-          navigate: (route) => {
-            window.setTimeout(() => {
-              router.push(route);
-            }, 0);
-          },
-        });
+              /*
+               * Navigasi dijadwalkan setelah
+               * addToolOutput mendapat kesempatan
+               * memperbarui state chat.
+               */
+              navigate: (route) => {
+                window.setTimeout(() => {
+                  router.push(route);
+                }, 0);
+              },
+            });
 
-        addToolOutput({
-          tool: "navigateToPage",
-          toolCallId: toolCall.toolCallId,
-          output,
-        });
-
-        console.log(
-          "[PortfolioChat] navigate output added:",
-          {
-            toolCallId: toolCall.toolCallId,
+          addToolOutput({
+            tool: "navigateToPage",
+            toolCallId:
+              toolCall.toolCallId,
             output,
+          });
+
+          if (
+            process.env.NODE_ENV ===
+            "development"
+          ) {
+            console.log(
+              "[PortfolioChat] navigate output added:",
+              {
+                toolCallId:
+                  toolCall.toolCallId,
+                output,
+              }
+            );
           }
-        );
+        } catch (error) {
+          console.error(
+            "[PortfolioChat] navigation execution failed:",
+            error
+          );
+
+          addToolOutput({
+            tool: "navigateToPage",
+            toolCallId:
+              toolCall.toolCallId,
+            state: "output-error",
+            errorText:
+              "The requested page could not be opened.",
+          });
+        }
 
         return;
       }
@@ -498,6 +645,7 @@ export function PortfolioChatProvider({
 
         return;
       }
+
       if (
         isServerExecutedToolName(
           toolCall.toolName
@@ -520,10 +668,18 @@ export function PortfolioChatProvider({
          */
         return;
       }
-      console.warn(
-        "[PortfolioChat] unhandled tool:",
+      console.error(
+        "[PortfolioChat] unsupported client tool:",
         toolCall.toolName
       );
+
+      addToolOutput({
+        tool: toolCall.toolName,
+        toolCallId: toolCall.toolCallId,
+        state: "output-error",
+        errorText:
+          "This portfolio action is not supported.",
+      });
     },
 
 
@@ -660,6 +816,97 @@ export function PortfolioChatProvider({
     };
   }, [pathname]);
   useEffect(() => {
+    const pending =
+      pendingDeterministicSectionActionRef.current;
+
+    if (!pending) {
+      return;
+    }
+
+    const targetRoute =
+      getSectionPageRoute(
+        pending.sectionId
+      );
+
+    if (
+      !targetRoute ||
+      pathname !== targetRoute
+    ) {
+      return;
+    }
+
+    pendingDeterministicSectionActionRef.current =
+      null;
+
+    const frameId =
+      window.requestAnimationFrame(
+        () => {
+          const scrollOutput =
+            executeScrollToSection({
+              input: {
+                sectionId:
+                  pending.sectionId,
+              },
+
+              findSection: (
+                sectionId
+              ) =>
+                document.getElementById(
+                  sectionId
+                ),
+            });
+
+          if (
+            scrollOutput.status ===
+            "error"
+          ) {
+            console.error(
+              "[PortfolioChat] pending deterministic scroll failed:",
+              scrollOutput
+            );
+
+            return;
+          }
+
+          if (
+            pending.kind ===
+            "highlight"
+          ) {
+            const highlightOutput =
+              executeHighlightSection({
+                input: {
+                  sectionId:
+                    pending.sectionId,
+                },
+
+                findSection: (
+                  sectionId
+                ) =>
+                  document.getElementById(
+                    sectionId
+                  ),
+              });
+
+            if (
+              highlightOutput.status ===
+              "error"
+            ) {
+              console.error(
+                "[PortfolioChat] pending deterministic highlight failed:",
+                highlightOutput
+              );
+            }
+          }
+        }
+      );
+
+    return () => {
+      window.cancelAnimationFrame(
+        frameId
+      );
+    };
+  }, [pathname]);
+  useLayoutEffect(() => {
     addToolOutputRef.current =
       chat.addToolOutput;
   }, [chat.addToolOutput]);

@@ -5,7 +5,7 @@ import { usePortfolioChat } from "@/components/pages/chat/usePortfolioChat";
 import { isChatBusy } from "@/components/pages/chat/isChatBusy";
 
 export function useAgentComposer() {
-  const { sendMessage, status } = usePortfolioChat();
+  const { sendMessage, status, clearError, error } = usePortfolioChat();
   const [draftMessage, setDraftMessage] = useState("");
 
   const disabled = isChatBusy(status);
@@ -19,6 +19,9 @@ export function useAgentComposer() {
       return;
     }
 
+    if (error) {
+      clearError()
+    }
     sendMessage({ text: message });
     setDraftMessage("");
   }

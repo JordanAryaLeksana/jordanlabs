@@ -34,7 +34,37 @@ const CONTACT_COMMAND_PATTERNS = [
   /\b(?:hubungi|kontak|email)\s+jordan\b/i,
   /\bbagaimana\s+cara\s+menghubungi\s+jordan\b/i,
 ];
+const HIRING_CONTACT_PATTERNS = [
+  /*
+   * English:
+   * explicit intent to hire/recruit Jordan.
+   */
+  /\b(?:i want|i'd like|i would like)\s+to\s+(?:hire|recruit)\s+jordan\b/i,
 
+  /\b(?:i'm interested|i am interested)\s+in\s+(?:hiring|recruiting)\s+jordan\b/i,
+
+  /\b(?:i'm interested|i am interested)\s+to\s+(?:hire|recruit)\s+jordan\b/i,
+
+  /*
+   * Explicit contact for an opportunity.
+   */
+  /\b(?:i want|i'd like|i would like)\s+to\s+(?:contact|reach|email)\s+jordan\b.*\b(?:job|role|position|opportunity|hiring|recruitment)\b/i,
+
+  /\b(?:contact|reach|email)\s+jordan\b.*\b(?:about|for|regarding)\b.*\b(?:job|role|position|opportunity|hiring|recruitment)\b/i,
+
+  /*
+   * Indonesian:
+   * explicit hiring intent.
+   */
+  /\b(?:saya ingin|saya mau)\s+(?:untuk\s+)?(?:merekrut|rekrut|hire)\s+jordan\b/i,
+
+  /\b(?:saya tertarik)\s+(?:untuk\s+)?(?:merekrut|rekrut|hire)\s+jordan\b/i,
+
+  /*
+   * Explicit contact for a job opportunity.
+   */
+  /\b(?:saya ingin|saya mau)\s+(?:menghubungi|kontak|email)\s+jordan\b.*\b(?:pekerjaan|posisi|lowongan|kesempatan|rekrutmen)\b/i,
+];
 export function getResourceToolChoice(
   userText: string
 ) {
@@ -76,7 +106,15 @@ export function getResourceToolChoice(
       toolName: "openLinkedin",
     } as const;
   }
-  const isContactCommand = CONTACT_COMMAND_PATTERNS.some((pattern) => pattern.test(userText));
+  const isContactCommand =
+    CONTACT_COMMAND_PATTERNS.some(
+      (pattern) =>
+        pattern.test(userText)
+    ) ||
+    HIRING_CONTACT_PATTERNS.some(
+      (pattern) =>
+        pattern.test(userText)
+    );
 
   if (isContactCommand) {
     return { type: "tool", toolName: "showContactCard" } as const;

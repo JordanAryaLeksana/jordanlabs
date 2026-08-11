@@ -1,3 +1,5 @@
+
+===== AgentConversation.tsx =====
 "use client";
 
 import { cn } from "@/lib/cn";
@@ -8,7 +10,7 @@ import { useConversationAutoScroll } from "./useConversationAutoScroll";
 import { usePortfolioChat } from "@/components/pages/chat/usePortfolioChat";
 import { Badge } from "@/components/interfaces/ui/Badge";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
-import { ChatMessageBubble } from "@/components/pages/chat/ChatMessageBubble";
+
 interface AgentConversationProps {
   compact?: boolean;
 }
@@ -16,7 +18,7 @@ interface AgentConversationProps {
 export function AgentConversation({
   compact = false,
 }: AgentConversationProps) {
-  const { messages, status, error } = usePortfolioChat();
+  const { messages, status } = usePortfolioChat();
 
   const conversationStarted = hasConversationStarted(messages);
   const conversationEndReference = useConversationAutoScroll(
@@ -92,19 +94,50 @@ export function AgentConversation({
               Jordan AI is responding...
             </Typography>
           ) : null}
-          {error ? (
-            <div
-              role="alert"
-              aria-live="polite"
-            >
-              <ChatMessageBubble role="assistant">
-                Jordan AI could not complete that request. You can try again or send another message.
-              </ChatMessageBubble>
-            </div>
-          ) : null}
+
           <div ref={conversationEndReference} />
         </div>
       </div>
     </section>
   );
+}
+===== useAgentComposer.ts =====
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { usePortfolioChat } from "@/components/pages/chat/usePortfolioChat";
+import { isChatBusy } from "@/components/pages/chat/isChatBusy";
+
+export function useAgentComposer() {
+  const { sendMessage, status } = usePortfolioChat();
+  const [draftMessage, setDraftMessage] = useState("");
+
+  const disabled = isChatBusy(status);
+
+  function submitMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const message = draftMessage.trim();
+
+    if (message === "" || disabled) {
+      return;
+    }
+
+    sendMessage({ text: message });
+    setDraftMessage("");
+  }
+
+  return {
+    draftMessage,
+    disabled,
+    setDraftMessage,
+    submitMessage,
+  };
+}
+===== isChatBusy.ts =====
+import type { useChat } from "@ai-sdk/react";
+
+type ChatStatus = ReturnType<typeof useChat>["status"];
+export function isChatBusy(status: ChatStatus): boolean {
+  return status === "submitted" || status === "streaming";
 }

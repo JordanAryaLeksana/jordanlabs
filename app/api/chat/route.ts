@@ -22,6 +22,42 @@ import { createProjectFilterResponse } from "@/lib/tools/content/projects/create
 import {
   createSkillFilterResponse,
 } from "@/lib/tools/content/skills/createSkillFilterResponse";
+import { getEvaluationRole } from "@/lib/ai/evaluation/getEvaluationIntent";
+import {
+  getUnknownProjectEntity,
+} from "@/lib/ai/entity-guard/getUnknownProjectEntity";
+
+import {
+  createUnknownProjectResponse,
+} from "@/lib/ai/entity-guard/createUnknownProjectResponse";
+import {
+  createEvaluationResponse,
+} from "@/lib/ai/evaluation/createEvaluationResponse";
+import { createSkillKnowledgeResponse } from "@/lib/ai/entity-guard/createSkillKnowledgeResponse";
+import { getSkillKnowledge } from "@/lib/ai/entity-guard/getSkillKnowledge";
+import {
+  getEmploymentKnowledge,
+} from "@/lib/ai/entity-guard/getEmploymentKnowledge";
+
+import {
+  createEmploymentKnowledgeResponse,
+} from "@/lib/ai/entity-guard/createEmploymentKnowledgeResponse";
+
+import {
+  getUnknownCertificationEntity,
+} from "@/lib/ai/entity-guard/getUnknownCertificationEntity";
+
+import {
+  createUnknownCertificationResponse,
+} from "@/lib/ai/entity-guard/createUnknownCertificationResponse";
+import {
+  isAiExperienceDurationQuery,
+} from "@/lib/ai/entity-guard/getAiExperienceDurationQuery";
+
+import {
+  createAiExperienceDurationResponse,
+} from "@/lib/ai/entity-guard/createAiExperienceDurationResponse";
+
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
@@ -197,6 +233,156 @@ export async function POST(request: Request) {
       stream,
     });
   }
+  const evaluationRole =
+    getEvaluationRole(
+      latestUserText
+    );
+
+  if (evaluationRole) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio grounded evaluation request:",
+        {
+          latestUserText,
+          evaluationRole,
+        }
+      );
+    }
+
+    return createEvaluationResponse({
+      messages,
+      userText:
+        latestUserText,
+      role:
+        evaluationRole,
+    });
+  }
+  const unknownProjectEntity =
+    getUnknownProjectEntity(
+      latestUserText
+    );
+
+  if (unknownProjectEntity) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio unknown project entity:",
+        {
+          latestUserText,
+          unknownProjectEntity,
+        }
+      );
+    }
+
+    return createUnknownProjectResponse({
+      messages,
+      entityName:
+        unknownProjectEntity.entityName,
+    });
+  }
+  const skillKnowledge =
+    getSkillKnowledge(
+      latestUserText
+    );
+
+  if (skillKnowledge) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio skill knowledge:",
+        {
+          latestUserText,
+          skillKnowledge,
+        }
+      );
+    }
+
+    return createSkillKnowledgeResponse({
+      messages,
+      result:
+        skillKnowledge,
+    });
+  }
+  const employmentKnowledge =
+    getEmploymentKnowledge(
+      latestUserText
+    );
+
+  if (employmentKnowledge) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio employment knowledge:",
+        {
+          latestUserText,
+          employmentKnowledge,
+        }
+      );
+    }
+
+    return createEmploymentKnowledgeResponse({
+      messages,
+      result:
+        employmentKnowledge,
+    });
+  }
+
+  const unknownCertificationEntity =
+    getUnknownCertificationEntity(
+      latestUserText
+    );
+
+  if (unknownCertificationEntity) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio unknown certification:",
+        {
+          latestUserText,
+          unknownCertificationEntity,
+        }
+      );
+    }
+
+    return createUnknownCertificationResponse({
+      messages,
+      certificationName:
+        unknownCertificationEntity
+          .certificationName,
+    });
+  }
+  if (
+    isAiExperienceDurationQuery(
+      latestUserText
+    )
+  ) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio AI experience duration:",
+        {
+          latestUserText,
+        }
+      );
+    }
+
+    return createAiExperienceDurationResponse({
+      messages,
+    });
+  }
   const portfolioToolChoice =
     getNavigationToolChoice(
       latestUserText
@@ -241,13 +427,12 @@ export async function POST(request: Request) {
       "scrollToSection",
       "highlightSection",
       "openProjectDetail",
-
       "showDownloadCard",
       "openGithub",
       "openLinkedin",
       "showContactCard",
-
       "filterProjects",
+      "filterSkills",
     ],
     toolChoice: portfolioToolChoice,
 

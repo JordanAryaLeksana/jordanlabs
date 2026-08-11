@@ -1,3 +1,12 @@
+import {
+  PAGE_ROUTES,
+  PROJECT_IDS,
+  SECTION_IDS,
+  type PageRoute,
+  type ProjectId,
+  type SectionId,
+} from "@/lib/tools/types";;
+
 const HIGHLIGHT_COMMAND_PATTERNS = [
   /\bhighlight\b/i,
   /\bspotlight\b/i,
@@ -15,6 +24,7 @@ const SCROLL_COMMAND_PATTERNS = [
   /\bgulir ke\b/i,
   /\bscroll ke\b/i,
 ];
+
 const PROJECT_DETAIL_COMMAND_PATTERNS = [
   /\b(?:open|view|visit|show|go to)\b.*\b(?:emqnet|dermsight)\b/i,
   /\b(?:buka|lihat|kunjungi|tampilkan|pergi ke)\b.*\b(?:emqnet|dermsight)\b/i,
@@ -31,20 +41,14 @@ const PAGE_NAVIGATION_PATTERNS = [
   /\bkembali ke\b/i,
   /\bbalik ke\b/i,
 ];
-import {
-  PAGE_ROUTES,
-  PROJECT_IDS,
-  type PageRoute,
-  type ProjectId,
-} from "@/lib/tools/types";
+
 export function getNavigationToolChoice(
   userText: string
 ) {
   const isHighlightCommand =
     HIGHLIGHT_COMMAND_PATTERNS.some(
-      (pattern) => {
-        return pattern.test(userText);
-      }
+      (pattern) =>
+        pattern.test(userText)
     );
 
   if (isHighlightCommand) {
@@ -56,9 +60,8 @@ export function getNavigationToolChoice(
 
   const isScrollCommand =
     SCROLL_COMMAND_PATTERNS.some(
-      (pattern) => {
-        return pattern.test(userText);
-      }
+      (pattern) =>
+        pattern.test(userText)
     );
 
   if (isScrollCommand) {
@@ -68,24 +71,14 @@ export function getNavigationToolChoice(
     } as const;
   }
 
-  const isPageNavigationCommand =
-    PAGE_NAVIGATION_PATTERNS.some(
-      (pattern) => {
-        return pattern.test(userText);
-      }
-    );
-
-  if (isPageNavigationCommand) {
-    return {
-      type: "tool",
-      toolName: "navigateToPage",
-    } as const;
-  }
+  /*
+   * Project detail harus lebih spesifik
+   * daripada generic page navigation.
+   */
   const isProjectDetailCommand =
     PROJECT_DETAIL_COMMAND_PATTERNS.some(
-      (pattern) => {
-        return pattern.test(userText);
-      }
+      (pattern) =>
+        pattern.test(userText)
     );
 
   if (isProjectDetailCommand) {
@@ -94,8 +87,23 @@ export function getNavigationToolChoice(
       toolName: "openProjectDetail",
     } as const;
   }
+
+  const isPageNavigationCommand =
+    PAGE_NAVIGATION_PATTERNS.some(
+      (pattern) =>
+        pattern.test(userText)
+    );
+
+  if (isPageNavigationCommand) {
+    return {
+      type: "tool",
+      toolName: "navigateToPage",
+    } as const;
+  }
+
   return "auto" as const;
 }
+
 export type DeterministicNavigationAction =
   | {
     kind: "route";
@@ -106,16 +114,63 @@ export type DeterministicNavigationAction =
     kind: "project";
     projectId: ProjectId;
     message: string;
+  }
+  | {
+    kind: "scroll";
+    sectionId: SectionId;
+    message: string;
+  }
+  | {
+    kind: "highlight";
+    sectionId: SectionId;
+    message: string;
   };
 
 export function getDeterministicNavigationAction(
   userText: string
 ): DeterministicNavigationAction | null {
   const text = userText.trim();
-
   /*
-   * Project detail harus diperiksa
-   * sebelum generic page navigation.
+   * Explicit section actions.
+   *
+   * Untuk sekarang kita harden target skills
+   * yang memang sudah menjadi regression case.
+   */
+  if (
+    /\b(?:highlight|spotlight|sorot|tandai)\b.*\bskills?\b/i.test(
+      text
+    ) ||
+    /\b(?:sorot|tandai)\b.*\b(?:skill|keahlian|kemampuan)\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "highlight",
+      sectionId:
+        SECTION_IDS.aboutSkills,
+      message:
+        "Opening and highlighting Jordan's skills…",
+    };
+  }
+
+  if (
+    /\b(?:scroll|jump to|scroll down to|scroll up to)\b.*\bskills?\b/i.test(
+      text
+    ) ||
+    /\b(?:scroll ke|geser ke|gulir ke)\b.*\b(?:skill|skills|keahlian|kemampuan)\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "scroll",
+      sectionId:
+        SECTION_IDS.aboutSkills,
+      message:
+        "Opening Jordan's skills…",
+    };
+  }
+  /*
+   * Specific project detail.
    */
   if (
     /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan)\b.*\bemqnet\b/i.test(
@@ -124,8 +179,10 @@ export function getDeterministicNavigationAction(
   ) {
     return {
       kind: "project",
-      projectId: PROJECT_IDS.emqnet,
-      message: "Opening EMQNET project…",
+      projectId:
+        PROJECT_IDS.emqnet,
+      message:
+        "Opening EMQNET project…",
     };
   }
 
@@ -136,20 +193,78 @@ export function getDeterministicNavigationAction(
   ) {
     return {
       kind: "project",
-      projectId: PROJECT_IDS.dermsight,
-      message: "Opening DermSight project…",
+      projectId:
+        PROJECT_IDS.dermsight,
+      message:
+        "Opening DermSight project…",
     };
   }
 
+  /*
+   * Portfolio pages.
+   */
   if (
     /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bprojects?\b/i.test(
       text
     )
   ) {
     return {
-      kind: "project",
-      projectId: PROJECT_IDS.dermsight,
-      message: "Opening DermSight project…",
+      kind: "route",
+      route:
+        PAGE_ROUTES.projects,
+      message:
+        "Opening Jordan's projects…",
+    };
+  }
+
+  if (
+    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\babout\b/i.test(
+      text
+    ) ||
+    /\b(?:pergi ke|buka)\b.*\b(?:tentang|profil)\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "route",
+      route:
+        PAGE_ROUTES.about,
+      message:
+        "Opening Jordan's profile…",
+    };
+  }
+
+  if (
+    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bexperience\b/i.test(
+      text
+    ) ||
+    /\b(?:pergi ke|buka)\b.*\bpengalaman\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "route",
+      route:
+        PAGE_ROUTES.experience,
+      message:
+        "Opening Jordan's experience…",
+    };
+  }
+
+  if (
+    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bcontact\b/i.test(
+      text
+    ) ||
+    /\b(?:pergi ke|buka)\b.*\bkontak\b/i.test(
+      text
+    )
+  ) {
+    return {
+      kind: "route",
+      route:
+        PAGE_ROUTES.contact,
+      message:
+        "Opening Jordan's contact page…",
     };
   }
 
@@ -163,8 +278,10 @@ export function getDeterministicNavigationAction(
   ) {
     return {
       kind: "route",
-      route: PAGE_ROUTES.home,
-      message: "Going back to the home page…",
+      route:
+        PAGE_ROUTES.home,
+      message:
+        "Going back to the home page…",
     };
   }
 

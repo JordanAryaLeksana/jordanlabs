@@ -30,6 +30,17 @@ import { isSkillFilterToolPart } from "@/components/pages/chat/content/skills/is
 import { SkillFilterDataRenderer } from "@/components/pages/chat/content/skills/SkillFilterDataRenderer";
 import { SkillFilterErrorRenderer } from "@/components/pages/chat/content/skills/SkillFilterErrorRenderer";
 import { SkillFilterToolRenderer } from "@/components/pages/chat/content/skills/SkillFilterToolRenderer";
+import {
+  isPortfolioKnowledgeDataPart,
+} from "@/components/pages/chat/isPortfolioKnowledgeDataPart";
+import {
+  EvaluationDataRenderer,
+} from "@/components/pages/chat/evaluation/EvaluationDataRenderer";
+
+import {
+  isEvaluationErrorDataPart,
+  isEvaluationResultDataPart,
+} from "@/components/pages/chat/evaluation/isEvaluationDataPart";
 //local type guard
 type MessagePart =
   UIMessage["parts"][number];
@@ -133,8 +144,19 @@ export function MessagePartRenderer({
       isSkillFilterToolPart
     );
 
+  const portfolioKnowledgeDataParts =
+    message.parts.filter(
+      isPortfolioKnowledgeDataPart
+    );
+  const evaluationResultParts =
+    message.parts.filter(
+      isEvaluationResultDataPart
+    );
 
-
+  const evaluationErrorParts =
+    message.parts.filter(
+      isEvaluationErrorDataPart
+    );
   const hasText =
     messageText !== "";
 
@@ -163,6 +185,35 @@ export function MessagePartRenderer({
     skillFilterDataParts.length > 0 ||
     skillFilterErrorParts.length > 0 ||
     skillFilterToolParts.length > 0;
+  const hasPortfolioKnowledge =
+    portfolioKnowledgeDataParts.length >
+    0;
+
+  const hasEvaluation =
+    evaluationResultParts.length > 0 ||
+    evaluationErrorParts.length > 0;
+
+  const hasToolOutputError =
+    message.parts.some(
+      (part) =>
+        part.type.startsWith("tool-") &&
+        "state" in part &&
+        part.state === "output-error"
+    );
+
+  const hasKnownToolContent =
+    hasNavigationTool ||
+    hasDownloadCard ||
+    hasExternalResource ||
+    hasContactCard ||
+    hasProjectFilter ||
+    hasSkillFilter;
+
+  const shouldRenderToolErrorFallback =
+    message.role === "assistant" &&
+    hasToolOutputError &&
+    !hasKnownToolContent &&
+    !hasText;
   if (
     !hasText &&
     !hasNavigationTool &&
@@ -172,7 +223,10 @@ export function MessagePartRenderer({
     !hasContactCard &&
     !hasProjectFilter &&
     !hasNavigationAction &&
-    !hasSkillFilter
+    !hasSkillFilter &&
+    !hasPortfolioKnowledge &&
+    !hasEvaluation &&
+    !shouldRenderToolErrorFallback
   ) {
     return null;
   }
@@ -185,7 +239,8 @@ export function MessagePartRenderer({
   const shouldRenderText =
     hasText &&
     !(
-      message.role === "assistant" &&
+      message.role ===
+      "assistant" &&
       (
         hasDownloadCard ||
         hasCvDownloadData ||
@@ -193,7 +248,9 @@ export function MessagePartRenderer({
         hasContactCard ||
         hasProjectFilter ||
         hasNavigationAction ||
-        hasSkillFilter
+        hasSkillFilter ||
+        hasPortfolioKnowledge ||
+        hasEvaluation
       )
     );
 
@@ -226,6 +283,60 @@ export function MessagePartRenderer({
           {messageText}
         </ChatMessageBubble>
       ) : null}
+      {shouldRenderToolErrorFallback ? (
+        <div
+          role="alert"
+          aria-live="polite"
+        >
+          <ChatMessageBubble role="assistant">
+            Jordan AI could not complete that action. You can try another request.
+          </ChatMessageBubble>
+        </div>
+      ) : null}
+      {message.role === "assistant"
+        ? portfolioKnowledgeDataParts.map(
+          (part, index) => (
+            <ChatMessageBubble
+              key={
+                part.id ??
+                `portfolio-knowledge-${index}`
+              }
+              role="assistant"
+            >
+              {part.data.message}
+            </ChatMessageBubble>
+          )
+        )
+        : null}
+      {message.role === "assistant"
+        ? evaluationResultParts.map(
+          (part, index) => (
+            <EvaluationDataRenderer
+              key={
+                part.id ??
+                `evaluation-${index}`
+              }
+              part={part}
+            />
+          )
+        )
+        : null}
+
+      {message.role === "assistant"
+        ? evaluationErrorParts.map(
+          (part, index) => (
+            <ChatMessageBubble
+              key={
+                part.id ??
+                `evaluation-error-${index}`
+              }
+              role="assistant"
+            >
+              {part.data.message}
+            </ChatMessageBubble>
+          )
+        )
+        : null}
 
       {message.role === "assistant"
         ? navigationActionParts.map(
