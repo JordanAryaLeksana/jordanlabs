@@ -11,15 +11,17 @@ const PORTFOLIO_KNOWLEDGE_DATA_TYPES =
     "data-skillKnowledge",
     "data-employmentKnowledge",
     "data-experienceKnowledge",
+    "data-projectKnowledge",
   ]);
 
 export type PortfolioKnowledgeDataPart =
   MessagePart & {
     type:
-      | "data-unknownPortfolioEntity"
-      | "data-skillKnowledge"
-      | "data-employmentKnowledge"
-      | "data-experienceKnowledge";
+    | "data-unknownPortfolioEntity"
+    | "data-projectKnowledge"
+    | "data-skillKnowledge"
+    | "data-employmentKnowledge"
+    | "data-experienceKnowledge";
 
     id?: string;
 
@@ -48,6 +50,6 @@ export function isPortfolioKnowledgeDataPart(
     part.data !== null &&
     "message" in part.data &&
     typeof part.data.message ===
-      "string"
+    "string"
   );
 }

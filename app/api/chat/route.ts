@@ -58,6 +58,22 @@ import {
   createAiExperienceDurationResponse,
 } from "@/lib/ai/entity-guard/createAiExperienceDurationResponse";
 
+import {
+  getKnownProjectEntity,
+} from "@/lib/ai/entity-guard/getKnownProjectEntity";
+
+import {
+  createKnownProjectResponse,
+} from "@/lib/ai/entity-guard/createKnownProjectResponse";
+
+import {
+  getContextualProjectEntity,
+} from "@/lib/ai/entity-guard/getContextualProjectEntity";
+
+import {
+  getFullKnowledgeEvidence,
+} from "@/lib/rag/getFullKnowledgeEvidence";
+
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
@@ -260,6 +276,34 @@ export async function POST(request: Request) {
         evaluationRole,
     });
   }
+  const knownProjectEntity =
+    getKnownProjectEntity(
+      latestUserText
+    );
+
+  if (knownProjectEntity) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio known project request:",
+        {
+          latestUserText,
+          projectId:
+            knownProjectEntity.id,
+        }
+      );
+    }
+
+    return createKnownProjectResponse({
+      messages,
+      userText:
+        latestUserText,
+      project:
+        knownProjectEntity,
+    });
+  }
   const unknownProjectEntity =
     getUnknownProjectEntity(
       latestUserText
@@ -283,6 +327,36 @@ export async function POST(request: Request) {
       messages,
       entityName:
         unknownProjectEntity.entityName,
+    });
+  }
+  const contextualProjectEntity =
+    await getContextualProjectEntity({
+      messages,
+      userText:
+        latestUserText,
+    });
+
+  if (contextualProjectEntity) {
+    if (
+      process.env.NODE_ENV ===
+      "development"
+    ) {
+      console.log(
+        "Portfolio contextual project request:",
+        {
+          latestUserText,
+          projectId:
+            contextualProjectEntity.id,
+        }
+      );
+    }
+
+    return createKnownProjectResponse({
+      messages,
+      userText:
+        latestUserText,
+      project:
+        contextualProjectEntity,
     });
   }
   const skillKnowledge =
@@ -405,7 +479,11 @@ export async function POST(request: Request) {
   }
   const result = streamText({
     model: getChatModel(),
-    instructions: buildSystemPrompt(),
+    instructions:
+      buildSystemPrompt({
+        evidence:
+          getFullKnowledgeEvidence(),
+      }),
 
     messages: await convertToModelMessages(
       messages,
