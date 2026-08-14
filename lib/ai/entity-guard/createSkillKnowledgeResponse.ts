@@ -38,9 +38,11 @@ export function createSkillKnowledgeResponse({
             ...result,
 
             message:
-              result.documented
-                ? `${result.skillName} is documented in Jordan's portfolio skills.`
-                : `${result.skillName} is not documented in Jordan's verified portfolio skills.`,
+              !result.resolved
+                ? `I could not determine which technology "${result.skillName}" refers to from the recent conversation.`
+                : result.documented
+                  ? `${result.skillName} is documented in Jordan's portfolio skills.`
+                  : `${result.skillName} is not documented in Jordan's verified portfolio skills.`,
           },
         });
       },

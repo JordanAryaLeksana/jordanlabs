@@ -71,8 +71,8 @@ import {
 } from "@/lib/ai/entity-guard/getContextualProjectEntity";
 
 import {
-  getFullKnowledgeEvidence,
-} from "@/lib/rag/getFullKnowledgeEvidence";
+  retrievePortfolioEvidence,
+} from "@/lib/rag/retrieve";
 
 export const runtime = "nodejs";
 
@@ -360,9 +360,12 @@ export async function POST(request: Request) {
     });
   }
   const skillKnowledge =
-    getSkillKnowledge(
-      latestUserText
-    );
+    await getSkillKnowledge({
+      userText:
+        latestUserText,
+
+      messages,
+    });
 
   if (skillKnowledge) {
     if (
@@ -477,12 +480,46 @@ export async function POST(request: Request) {
       }
     );
   }
+  const retrievedEvidence =
+    await retrievePortfolioEvidence({
+      query:
+        latestUserText,
+
+      limit:
+        5,
+    });
+
+  if (
+    process.env.NODE_ENV ===
+    "development"
+  ) {
+    console.log(
+      "Portfolio RAG retrieval:",
+      {
+        query:
+          latestUserText,
+
+        evidence:
+          retrievedEvidence.map(
+            (item) => ({
+              sourceId:
+                item.sourceId,
+
+              title:
+                item.title,
+            })
+          ),
+      }
+    );
+  }
+
   const result = streamText({
     model: getChatModel(),
+
     instructions:
       buildSystemPrompt({
         evidence:
-          getFullKnowledgeEvidence(),
+          retrievedEvidence,
       }),
 
     messages: await convertToModelMessages(

@@ -1,27 +1,20 @@
 import "server-only";
 
-import path from "node:path";
-
 import {
-  readKnowledgeMarkdown,
-} from "@/lib/rag/readKnowledgeMarkdown";
+  getKnowledgeEvidence,
+} from "@/lib/rag/knowledge";
 
 export interface UnknownCertificationEntity {
   certificationName: string;
 }
 
-const KNOWLEDGE_DIRECTORY =
-  path.join(
-    process.cwd(),
-    "content",
-    "knowledge"
-  );
-
 const VERIFIED_KNOWLEDGE =
-  readKnowledgeMarkdown(
-    KNOWLEDGE_DIRECTORY,
-    KNOWLEDGE_DIRECTORY
-  ).toLowerCase();
+  getKnowledgeEvidence()
+    .map((item) => {
+      return item.content;
+    })
+    .join("\n")
+    .toLowerCase();
 
 const CERTIFICATION_QUERY_PATTERNS = [
   /\bwhat\s+(.+?)\s+certifications?\s+does\s+jordan\s+have(?:\?|$)/i,
@@ -60,9 +53,8 @@ export function getUnknownCertificationEntity(
      * Guard ini hanya memastikan entity yang benar-benar
      * tidak terdapat di verified knowledge dihentikan.
      *
-     * Jika istilah ditemukan, general grounded path tetap
-     * menjelaskan apakah itu sertifikasi, learning program,
-     * atau konteks lain tanpa guard membuat asumsi.
+     * Jika istilah ditemukan, grounded path berikutnya tetap
+     * menentukan konteks sebenarnya tanpa guard membuat asumsi.
      */
     if (
       VERIFIED_KNOWLEDGE.includes(

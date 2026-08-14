@@ -4,7 +4,9 @@ import "server-only";
 import {
   ABOUT_PROFILE,
 } from "@/lib/config/about";
-
+import type {
+  TrustedEvidence,
+} from "@/lib/rag/evidence";
 
 const PORTFOLIO_AGENT_INSTRUCTIONS = `
 IDENTITY
@@ -217,18 +219,44 @@ explicitly supports that claim. Otherwise state that such usage is
 not documented.
 `.trim();
 
+
 interface BuildSystemPromptOptions {
-  evidence: string;
+  evidence:
+    readonly TrustedEvidence[];
 }
 
 export function buildSystemPrompt({
   evidence,
 }: BuildSystemPromptOptions): string {
+  let evidenceContext =
+    "No portfolio evidence was retrieved for this request.";
+
+  if (
+    evidence.length > 0
+  ) {
+    evidenceContext =
+      evidence
+        .map((item) => {
+          return `
+<EVIDENCE>
+SOURCE_ID: ${item.sourceId}
+SOURCE_PATH: ${item.sourcePath}
+TITLE: ${item.title}
+
+${item.content}
+</EVIDENCE>
+`.trim();
+        })
+        .join(
+          "\n\n"
+        );
+  }
+
   return `
 ${PORTFOLIO_AGENT_INSTRUCTIONS}
 
 <TRUSTED_PORTFOLIO_EVIDENCE>
-${evidence}
+${evidenceContext}
 </TRUSTED_PORTFOLIO_EVIDENCE>
 `.trim();
 }
