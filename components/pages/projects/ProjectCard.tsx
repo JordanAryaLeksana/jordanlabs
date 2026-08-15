@@ -9,9 +9,9 @@ interface ProjectCardProps { project: Project; featured?: boolean }
 
 export function ProjectCard({ project, featured = false }: ProjectCardProps) {
   return <HoverLift className="h-full">
-    <a href={`/projects/${project.slug}`} className={`group relative flex h-full flex-col overflow-hidden border border-current/25 bg-[var(--bg-raised)] outline-none focus-visible:border-frame-green focus-visible:ring-2 focus-visible:ring-frame-green ${featured ? "md:grid md:grid-cols-[0.9fr_1.1fr]" : ""}`}>
+    <a href={`/projects/${project.slug}`} className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-text-on-dark/15 bg-ink-panel/85 text-text-on-dark shadow-xl backdrop-blur-md outline-none focus-visible:border-frame-green focus-visible:ring-2 focus-visible:ring-frame-green ${featured ? "md:grid md:grid-cols-[0.9fr_1.1fr]" : ""}`}>
       <div className={`relative overflow-hidden bg-slate ${featured ? "min-h-48" : "aspect-[16/9]"}`}>
-        <Image src={project.thumbnail} alt={`${project.title} project visual`} fill className="object-cover opacity-85 mix-blend-multiply transition-transform duration-200 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100" sizes={featured ? "(max-width: 768px) 100vw, 45vw" : "(max-width: 768px) 100vw, 25vw"} />
+        <Image src={project.thumbnail} alt={`${project.title} project visual`} fill className="object-cover opacity-90 transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100" sizes={featured ? "(max-width: 768px) 100vw, 45vw" : "(max-width: 768px) 100vw, 25vw"} />
         <span className="absolute left-4 top-4">
           <Badge color="mustard">{project.category}
           </Badge>

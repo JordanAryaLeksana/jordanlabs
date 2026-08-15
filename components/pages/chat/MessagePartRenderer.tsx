@@ -257,7 +257,7 @@ export function MessagePartRenderer({
   return (
     <article
       className={cn(
-        "flex w-full flex-col gap-3",
+        "flex w-full flex-col gap-4",
 
         message.role === "user"
           ? "items-end"
@@ -270,7 +270,7 @@ export function MessagePartRenderer({
           variant="text"
           size="xs"
           weight="bold"
-          className="uppercase tracking-[0.14em] opacity-50"
+          className="flex items-center gap-2 uppercase tracking-[0.16em] opacity-55 before:size-1.5 before:rounded-full before:bg-coral"
         >
           Jordan AI
         </Typography>

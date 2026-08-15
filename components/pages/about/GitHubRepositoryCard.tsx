@@ -10,7 +10,7 @@ interface GitHubRepositoryCardProps { repository: GitHubRepository }
 export function GitHubRepositoryCard({ repository }: GitHubRepositoryCardProps) {
   return (
     <HoverLift className="h-full">
-      <a href={repository.html_url} target="_blank" rel="noreferrer" className="group flex h-full flex-col border border-current/25 bg-[var(--bg-raised)] p-5 outline-none transition-[border-color,transform] duration-150 focus-visible:border-frame-green focus-visible:ring-2 focus-visible:ring-frame-green motion-reduce:transition-none">
+      <a href={repository.html_url} target="_blank" rel="noreferrer" className="group flex h-full flex-col rounded-2xl border border-current/10 bg-[var(--bg-raised)] p-5 shadow-sm outline-none transition-[border-color,box-shadow] duration-200 hover:border-current/25 hover:shadow-md focus-visible:border-frame-green focus-visible:ring-2 focus-visible:ring-frame-green motion-reduce:transition-none">
         <div className="flex items-start justify-between gap-4">
           <Typography as="h3" variant="header" size="xl">{repository.name}</Typography>
           <ArrowUpRightIcon size={20} className="shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />

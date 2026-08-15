@@ -1,92 +1,11 @@
-import {
-  ChatMessageBubble,
-} from "@/components/pages/chat/ChatMessageBubble";
+import { CheckCircleIcon, InfoIcon } from "@phosphor-icons/react/dist/ssr";
+import { ToolResultSurface } from "@/components/pages/chat/ToolResultSurface";
+import { Typography } from "@/components/interfaces/ui/Typography/Typography";
+import type { EvaluationResultDataPart } from "@/components/pages/chat/evaluation/isEvaluationDataPart";
 
-import type {
-  EvaluationResultDataPart,
-} from "@/components/pages/chat/evaluation/isEvaluationDataPart";
+const LABELS = { strong: "Strong evidence", moderate: "Moderate evidence", limited: "Limited evidence" } as const;
 
-interface EvaluationDataRendererProps {
-  part: EvaluationResultDataPart;
-}
-
-const ASSESSMENT_LABELS = {
-  strong: "Strong evidence",
-  moderate: "Moderate evidence",
-  limited: "Limited evidence",
-} as const;
-
-export function EvaluationDataRenderer({
-  part,
-}: EvaluationDataRendererProps) {
-  const {
-    assessment,
-    summary,
-    strengths,
-    limitations,
-  } = part.data;
-
-  return (
-    <ChatMessageBubble role="assistant">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-bold uppercase tracking-[0.12em] opacity-60">
-            {
-              ASSESSMENT_LABELS[
-                assessment
-              ]
-            }
-          </span>
-
-          <p>{summary}</p>
-        </div>
-
-        {strengths.length > 0 ? (
-          <div className="flex flex-col gap-2">
-            <p className="font-semibold">
-              Documented evidence
-            </p>
-
-            <ul className="list-disc space-y-1 pl-5">
-              {strengths.map(
-                (
-                  strength,
-                  index
-                ) => (
-                  <li
-                    key={`strength-${index}`}
-                  >
-                    {strength}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-        ) : null}
-
-        {limitations.length > 0 ? (
-          <div className="flex flex-col gap-2">
-            <p className="font-semibold">
-              Limitations
-            </p>
-
-            <ul className="list-disc space-y-1 pl-5">
-              {limitations.map(
-                (
-                  limitation,
-                  index
-                ) => (
-                  <li
-                    key={`limitation-${index}`}
-                  >
-                    {limitation}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-        ) : null}
-      </div>
-    </ChatMessageBubble>
-  );
+export function EvaluationDataRenderer({ part }: { part: EvaluationResultDataPart }) {
+  const { assessment, summary, strengths, limitations } = part.data;
+  return <ToolResultSurface ariaLabel="Jordan role evaluation" label="ROLE EVALUATION" color={assessment === "strong" ? "pine" : assessment === "moderate" ? "mustard" : "coral"} meta={LABELS[assessment].toUpperCase()}><Typography as="p" variant="text" className="max-w-2xl text-base leading-7">{summary}</Typography><div className="mt-6 grid gap-6 sm:grid-cols-2">{strengths.length > 0 ? <section><h3 className="flex items-center gap-2 font-display text-base font-bold"><CheckCircleIcon size={18} className="text-frame-green" />Documented evidence</h3><ul className="mt-3 space-y-2">{strengths.map((item, index) => <li key={`strength-${index}`} className="flex gap-2 text-sm leading-6 opacity-75"><span aria-hidden="true" className="mt-2.5 size-1.5 shrink-0 rounded-full bg-pine" />{item}</li>)}</ul></section> : null}{limitations.length > 0 ? <section><h3 className="flex items-center gap-2 font-display text-base font-bold"><InfoIcon size={18} className="text-mustard" />Limitations</h3><ul className="mt-3 space-y-2">{limitations.map((item, index) => <li key={`limitation-${index}`} className="flex gap-2 text-sm leading-6 opacity-75"><span aria-hidden="true" className="mt-2.5 size-1.5 shrink-0 rounded-full bg-mustard" />{item}</li>)}</ul></section> : null}</div></ToolResultSurface>;
 }

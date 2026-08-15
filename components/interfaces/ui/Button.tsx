@@ -46,7 +46,7 @@ const VARIANT_CLASS_NAME: Record<
 };
 
 const BASE_CLASS_NAME =
-  "inline-flex items-center justify-center px-4 py-2 font-sans font-bold shadow-[3px_3px_0_0_var(--color-ink-base)] transition-transform duration-150 ease-retro-bounce hover:-translate-y-0.5 active:translate-y-0 active:shadow-none motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+  "inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2 font-sans text-sm font-bold shadow-sm transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-green motion-reduce:transition-none motion-reduce:hover:translate-y-0";
 
 export function Button({
   variant = "primary",

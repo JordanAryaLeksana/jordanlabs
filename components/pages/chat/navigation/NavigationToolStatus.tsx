@@ -1,4 +1,4 @@
-import { ChatMessageBubble } from "@/components/pages/chat/ChatMessageBubble";
+import { ArrowRightIcon, CheckCircleIcon, WarningCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import type { NavigationToolPart } from "@/components/pages/chat/navigation/isNavigationToolPart";
 
 interface NavigationToolStatusProps {
@@ -76,11 +76,10 @@ export function NavigationToolStatus({
     <div
       role="status"
       aria-live="polite"
-      className="w-full"
+      className="inline-flex max-w-full items-center gap-2 rounded-full border border-current/10 bg-[var(--surface)] px-3 py-2 font-mono text-[11px] shadow-sm backdrop-blur-md"
     >
-      <ChatMessageBubble role="assistant">
-        {statusText}
-      </ChatMessageBubble>
+      {part.state === "output-error" || output?.status === "error" ? <WarningCircleIcon size={15} className="shrink-0 text-coral" /> : part.state === "output-available" ? <CheckCircleIcon size={15} className="shrink-0 text-frame-green" /> : <ArrowRightIcon size={15} className="shrink-0 animate-pulse text-coral motion-reduce:animate-none" />}
+      <span className="truncate opacity-70">{statusText}</span>
     </div>
   );
 }

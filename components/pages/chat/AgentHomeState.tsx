@@ -9,12 +9,13 @@ export function AgentHomeState({
   compact = false,
 }: AgentHomeStateProps) {
   return (
-    <div className="flex flex-1 flex-col justify-center">
+    <div className="flex min-h-full flex-1 flex-col justify-center py-8 sm:py-12">
+      <Typography as="p" variant="text" size="xs" className="mb-4 font-mono tracking-[0.22em] text-coral">PORTFOLIO ASSISTANT</Typography>
       <Typography
         as="h1"
         variant="header"
         size={compact ? "2xl" : "3xl"}
-        className="mb-3"
+        className="mb-4 max-w-2xl text-4xl leading-[0.95] sm:text-6xl"
       >
         Jordan AI
       </Typography>
@@ -22,10 +23,9 @@ export function AgentHomeState({
       <Typography
         variant="text"
         size="sm"
-        className="mb-6 max-w-lg leading-7 opacity-75"
+        className="mb-8 max-w-xl text-base leading-7 opacity-80"
       >
-        Explore Jordan&apos;s work, inspect the evidence behind his skills,
-        get his CV, or prepare a message to contact him.
+        Ask about Jordan&apos;s work, inspect evidence behind his skills, or let me guide you through the portfolio.
       </Typography>
 
       {!compact ? <SuggestedActions /> : null}

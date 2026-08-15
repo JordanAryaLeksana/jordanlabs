@@ -1,5 +1,6 @@
 import { Badge } from "@/components/interfaces/ui/Badge";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
+import { ToolResultSurface } from "@/components/pages/chat/ToolResultSurface";
 
 import type {
   FilterSkillsOutput,
@@ -13,30 +14,7 @@ export function SkillFilterResults({
   data,
 }: SkillFilterResultsProps) {
   return (
-    <section
-      aria-label="Jordan's skill results"
-      className="w-full max-w-2xl border border-current/25 bg-[var(--bg-raised)]"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-current/15 px-5 py-4">
-        <Badge color="coral">
-          SKILLS
-        </Badge>
-
-        <Typography
-          as="p"
-          variant="text"
-          size="xs"
-          weight="bold"
-          className="uppercase tracking-[0.12em] opacity-60"
-        >
-          {data.count}{" "}
-          {data.count === 1
-            ? "skill"
-            : "skills"}
-        </Typography>
-      </div>
-
-      <div className="p-5">
+    <ToolResultSurface ariaLabel="Jordan's skill results" label="SKILL EVIDENCE" color="coral" meta={`${data.count} ${data.count === 1 ? "skill" : "skills"}`}>
         <Typography
           as="p"
           variant="text"
@@ -58,12 +36,12 @@ export function SkillFilterResults({
             </Typography>
           </div>
         ) : (
-          <div className="mt-5 flex flex-col border-t border-current/15">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {data.groups.map(
               (group) => (
                 <article
                   key={group.category}
-                  className="border-b border-current/15 py-5 last:border-b-0"
+                  className="rounded-xl border border-current/10 bg-[var(--bg)]/55 p-5"
                 >
                   <Typography
                     as="h3"
@@ -95,7 +73,6 @@ export function SkillFilterResults({
             )}
           </div>
         )}
-      </div>
-    </section>
+    </ToolResultSurface>
   );
 }

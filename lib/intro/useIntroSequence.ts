@@ -50,6 +50,7 @@ interface UseIntroSequenceResult {
    * selesai, untuk berpindah ke fase berikutnya.
    */
   advancePhase: () => void;
+  skipSequence: () => void;
 }
 
 /**
@@ -110,5 +111,9 @@ export function useIntroSequence(): UseIntroSequenceResult {
     });
   }, [freezePhase]);
 
-  return { phase: shouldSkip ? "done" : timerPhase, advancePhase };
+  const skipSequence = useCallback(() => {
+    if (freezePhase === null) setTimerPhase("exiting");
+  }, [freezePhase]);
+
+  return { phase: shouldSkip ? "done" : timerPhase, advancePhase, skipSequence };
 }

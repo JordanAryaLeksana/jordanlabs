@@ -164,9 +164,9 @@ export function AnimationShowcase() {
           </Button>
         </div>
         <Typography variant="text" size="sm">
-          Isi Fase 1 IntroSequence: tiga sapaan bergantian lewat KineticHeading + progress bar solid yang tumbuh
-          (bukan spinner). Komponen ini murni presentational — urutan fase & keluar-masuknya dikendalikan oleh
-          IntroSequence (lihat Home), di sini hanya isinya yang diputar ulang.
+          Fase pembuka IntroSequence memakai scene startup yang sama dengan Home, tiga sapaan singkat, dan indikator
+          chapter yang tenang. Komponen ini murni presentational—urutan fase dan akses skip dikendalikan oleh
+          IntroSequence; di sini hanya isi pembukanya yang diputar ulang.
         </Typography>
         <div className="relative h-[360px] overflow-hidden">
           <LoadingScreen key={loaderKey} greetingPhrases={INTRO_GREETING_PHRASES} onComplete={() => {}} />

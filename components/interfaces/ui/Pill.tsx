@@ -8,11 +8,11 @@ type PillProps = (PillAsButton | PillAsAnchor) & { active?: boolean };
 
 /**
  * State aktif memakai frame-green, satu-satunya peran yang boleh dipakai untuk warna itu (CLAUDE.md §5).
- * Merender <a> kalau `href` diisi, selain itu <button> — dipakai bareng, misalnya buat nav link di NavBar.
+ * Merender <a> jika `href` tersedia; selain itu menjadi button untuk filter/tab interaktif.
  */
 export function Pill({ active = false, className, children, ...props }: PillProps) {
   const classes = cn(
-    "inline-flex items-center gap-1 border px-3 py-1 font-mono text-sm",
+    "inline-flex min-h-10 items-center gap-1 rounded-full border px-4 py-1 font-mono text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-green",
     active ? "border-frame-green text-frame-green" : "border-current text-current",
     className
   );

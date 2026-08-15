@@ -10,7 +10,7 @@ interface SectionProps {
   disableReveal?: boolean;
 }
 
-/** Kolom konten konsisten (lebar maksimum + padding) di dalam SceneContainer, dengan scroll-reveal bawaan (CLAUDE.md §11). */
+/** Kolom konten konsisten dengan lebar maksimum, padding, dan scroll-reveal bawaan. */
 export function Section({ children, id, className, disableReveal = false }: SectionProps) {
   const content = <div className={cn("mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-16", className)}>{children}</div>;
 

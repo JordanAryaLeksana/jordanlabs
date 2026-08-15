@@ -20,7 +20,7 @@ const COLOR_CLASS_NAME: Record<BadgeColor, string> = {
 
 export function Badge({ color = "pine", children, className }: BadgeProps) {
   return (
-    <span className={cn("inline-flex items-center px-2 py-0.5 font-mono text-xs font-bold", COLOR_CLASS_NAME[color], className)}>
+    <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 font-mono text-[11px] font-bold", COLOR_CLASS_NAME[color], className)}>
       {children}
     </span>
   );

@@ -54,14 +54,14 @@
   --color-text-on-dark: #ede6d6;
   --color-text-on-light: #1c1c22;
 
-  /* ---------- RADIUS: SIKU dipaksakan sebagai default ---------- */
+  /* Restrained product surfaces; circles remain explicitly rounded-full. */
   --radius-none: 0;
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  --radius-2xl: 0;
-  --radius-3xl: 0;
+  --radius-sm: .375rem;
+  --radius-md: .625rem;
+  --radius-lg: .875rem;
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   --radius-full: 9999px; /* satu-satunya yang membulat, khusus lingkaran */
 
   /* ---------- FONT ---------- */
@@ -133,6 +133,7 @@
   /* Di mode terang, "bentuk terang" (cream/offwhite) tak terlihat di atas cream.
      Pakai token ini untuk peran bentuk kontras: ganti ke ink/navy/maroon. */
   --shape-contrast: var(--color-ink-base);
+  --surface: color-mix(in srgb, var(--color-cream-base) 86%, transparent);
 }
 
 :root[data-theme="dark"],
@@ -141,6 +142,7 @@
   --bg-raised: var(--color-ink-panel);
   --fg: var(--color-text-on-dark);
   --shape-contrast: var(--color-cream-shape);
+  --surface: color-mix(in srgb, var(--color-ink-panel) 84%, transparent);
 }
 
 body {
@@ -148,6 +150,44 @@ body {
   color: var(--fg);
   font-family: var(--font-sans);
 }
+
+@keyframes scene-drift {
+  from { transform: scale(1.025) translate3d(-0.25%, 0, 0); }
+  to { transform: scale(1.055) translate3d(0.25%, -0.25%, 0); }
+}
+
+.scene-backdrop-base,
+[data-owner-scene] {
+  transition: opacity 600ms ease;
+}
+
+.owner-scene-layer {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 100%);
+}
+
+@media (min-width: 40rem) {
+  .owner-scene-layer {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 24%, black 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 24%, black 100%);
+  }
+}
+
+main:has([data-conversation-active="true"]) [data-scene-backdrop] .scene-backdrop-base {
+  opacity: 0.24;
+}
+
+main:has([data-conversation-active="true"]) [data-scene-backdrop] [data-owner-scene] {
+  opacity: 0.16;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-backdrop-base,
+  [data-owner-scene] {
+    transition: none;
+  }
+}
+
 /* Temporary section focus controlled by Jordan AI. */
 [data-ai-highlight="true"] {
   outline: 3px solid

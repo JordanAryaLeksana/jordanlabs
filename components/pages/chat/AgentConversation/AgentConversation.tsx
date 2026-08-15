@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { AgentHomeState } from "@/components/pages/chat/AgentHomeState";
 import { MessagePartRenderer } from "@/components/pages/chat/MessagePartRenderer";
@@ -17,6 +18,13 @@ export function AgentConversation({
   compact = false,
 }: AgentConversationProps) {
   const { messages, status, error } = usePortfolioChat();
+  const reducedMotion = useReducedMotion();
+  const welcomeTransition = reducedMotion
+    ? { duration: 0 }
+    : { duration: 0.24, ease: "easeOut" as const };
+  const conversationTransition = reducedMotion
+    ? { duration: 0 }
+    : { duration: 0.32, ease: "easeOut" as const };
 
   const conversationStarted = hasConversationStarted(messages);
   const conversationEndReference = useConversationAutoScroll(
@@ -29,12 +37,10 @@ export function AgentConversation({
       aria-label="Conversation with Jordan AI"
       className={cn(
         "flex min-h-0 flex-col",
-        compact
-          ? ""
-          : "border-b border-ink-raised lg:border-r lg:border-b-0"
+        compact ? "" : ""
       )}
     >
-      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-ink-raised px-6 py-4">
+      {compact ? <header className="flex shrink-0 items-center justify-between gap-4 border-b border-current/10 px-4 py-3">
         <Typography
           as="p"
           variant="text"
@@ -46,12 +52,12 @@ export function AgentConversation({
         </Typography>
 
         <Badge color="pine">Online</Badge>
-      </header>
+      </header> : null}
 
       <div
         className={cn(
           "min-h-0 flex-1 overflow-y-auto",
-          compact ? "px-3 py-3" : "px-4 py-5 sm:px-6 sm:py-6"
+          compact ? "px-3 py-3" : "px-5 py-3 sm:px-8"
         )}
       >
         <div
@@ -60,23 +66,42 @@ export function AgentConversation({
             compact ? "max-w-none" : "max-w-5xl"
           )}
         >
-          {!conversationStarted ? (
-            <AgentHomeState compact={compact} />
-          ) : (
-            messages.map((message) => (
-              <MessagePartRenderer
-                key={message.id}
-                message={message}
-              />
-            ))
-          )}
+          <AnimatePresence initial={false} mode="wait">
+            {!conversationStarted ? (
+              <motion.div
+                key="welcome"
+                className="flex min-h-0 flex-1 flex-col"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={welcomeTransition}
+              >
+                <AgentHomeState compact={compact} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="conversation"
+                className="flex flex-col gap-5"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={conversationTransition}
+              >
+                {messages.map((message) => (
+                  <MessagePartRenderer
+                    key={message.id}
+                    message={message}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {status === "submitted" ? (
             <Typography
               variant="text"
               size="xs"
               italic
-              className="opacity-60"
+              className="flex items-center gap-2 opacity-65 before:size-1.5 before:animate-pulse before:rounded-full before:bg-coral motion-reduce:before:animate-none"
             >
               Jordan AI is preparing the requested information...
             </Typography>
@@ -87,7 +112,7 @@ export function AgentConversation({
               variant="text"
               size="xs"
               italic
-              className="opacity-60"
+              className="flex items-center gap-2 opacity-65 before:size-1.5 before:animate-pulse before:rounded-full before:bg-coral motion-reduce:before:animate-none"
             >
               Jordan AI is responding...
             </Typography>

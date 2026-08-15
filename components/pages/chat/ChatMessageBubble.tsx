@@ -50,12 +50,12 @@ const ALIGNMENT_CLASS_NAME: Record<MessageRole, string> = {
   user: "justify-end",
 };
 const BUBBLE_WIDTH_CLASS_NAME: Record<MessageRole, string> = {
-  assistant: "max-w-[min(100%,44rem)]",
+  assistant: "max-w-[min(100%,48rem)]",
   user: "max-w-[min(88%,36rem)]",
 };
 const BUBBLE_COLOR_CLASS_NAME: Record<MessageRole, string> = {
-  assistant: "bg-ink-panel text-text-on-dark",
-  user: "bg-pine text-text-on-dark",
+  assistant: "border-l-2 border-coral/60 bg-transparent pl-5 text-current",
+  user: "rounded-2xl rounded-br-md bg-pine text-text-on-dark shadow-sm",
 };
 
 export function ChatMessageBubble({
@@ -76,7 +76,8 @@ export function ChatMessageBubble({
     >
       <div
         className={cn(
-          "w-fit min-w-0 px-4 py-3",
+          "w-fit min-w-0",
+          role === "assistant" ? "py-1 pr-2" : "px-4 py-3",
           BUBBLE_WIDTH_CLASS_NAME[role],
           BUBBLE_COLOR_CLASS_NAME[role]
         )}

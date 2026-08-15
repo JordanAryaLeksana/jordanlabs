@@ -3,7 +3,8 @@ import { AboutProfile } from "@/components/pages/about/AboutProfile";
 import { ExperiencedAs } from "@/components/pages/about/ExperiencedAs";
 import { GitHubActivity } from "@/components/pages/about/GitHubActivity";
 import { TechStack } from "@/components/pages/about/TechStack";
-import { StaticHeader } from "@/components/interfaces/ui/StaticHeader";
+import { SceneBackdrop } from "@/components/interfaces/scenes/SceneBackdrop";
+import { PortfolioHeader } from "@/components/pages/layout/PortfolioHeader";
 import { Footer } from "@/components/pages/layout/Footer";
 import { getGitHubRepositories } from "@/lib/about/getGitHubRepositories";
 import { getGitHubContributions } from "@/lib/about/getGitHubContributions";
@@ -20,12 +21,8 @@ export default async function AboutPage() {
   const contributions = await getGitHubContributions();
   return (
     <main className="min-h-screen overflow-x-clip bg-[var(--bg)] text-[var(--fg)]">
-      <StaticHeader />
-      <AboutProfile />
-      <ExperiencedAs />
-      <TechStack />
-      <GitHubActivity repositories={repositories} contributions={contributions} />
-      <Footer />
+      <div className="relative min-h-[76svh] bg-ink-base text-text-on-dark"><SceneBackdrop scene="about" priority /><PortfolioHeader /><div className="relative"><AboutProfile /></div></div>
+      <div className="relative bg-[var(--bg)]"><ExperiencedAs /><TechStack /><GitHubActivity repositories={repositories} contributions={contributions} /><Footer /></div>
     </main>
   );
 }

@@ -5,6 +5,7 @@ import {
 import { Badge } from "@/components/interfaces/ui/Badge";
 import { Button } from "@/components/interfaces/ui/Button";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
+import { ToolResultSurface } from "@/components/pages/chat/ToolResultSurface";
 import type { FilterProjectsOutput } from "@/lib/tools/content/projects/project-filter-types";
 
 interface ProjectFilterResultsProps {
@@ -15,30 +16,7 @@ export function ProjectFilterResults({
   data,
 }: ProjectFilterResultsProps) {
   return (
-    <section
-      aria-label="Jordan's project results"
-      className="w-full max-w-2xl border border-current/25 bg-[var(--bg-raised)]"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-current/15 px-5 py-4">
-        <Badge color="mustard">
-          PROJECTS
-        </Badge>
-
-        <Typography
-          as="p"
-          variant="text"
-          size="xs"
-          weight="bold"
-          className="uppercase tracking-[0.12em] opacity-60"
-        >
-          {data.count}{" "}
-          {data.count === 1
-            ? "result"
-            : "results"}
-        </Typography>
-      </div>
-
-      <div className="p-5">
+    <ToolResultSurface ariaLabel="Jordan's project results" label="PROJECT EVIDENCE" color="mustard" meta={`${data.count} ${data.count === 1 ? "result" : "results"}`}>
         <Typography
           as="p"
           variant="text"
@@ -61,12 +39,12 @@ export function ProjectFilterResults({
             </Typography>
           </div>
         ) : (
-          <div className="mt-5 flex flex-col border-t border-current/15">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {data.projects.map(
               (project) => (
                 <article
                   key={project.id}
-                  className="border-b border-current/15 py-5 last:border-b-0"
+                  className="flex flex-col rounded-xl border border-current/10 bg-[var(--bg)]/55 p-5"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -130,7 +108,7 @@ export function ProjectFilterResults({
                       ))}
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-auto pt-5">
                     <Button
                       href={`/projects/${project.slug}`}
                       variant="ghost"
@@ -150,7 +128,6 @@ export function ProjectFilterResults({
             )}
           </div>
         )}
-      </div>
-    </section>
+    </ToolResultSurface>
   );
 }

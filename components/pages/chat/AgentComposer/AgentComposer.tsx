@@ -24,8 +24,8 @@ export function AgentComposer({
     <form
       onSubmit={submitMessage}
       className={cn(
-        "flex items-center gap-2 border-t border-ink-raised bg-[var(--bg)]",
-        compact ? "px-3 py-3" : "px-6 py-4"
+        "flex items-center gap-2",
+        compact ? "border-t border-current/10 bg-[var(--bg)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3" : "mx-auto mb-[max(1rem,env(safe-area-inset-bottom))] w-[calc(100%-2rem)] max-w-5xl rounded-2xl border border-text-on-dark/20 bg-ink-panel/85 p-2 shadow-2xl backdrop-blur-xl sm:mb-6"
       )}
     >
       <label htmlFor="portfolio-agent-input" className="sr-only">
@@ -39,7 +39,7 @@ export function AgentComposer({
         disabled={disabled}
         onChange={(event) => setDraftMessage(event.target.value)}
         placeholder="Ask about Jordan or tell me what you want to do..."
-        className="h-12 min-w-0 flex-1 border border-current bg-transparent px-4 font-sans text-sm outline-none placeholder:opacity-45 focus:border-frame-green disabled:cursor-not-allowed disabled:opacity-50"
+        className="h-12 min-w-0 flex-1 rounded-xl border-0 bg-transparent px-3 font-sans text-base outline-none placeholder:opacity-50 focus-visible:ring-2 focus-visible:ring-frame-green disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
       />
 
       <IconButton
