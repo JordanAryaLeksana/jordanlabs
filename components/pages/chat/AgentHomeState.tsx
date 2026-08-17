@@ -1,4 +1,4 @@
-import { SuggestedActions } from "@/components/pages/chat/SuggestedActions";
+import { CapabilityOnboarding } from "@/components/pages/chat/CapabilityOnboarding";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 
 interface AgentHomeStateProps {
@@ -10,7 +10,7 @@ export function AgentHomeState({
 }: AgentHomeStateProps) {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center py-8 sm:py-12">
-      <Typography as="p" variant="text" size="xs" className="mb-4 font-mono tracking-[0.22em] text-coral">PORTFOLIO ASSISTANT</Typography>
+      <Typography as="p" variant="text" size="xs" className="mb-4 font-mono tracking-[0.22em] text-coral">YOUR GUIDE TO JORDAN</Typography>
       <Typography
         as="h1"
         variant="header"
@@ -25,10 +25,10 @@ export function AgentHomeState({
         size="sm"
         className="mb-8 max-w-xl text-base leading-7 opacity-80"
       >
-        Ask about Jordan&apos;s work, inspect evidence behind his skills, or let me guide you through the portfolio.
+        Ask me about Jordan, or let me show you around. I can answer, navigate, evaluate role fit, and help with supported actions.
       </Typography>
 
-      {!compact ? <SuggestedActions /> : null}
+      {!compact ? <CapabilityOnboarding /> : null}
     </div>
   );
 }

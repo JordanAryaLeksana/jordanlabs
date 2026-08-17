@@ -11,7 +11,7 @@ Replace the WebP files in this directory with the selected licensed/original sce
 
 Recommended export: WebP, roughly 1800–2400 px wide, landscape, with enough negative space for UI. Keep faces and focal actions away from the text-heavy left side and make sure the subject survives a narrow portrait crop.
 
-The generated files in the parent `public/scenes/` directory remain the full-bleed atmospheric backdrops. Owner images are mixed in as feathered `object-contain` scene layers, so their original aspect ratios, faces, and focal actions are not cropped.
+These owner images are used only by the six-scene Home intro. Each intro chapter renders one owner image as a single `object-cover` layer with tonal overlays; images are never stacked. Home after the intro and every content page use the generated scene assets in the parent `public/scenes/` directory.
 
 Before public deployment, confirm that every replacement is original or licensed for portfolio use. If a still cannot be licensed, replace it with an original/licensed recreation while keeping the same narrative scene family.
 

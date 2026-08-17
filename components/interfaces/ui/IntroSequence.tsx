@@ -1,12 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { LoadingScreen } from "@/components/pages/layout/LoadingScreen";
-import { BrandReveal } from "@/components/pages/layout/BrandReveal";
+import { useEffect, useRef, type ReactNode } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { OpeningSequence } from "@/components/pages/layout/OpeningSequence";
 import { useIntroSequence } from "@/lib/intro/useIntroSequence";
-import { INTRO_GREETING_PHRASES } from "@/lib/config/brand";
-import { ENTRANCE_DURATION_SECONDS, FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
+import { FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
 
 const EXIT_DURATION_SECONDS = 0.48;
 
@@ -16,17 +14,45 @@ interface IntroSequenceProps {
 }
 
 /**
- * Komponen ini digunakan sebagai controller intro dua fase di atas Home:
- * Fase 1 LoadingScreen (sapaan bergantian) lalu Fase 2 BrandReveal (wordmark
- * + tombol lanjut), ditutup wipe blok solid ke kanan. Urutan fasenya sendiri
- * dipegang hook useIntroSequence (satu tanggung jawab per unit, CLAUDE.md
- * §9); komponen ini hanya memetakan fase ke tampilan dan meneruskan sinyal
- * selesainya animasi tiap fase lewat advancePhase.
+ * Controller overlay intro Home. OpeningSequence memiliki enam chapter
+ * presentational, sedangkan hook ini tetap menjadi pemilik lifecycle
+ * intro -> exiting -> done dan persistence per session.
  */
 export function IntroSequence({ children }: IntroSequenceProps) {
   const { phase, advancePhase, skipSequence } = useIntroSequence();
+  const reducedMotion = useReducedMotion();
+  const overlayRef = useRef<HTMLDivElement>(null);
   const isOverlayVisible = phase !== "done";
   const isExiting = phase === "exiting";
+
+  useEffect(() => {
+    if (!isOverlayVisible) return;
+
+    const focusableSelector =
+      'button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const overlay = overlayRef.current;
+    overlay?.querySelector<HTMLElement>(focusableSelector)?.focus();
+
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+
+      const focusable = overlay?.querySelectorAll<HTMLElement>(focusableSelector);
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", trapFocus);
+    return () => window.removeEventListener("keydown", trapFocus);
+  }, [isOverlayVisible]);
 
   return (
     <>
@@ -34,41 +60,21 @@ export function IntroSequence({ children }: IntroSequenceProps) {
         {isOverlayVisible ? (
           <motion.div
             key="intro-overlay"
+            ref={overlayRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Introduction to Jordan Arya Leksana"
             className="fixed inset-0 z-[80] bg-ink-base"
             animate={{ opacity: isExiting ? 0 : 1, scale: isExiting ? 1.015 : 1 }}
-            transition={{ duration: EXIT_DURATION_SECONDS, ease: FUNCTIONAL_EASE }}
+            transition={{ duration: reducedMotion ? 0 : EXIT_DURATION_SECONDS, ease: FUNCTIONAL_EASE }}
             onAnimationComplete={() => {
               if (isExiting) advancePhase();
             }}
           >
-            <button type="button" onClick={skipSequence} className="absolute right-5 top-5 z-20 min-h-11 rounded-full border border-text-on-dark/25 bg-ink-base/45 px-4 font-mono text-[11px] tracking-[0.16em] text-text-on-dark backdrop-blur-md hover:border-coral focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-green sm:right-8 sm:top-7">
-              {phase === "brand" ? "ENTER" : "SKIP INTRO"}
+            <button type="button" onClick={skipSequence} className="absolute right-5 top-[max(1.25rem,env(safe-area-inset-top))] z-20 min-h-11 rounded-full border border-text-on-dark/25 bg-ink-base/45 px-4 font-mono text-[11px] tracking-[0.16em] text-text-on-dark backdrop-blur-md hover:border-coral focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-green sm:right-8">
+              SKIP INTRO
             </button>
-            <AnimatePresence mode="wait">
-              {phase === "loading" ? (
-                <motion.div
-                  key="loading"
-                  className="absolute inset-0"
-                  initial={false}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: ENTRANCE_DURATION_SECONDS, ease: FUNCTIONAL_EASE }}
-                >
-                  <LoadingScreen greetingPhrases={INTRO_GREETING_PHRASES} onComplete={advancePhase} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="brand"
-                  className="absolute inset-0"
-                  initial={false}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: ENTRANCE_DURATION_SECONDS, ease: FUNCTIONAL_EASE }}
-                >
-                  <BrandReveal onComplete={advancePhase} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <OpeningSequence onComplete={advancePhase} />
           </motion.div>
         ) : null}
       </AnimatePresence>

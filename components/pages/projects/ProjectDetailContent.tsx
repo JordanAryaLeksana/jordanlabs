@@ -1,21 +1,62 @@
-import { Section } from "@/components/interfaces/ui/Section";
 import { Badge } from "@/components/interfaces/ui/Badge";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import type { Project } from "@/lib/config/projects";
 import { PROJECT_SECTION_IDS } from "@/lib/tools/types";
 
 export function ProjectDetailContent({ project }: { project: Project }) {
+  const overview = [
+    { label: "PROBLEM", color: "coral", content: project.overview.problem },
+    { label: "APPROACH", color: "pine", content: project.overview.approach },
+    { label: "CONTRIBUTION", color: "slate", content: project.overview.contribution },
+  ] as const;
   const chapters = [
-    { id: PROJECT_SECTION_IDS.architecture, label: "Architecture", content: project.architecture },
-    { id: PROJECT_SECTION_IDS.dataset, label: "Dataset", content: project.dataset },
-    { id: PROJECT_SECTION_IDS.training, label: "Training", content: project.training },
-    { id: PROJECT_SECTION_IDS.evaluation, label: "Evaluation", content: project.evaluation },
-  ];
-  return <div className="bg-[var(--bg)]">
-    <Section id={PROJECT_SECTION_IDS.overview} className="scroll-mt-20 py-16 sm:py-24">
-      <div className="max-w-2xl"><Typography as="p" variant="text" size="xs" className="tracking-[0.2em] opacity-55">01 / OVERVIEW</Typography><Typography as="h2" variant="header" size="3xl" className="mt-2">From problem to shipped approach</Typography></div>
-      <div className="grid gap-4 md:grid-cols-3">{[["THE PROBLEM", "coral", project.overview.problem], ["THE APPROACH", "pine", project.overview.approach], ["MY CONTRIBUTION", "slate", project.overview.contribution]].map(([label, color, copy]) => <article key={label} className="rounded-2xl border border-current/10 bg-[var(--bg-raised)] p-6 shadow-sm"><Badge color={color as "coral" | "pine" | "slate"}>{label}</Badge><Typography variant="text" size="sm" className="mt-5 leading-7 opacity-80">{copy}</Typography></article>)}</div>
-    </Section>
-    {chapters.map((chapter, index) => <Section key={chapter.id} id={chapter.id} className="scroll-mt-20 border-t border-current/10 py-16 sm:grid sm:grid-cols-[0.45fr_1fr] sm:gap-12 sm:py-24"><div><Typography as="p" variant="text" size="xs" className="tracking-[0.2em] opacity-50">0{index + 2} / TECHNICAL NOTE</Typography><Typography as="h2" variant="header" size="3xl" className="mt-2">{chapter.label}</Typography></div><Typography variant="text" className="max-w-3xl text-base leading-8 opacity-80">{chapter.content}</Typography></Section>)}
-  </div>;
+    { id: PROJECT_SECTION_IDS.architecture, label: "Architecture", content: project.architecture, accent: "border-coral" },
+    { id: PROJECT_SECTION_IDS.dataset, label: "Dataset", content: project.dataset, accent: "border-pine" },
+    { id: PROJECT_SECTION_IDS.training, label: "Training", content: project.training, accent: "border-slate" },
+    { id: PROJECT_SECTION_IDS.evaluation, label: "Evaluation", content: project.evaluation, accent: "border-mustard" },
+  ] as const;
+
+  return (
+    <div className="bg-[var(--bg)]">
+      <section id={PROJECT_SECTION_IDS.overview} className="scroll-mt-20 border-b border-current/10">
+        <div className="mx-auto w-full max-w-5xl px-6 py-16 sm:py-24">
+          <Typography as="p" variant="text" size="xs" className="font-mono tracking-[0.2em] opacity-55">
+            01 / EXPLANATION FLOW
+          </Typography>
+          <Typography as="h2" variant="header" size="3xl" className="mt-2 max-w-2xl">
+            From the problem to Jordan&apos;s contribution.
+          </Typography>
+          <ol className="mt-10 grid gap-0 md:grid-cols-3">
+            {overview.map((item, index) => (
+              <li key={item.label} className="relative border-l border-current/16 pb-9 pl-6 last:pb-0 md:border-l-0 md:border-t md:pb-0 md:pl-0 md:pt-7 md:not-last:pr-8">
+                <span className="absolute -left-1.5 top-0 size-3 rounded-full bg-frame-green md:-top-1.5 md:left-0" aria-hidden="true" />
+                <Badge color={item.color}>{`0${index + 1} / ${item.label}`}</Badge>
+                <Typography variant="text" size="sm" className="mt-5 leading-7 opacity-76">
+                  {item.content}
+                </Typography>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {chapters.map((chapter, index) => (
+        <section key={chapter.id} id={chapter.id} className="scroll-mt-20 border-b border-current/10">
+          <div className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-16 sm:grid-cols-[0.38fr_1fr] sm:gap-14 sm:py-24">
+            <div className={`border-l-2 pl-5 ${chapter.accent}`}>
+              <Typography as="p" variant="text" size="xs" className="font-mono tracking-[0.18em] opacity-48">
+                0{index + 2} / TECHNICAL NOTE
+              </Typography>
+              <Typography as="h2" variant="header" size="3xl" className="mt-2">
+                {chapter.label}
+              </Typography>
+            </div>
+            <Typography variant="text" className="max-w-3xl text-base leading-8 opacity-78 sm:text-lg sm:leading-9">
+              {chapter.content}
+            </Typography>
+          </div>
+        </section>
+      ))}
+    </div>
+  );
 }

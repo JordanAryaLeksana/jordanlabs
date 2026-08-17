@@ -6,18 +6,20 @@ import { PAGE_SCENES, type PageScene } from "@/lib/config/scenes";
 
 interface SceneBackdropProps {
   scene: PageScene;
+  variant?: "page" | "intro";
   priority?: boolean;
   subdued?: boolean;
   className?: string;
 }
 
-export function SceneBackdrop({ scene, priority = false, subdued = false, className }: SceneBackdropProps) {
+export function SceneBackdrop({ scene, variant = "page", priority = false, subdued = false, className }: SceneBackdropProps) {
   const config = PAGE_SCENES[scene];
+  const src = variant === "intro" ? config.introSrc : config.pageSrc;
 
   return (
     <div aria-hidden="true" data-scene-backdrop className={cn("pointer-events-none absolute inset-0 overflow-hidden bg-ink-base", className)}>
       <Image
-        src={config.src}
+        src={src}
         alt=""
         fill
         priority={priority}

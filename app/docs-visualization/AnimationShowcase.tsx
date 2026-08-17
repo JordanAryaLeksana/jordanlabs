@@ -15,8 +15,7 @@ import { StaggerItem } from "@/components/interfaces/motion/StaggerItem";
 import { HoverLift } from "@/components/interfaces/motion/HoverLift";
 import { ParallaxShape } from "@/components/interfaces/motion/ParallaxShape";
 import { ColorBlockReveal } from "@/components/interfaces/motion/ColorBlockReveal";
-import { LoadingScreen } from "@/components/pages/layout/LoadingScreen";
-import { INTRO_GREETING_PHRASES } from "@/lib/config/brand";
+import { OpeningSequence } from "@/components/pages/layout/OpeningSequence";
 
 const STAGGER_ITEM_COLORS = ["bg-coral", "bg-pine", "bg-slate", "bg-mustard"];
 
@@ -157,19 +156,18 @@ export function AnimationShowcase() {
       <div className="flex flex-col gap-3 border border-ink-raised p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Typography variant="header" size="xl">
-            LoadingScreen — intro loader
+            OpeningSequence — six-scene intro
           </Typography>
           <Button variant="secondary" onClick={() => setLoaderKey((previous) => previous + 1)}>
-            Play intro loader
+            Replay opening sequence
           </Button>
         </div>
         <Typography variant="text" size="sm">
-          Fase pembuka IntroSequence memakai scene startup yang sama dengan Home, tiga sapaan singkat, dan indikator
-          chapter yang tenang. Komponen ini murni presentational—urutan fase dan akses skip dikendalikan oleh
-          IntroSequence; di sini hanya isi pembukanya yang diputar ulang.
+          Intro Home memakai enam chapter sinematik, scene mapping terpusat, colorful typography, dan chapter controls.
+          Komponen ini murni presentational; lifecycle session dan akses skip tetap dikendalikan oleh IntroSequence.
         </Typography>
         <div className="relative h-[360px] overflow-hidden">
-          <LoadingScreen key={loaderKey} greetingPhrases={INTRO_GREETING_PHRASES} onComplete={() => {}} />
+          <OpeningSequence key={loaderKey} onComplete={() => {}} />
         </div>
       </div>
     </div>

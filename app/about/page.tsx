@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { AboutProfile } from "@/components/pages/about/AboutProfile";
-import { ExperiencedAs } from "@/components/pages/about/ExperiencedAs";
+import { AboutChapterStage } from "@/components/pages/about/AboutChapterStage";
 import { GitHubActivity } from "@/components/pages/about/GitHubActivity";
-import { TechStack } from "@/components/pages/about/TechStack";
 import { SceneBackdrop } from "@/components/interfaces/scenes/SceneBackdrop";
 import { PortfolioHeader } from "@/components/pages/layout/PortfolioHeader";
 import { Footer } from "@/components/pages/layout/Footer";
@@ -22,7 +21,7 @@ export default async function AboutPage() {
   return (
     <main className="min-h-screen overflow-x-clip bg-[var(--bg)] text-[var(--fg)]">
       <div className="relative min-h-[76svh] bg-ink-base text-text-on-dark"><SceneBackdrop scene="about" priority /><PortfolioHeader /><div className="relative"><AboutProfile /></div></div>
-      <div className="relative bg-[var(--bg)]"><ExperiencedAs /><TechStack /><GitHubActivity repositories={repositories} contributions={contributions} /><Footer /></div>
+      <div className="relative bg-[var(--bg)]"><AboutChapterStage /><GitHubActivity repositories={repositories} contributions={contributions} /><Footer /></div>
     </main>
   );
 }
