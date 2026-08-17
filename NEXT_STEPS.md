@@ -11,7 +11,7 @@
 - Added the active-conversation presentation state: the scene settles into the background, welcome prompts transition out, message history gains priority, and the composer respects mobile safe areas and keyboard zoom behavior.
 - Made the active-conversation transition resolve instantly when the visitor requests reduced motion.
 - Audited the supplied owner scenes, connected the supplied Experience image through an optimized WebP runtime asset, and verified the remaining scene slots and focal crops.
-- Restored the original generated WebPs as full-bleed backdrops and mixed every owner scene into a contained, uncropped cinematic frame.
+- Restored the original generated WebPs as the sole full-bleed backdrops; owner images remain archived under `public/scenes/owner/` but are no longer layered into the UI.
 - Applied the cinematic scene layer to every primary route and project detail.
 - Preserved existing route and stable section identifiers.
 - Restyled below-the-fold GitHub, project-detail, experience, and contact surfaces into restrained editorial/product UI.

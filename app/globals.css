@@ -156,34 +156,16 @@ body {
   to { transform: scale(1.055) translate3d(0.25%, -0.25%, 0); }
 }
 
-.scene-backdrop-base,
-[data-owner-scene] {
+.scene-backdrop-base {
   transition: opacity 600ms ease;
-}
-
-.owner-scene-layer {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 100%);
-}
-
-@media (min-width: 40rem) {
-  .owner-scene-layer {
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 24%, black 100%);
-    mask-image: linear-gradient(to right, transparent 0%, black 24%, black 100%);
-  }
 }
 
 main:has([data-conversation-active="true"]) [data-scene-backdrop] .scene-backdrop-base {
   opacity: 0.24;
 }
 
-main:has([data-conversation-active="true"]) [data-scene-backdrop] [data-owner-scene] {
-  opacity: 0.16;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .scene-backdrop-base,
-  [data-owner-scene] {
+  .scene-backdrop-base {
     transition: none;
   }
 }
