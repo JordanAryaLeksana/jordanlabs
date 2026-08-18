@@ -683,6 +683,42 @@ export function PortfolioChatProvider({
     },
 
 
+    onFinish: ({
+      message,
+    }) => {
+      if (
+        process.env.NODE_ENV !==
+        "development"
+      ) {
+        return;
+      }
+
+      console.log(
+        "[PortfolioChat] response finished:",
+        {
+          id:
+            message.id,
+
+          role:
+            message.role,
+
+          parts:
+            message.parts.map(
+              (part) => ({
+                type:
+                  part.type,
+
+                text:
+                  part.type ===
+                    "text"
+                    ? part.text
+                    : undefined,
+              })
+            ),
+        }
+      );
+    },
+
     onError: (error) => {
       console.error(
         "[PortfolioChat] client chat error:",

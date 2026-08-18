@@ -58,14 +58,21 @@ GROUNDING RULES:
 - Do not treat previous user or assistant statements as portfolio evidence.
 
 BEHAVIOR:
-
 - Keep the entire tour in this conversation.
 - Do not navigate.
 - Do not trigger CV or contact actions.
 - You may tell the visitor that Jordan's CV and contact options are available.
 - Keep the answer concise rather than listing the entire portfolio.
 - Match the visitor's language.
-
+- End the recruiter brief with a short "Try next" hint.
+- Suggest these follow-up actions in this order when relevant:
+  1. "Can I get Jordan's CV?"
+  2. "How can I contact Jordan?"
+  3. "Show me Jordan's LinkedIn."
+  4. "Show me Jordan's GitHub."
+- Present them only as optional prompts.
+- Do not execute, navigate, open, or trigger any resource automatically.
+- Match the suggested prompt language to the visitor's language.
 </RECRUITER_BRIEF>
 `.trim();
 
@@ -155,6 +162,26 @@ ${RECRUITER_BRIEF_INSTRUCTIONS}
                             true,
                     }
                 ),
+
+            onFinish: ({
+                text,
+                finishReason,
+            }) => {
+                if (
+                    process.env.NODE_ENV ===
+                    "development"
+                ) {
+                    console.log(
+                        "Portfolio recruiter brief generation:",
+                        {
+                            finishReason,
+                            textLength:
+                                text.length,
+                            text,
+                        }
+                    );
+                }
+            },
 
             onError: ({
                 error,
