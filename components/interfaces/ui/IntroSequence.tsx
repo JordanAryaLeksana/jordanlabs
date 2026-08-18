@@ -16,7 +16,7 @@ interface IntroSequenceProps {
 /**
  * Controller overlay intro Home. OpeningSequence memiliki enam chapter
  * presentational, sedangkan hook ini tetap menjadi pemilik lifecycle
- * intro -> exiting -> done dan persistence per session.
+ * intro -> exiting -> done untuk setiap load Home.
  */
 export function IntroSequence({ children }: IntroSequenceProps) {
   const { phase, advancePhase, skipSequence } = useIntroSequence();

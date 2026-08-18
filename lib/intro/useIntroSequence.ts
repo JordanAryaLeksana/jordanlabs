@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -11,16 +10,12 @@ export type IntroPhase = "intro" | "exiting" | "done";
 
 const PHASE_ORDER: readonly IntroPhase[] = ["intro", "exiting", "done"];
 
-const SESSION_STORAGE_KEY = "jordan-labs:intro-shown";
-
 function subscribeToNothing() {
   return () => {};
 }
 
 function getStaticSkipSnapshot(): boolean {
-  const alreadyShownThisSession = window.sessionStorage.getItem(SESSION_STORAGE_KEY) === "1";
-  const requestsSkipViaQueryParam = new URLSearchParams(window.location.search).get("skipIntro") === "1";
-  return alreadyShownThisSession || requestsSkipViaQueryParam;
+  return new URLSearchParams(window.location.search).get("skipIntro") === "1";
 }
 
 /** Snapshot server selalu false, supaya HTML awal konsisten dengan render klien pertama. */
@@ -67,10 +62,9 @@ interface UseIntroSequenceResult {
  * selesai (CLAUDE.md §11), sehingga durasi total intro mengikuti durasi
  * animasi sesungguhnya, bukan angka yang dihardcode di sini.
  *
- * Kondisi yang mempercepat langsung ke "done" -- sudah tampil di sesi ini
- * atau URL memuat ?skipIntro=1 -- dibaca lewat useSyncExternalStore (snapshot
- * server selalu false), bukan lewat setState langsung di dalam efek, supaya
- * React yang menyesuaikan render setelah hydration tanpa memicu mismatch.
+ * URL ?skipIntro=1 dapat mempercepat langsung ke "done" untuk kebutuhan
+ * development. Kunjungan dan refresh normal selalu mulai dari intro agar
+ * server render dan hydration tidak berbeda lalu menimbulkan flash ke Home.
  *
  * ?freezeIntro=intro membekukan urutan tepat di
  * fase itu (mengabaikan advancePhase() dan skip apa pun) -- alat bantu
@@ -91,17 +85,6 @@ export function useIntroSequence(): UseIntroSequenceResult {
   const shouldSkip = freezePhase === null && shouldSkipStatically;
 
   const [timerPhase, setTimerPhase] = useState<IntroPhase>("intro");
-
-  // Penanda "intro sudah tampil" BARU ditulis saat urutan mencapai "done" --
-  // bukan saat mount. Menulis di awal membuat snapshot useSyncExternalStore
-  // (yang dibaca ulang tiap render) berubah false -> true di tengah intro,
-  // sehingga re-render pertama apa pun memaksa fase langsung "done" dan
-  // intro terlewati. Dengan menulis di akhir, snapshot stabil selama
-  // intro berjalan dan skip hanya berlaku pada kunjungan berikutnya.
-  useEffect(() => {
-    if (shouldSkip || timerPhase !== "done") return;
-    window.sessionStorage.setItem(SESSION_STORAGE_KEY, "1");
-  }, [shouldSkip, timerPhase]);
 
   const advancePhase = useCallback(() => {
     setTimerPhase((current) => {

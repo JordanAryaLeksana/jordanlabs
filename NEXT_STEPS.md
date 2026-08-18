@@ -2,7 +2,7 @@
 
 ## Completed in the current unit
 
-- Replaced the old loading/brand intro with a data-driven six-scene opening sequence that appears once per session, supports direct chapter controls and skip, and presents a static final chapter for reduced-motion users.
+- Replaced the old loading/brand intro with a data-driven six-scene opening sequence that appears on each Home load, supports direct chapter controls and skip, and presents a static final chapter for reduced-motion users.
 - Added a reusable scene backdrop and centralized page-to-scene mapping.
 - Added optimized original WebP scenes for Home, About, Projects/Detail, Experience, and Contact.
 - Added stable owner-image slots under `public/scenes/owner/`; generated scenes remain preserved as automatic fallbacks.
