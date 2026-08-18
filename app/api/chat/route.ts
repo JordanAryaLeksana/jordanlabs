@@ -74,6 +74,8 @@ import {
   retrievePortfolioEvidence,
 } from "@/lib/rag/retrieve";
 
+import { isRecuiterBriefRequest } from "@/lib/ai/recuiter/isRecuiterBriefRequest";
+import { createRecruiterBriefResponse } from "@/lib/ai/recuiter/createRecuiterBriefResponse";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
@@ -85,6 +87,20 @@ export async function POST(request: Request) {
 
   const latestUserText =
     getLatestUserText(messages);
+
+  const recruiterBriefRequest =
+    isRecuiterBriefRequest(
+      latestUserText
+    );
+
+  if (recruiterBriefRequest) {
+    return createRecruiterBriefResponse({
+      messages,
+
+      userText:
+        latestUserText,
+    });
+  }
 
   const resourceToolChoice =
     getResourceToolChoice(
