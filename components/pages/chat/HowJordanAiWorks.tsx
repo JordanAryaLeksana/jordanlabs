@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CaretDownIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, CaretDownIcon } from "@phosphor-icons/react";
+import { isChatBusy } from "@/components/pages/chat/isChatBusy";
+import { usePortfolioChat } from "@/components/pages/chat/usePortfolioChat";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
 
@@ -31,11 +33,20 @@ const TUTORIAL_STEPS = [
     description: "Manual browsing remains available, and actions stay visible in the conversation.",
     color: "border-mustard",
   },
+  {
+    number: "05",
+    title: "ROUTE BY CHAT",
+    description: "Ask Jordan AI to take you directly to a relevant page or portfolio section.",
+    color: "border-coral",
+    demo: "Take me to Jordan's projects",
+  },
 ] as const;
 
 export function HowJordanAiWorks() {
   const [open, setOpen] = useState(false);
   const reducedMotion = useReducedMotion();
+  const { sendMessage, status } = usePortfolioChat();
+  const demoDisabled = isChatBusy(status);
 
   return (
     <div className="mt-5 border-t border-text-on-dark/12 pt-4">
@@ -66,7 +77,7 @@ export function HowJordanAiWorks() {
             transition={{ duration: reducedMotion ? 0 : 0.36, ease: FUNCTIONAL_EASE }}
             className="overflow-hidden"
           >
-            <ol className="grid gap-x-5 gap-y-5 pb-2 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="grid gap-x-5 gap-y-5 pb-2 pt-4 sm:grid-cols-2 lg:grid-cols-5">
               {TUTORIAL_STEPS.map((step) => (
                 <li key={step.number} className={`border-l-2 pl-3 ${step.color}`}>
                   <Typography
@@ -94,6 +105,17 @@ export function HowJordanAiWorks() {
                   >
                     {step.description}
                   </Typography>
+                  {"demo" in step ? (
+                    <button
+                      type="button"
+                      disabled={demoDisabled}
+                      onClick={() => sendMessage({ text: step.demo })}
+                      className="mt-3 inline-flex min-h-11 items-center gap-2 font-mono text-[10px] font-bold tracking-[0.08em] text-coral transition-colors hover:text-text-on-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-green disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      TRY DEMO
+                      <ArrowRightIcon size={13} aria-hidden="true" />
+                    </button>
+                  ) : null}
                 </li>
               ))}
             </ol>
