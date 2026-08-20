@@ -160,6 +160,16 @@ body {
   transition: opacity 600ms ease;
 }
 
+.scene-backdrop-intro {
+  object-position: var(--scene-position, center);
+}
+
+@media (max-width: 639px) {
+  .scene-backdrop-intro {
+    object-position: var(--scene-position-mobile, var(--scene-position, center));
+  }
+}
+
 main:has([data-conversation-active="true"]) [data-scene-backdrop] .scene-backdrop-base {
   opacity: 0.24;
 }
