@@ -28,6 +28,9 @@ export function IntroSequence({ children }: IntroSequenceProps) {
   useEffect(() => {
     if (!isOverlayVisible) return;
 
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     const focusableSelector =
       'button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
     const overlay = overlayRef.current;
@@ -51,7 +54,10 @@ export function IntroSequence({ children }: IntroSequenceProps) {
     };
 
     window.addEventListener("keydown", trapFocus);
-    return () => window.removeEventListener("keydown", trapFocus);
+    return () => {
+      window.removeEventListener("keydown", trapFocus);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [isOverlayVisible]);
 
   return (

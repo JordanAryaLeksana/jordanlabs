@@ -170,6 +170,39 @@ body {
   }
 }
 
+@media (max-height: 680px) {
+  [data-opening-sequence] h1 {
+    font-size: 2.25rem;
+    line-height: 0.9;
+  }
+
+  [data-opening-sequence] h1 + p {
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    line-height: 1.15rem;
+  }
+
+  [data-opening-sequence] section > div,
+  [data-opening-content] > div:last-child {
+    margin-top: 0.75rem;
+  }
+
+  [data-opening-sequence] section > button {
+    margin-top: 0.875rem;
+  }
+}
+
+@media (max-height: 520px) and (min-width: 600px) {
+  [data-opening-content] {
+    padding-top: max(1.25rem, env(safe-area-inset-top));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  [data-opening-sequence] h1 {
+    font-size: 3rem;
+  }
+}
+
 main:has([data-conversation-active="true"]) [data-scene-backdrop] .scene-backdrop-base {
   opacity: 0.24;
 }

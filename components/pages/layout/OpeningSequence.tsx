@@ -52,10 +52,10 @@ export function OpeningSequence({ onComplete }: { onComplete: () => void }) {
 
   const transition = { duration: reducedMotion ? 0 : 0.62, ease: FUNCTIONAL_EASE };
 
-  return <div className="relative h-full overflow-hidden bg-ink-base text-text-on-dark">
+  return <div data-opening-sequence className="relative h-full overflow-hidden bg-ink-base text-text-on-dark">
     <AnimatePresence initial={false} mode="sync"><motion.div key={scene.id} className="absolute inset-0" variants={preset.backdrop} initial="enter" animate="active" exit={{ opacity: 0 }} transition={{ ...transition, duration: reducedMotion ? 0 : 1.2 }}><SceneBackdrop scene={scene.scene} variant="intro" priority={activeSceneIndex < 2} /></motion.div></AnimatePresence>
 
-    <div className="relative z-10 flex h-full flex-col px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(4.5rem,env(safe-area-inset-top))] sm:px-10 sm:pb-8 lg:px-16 lg:pb-10">
+    <div data-opening-content className="relative z-10 flex h-full flex-col px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(4.5rem,env(safe-area-inset-top))] sm:px-10 sm:pb-8 lg:px-16 lg:pb-10">
       <div className="font-mono text-[10px] tracking-[0.18em] text-text-on-dark/55" aria-live="polite">{String(activeSceneIndex + 1).padStart(2, "0")} / {String(INTRO_SCENES.length).padStart(2, "0")}</div>
       <AnimatePresence initial={false} mode="wait"><motion.section key={scene.id} className="mt-auto max-w-5xl" variants={preset.content} initial="enter" animate="active" exit={{ opacity: 0, y: reducedMotion ? 0 : -10 }} transition={transition} aria-labelledby={`intro-${scene.id}`}>
         <Typography as="p" variant="text" size="xs" className="mb-3 tracking-[0.24em] text-text-on-dark/70">{scene.eyebrow}</Typography>
