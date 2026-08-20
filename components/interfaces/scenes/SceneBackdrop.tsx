@@ -33,7 +33,8 @@ export function SceneBackdrop({ scene, variant = "page", priority = false, subdu
         sizes="100vw"
         style={introStyle}
         className={cn(
-          "scene-backdrop-base object-cover object-center motion-safe:animate-[scene-drift_18s_ease-out_both]",
+          "scene-backdrop-base object-cover object-center",
+          variant === "page" && "motion-safe:animate-[scene-drift_18s_ease-out_both]",
           variant === "intro" && "scene-backdrop-intro",
           subdued ? "opacity-20" : "opacity-65"
         )}

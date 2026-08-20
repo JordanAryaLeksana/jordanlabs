@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AboutProfile } from "@/components/pages/about/AboutProfile";
 import { AboutChapterStage } from "@/components/pages/about/AboutChapterStage";
 import { GitHubActivity } from "@/components/pages/about/GitHubActivity";
-import { SceneBackdrop } from "@/components/interfaces/scenes/SceneBackdrop";
+import { CinematicPageChapter } from "@/components/pages/layout/CinematicPageChapter";
 import { PortfolioHeader } from "@/components/pages/layout/PortfolioHeader";
 import { Footer } from "@/components/pages/layout/Footer";
 import { getGitHubRepositories } from "@/lib/about/getGitHubRepositories";
@@ -20,7 +20,7 @@ export default async function AboutPage() {
   const contributions = await getGitHubContributions();
   return (
     <main className="min-h-screen overflow-x-clip bg-[var(--bg)] text-[var(--fg)]">
-      <div className="relative min-h-[76svh] bg-ink-base text-text-on-dark"><SceneBackdrop scene="about" priority /><PortfolioHeader /><div className="relative"><AboutProfile /></div></div>
+      <CinematicPageChapter scene="about" priority className="min-h-[76svh]"><PortfolioHeader /><AboutProfile /></CinematicPageChapter>
       <div className="relative bg-[var(--bg)]"><AboutChapterStage /><GitHubActivity repositories={repositories} contributions={contributions} /><Footer /></div>
     </main>
   );
