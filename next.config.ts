@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+
   images: {
     remotePatterns: [
       {
@@ -11,7 +13,9 @@ const nextConfig: NextConfig = {
   },
 
   outputFileTracingIncludes: {
-    "/api/chat": ["./content/knowledge/**/*.md"],
+    "/api/chat": [
+      "./content/knowledge/**/*.md",
+    ],
   },
 };
 
