@@ -278,6 +278,7 @@ export async function retrievePortfolioEvidence({
     return [];
   }
 
+  console.time("RAG knowledge embed");
   try {
     if (
       !cachedKnowledgeEmbeddings ||
@@ -304,7 +305,9 @@ export async function retrievePortfolioEvidence({
       cachedKnowledgeEmbeddings =
         embeddings;
     }
+    console.timeEnd("RAG knowledge embed");
 
+    console.time("RAG query embed");
     const {
       embedding:
       queryEmbedding,
@@ -315,6 +318,7 @@ export async function retrievePortfolioEvidence({
       value:
         `task: question answering | query: ${query}`,
     });
+    console.timeEnd("RAG query embed");
     const semanticCandidates: {
       evidence:
       TrustedEvidence;
