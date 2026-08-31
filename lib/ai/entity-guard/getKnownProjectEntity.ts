@@ -44,6 +44,9 @@ export function getKnownProjectEntity(
         ) ||
         normalizedText.includes(
           project.slug.toLowerCase()
+        ) ||
+        project.aliases?.some((alias) =>
+          normalizedText.includes(alias.toLowerCase())
         )
     );
 

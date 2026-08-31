@@ -41,7 +41,10 @@ export function getUnknownProjectEntity(
           project.id.toLowerCase() ===
             normalizedEntityName ||
           project.slug.toLowerCase() ===
-            normalizedEntityName
+            normalizedEntityName ||
+          project.aliases?.some((alias) =>
+            alias.toLowerCase() === normalizedEntityName
+          )
       );
 
     if (isDocumentedProject) {

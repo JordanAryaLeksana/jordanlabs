@@ -1,7 +1,25 @@
+import Image from "next/image";
 import { Badge } from "@/components/interfaces/ui/Badge";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
-import type { Project } from "@/lib/config/projects";
+import type { Project, ProjectIllustration } from "@/lib/config/projects";
 import { PROJECT_SECTION_IDS } from "@/lib/tools/types";
+
+function IllustrationGrid({ illustrations }: { illustrations?: readonly ProjectIllustration[] }) {
+  if (!illustrations?.length) return null;
+
+  return (
+    <div className="mt-9 grid gap-4 sm:grid-cols-2">
+      {illustrations.slice(0, 2).map((illustration) => (
+        <figure key={illustration.src} className="overflow-hidden rounded-2xl border border-current/12 bg-ink-panel">
+          <div className="relative aspect-[16/10]">
+            <Image src={illustration.src} alt={illustration.alt} fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover" />
+          </div>
+          {illustration.caption ? <figcaption className="px-4 py-3 font-mono text-[11px] leading-5 opacity-60">{illustration.caption}</figcaption> : null}
+        </figure>
+      ))}
+    </div>
+  );
+}
 
 export function ProjectDetailContent({ project }: { project: Project }) {
   const overview = [
@@ -10,10 +28,10 @@ export function ProjectDetailContent({ project }: { project: Project }) {
     { label: "CONTRIBUTION", color: "slate", content: project.overview.contribution },
   ] as const;
   const chapters = [
-    { id: PROJECT_SECTION_IDS.architecture, label: "Architecture", content: project.architecture, accent: "border-coral" },
-    { id: PROJECT_SECTION_IDS.dataset, label: "Dataset", content: project.dataset, accent: "border-pine" },
-    { id: PROJECT_SECTION_IDS.training, label: "Training", content: project.training, accent: "border-slate" },
-    { id: PROJECT_SECTION_IDS.evaluation, label: "Evaluation", content: project.evaluation, accent: "border-mustard" },
+    { id: PROJECT_SECTION_IDS.architecture, label: project.chapterLabels?.architecture ?? "Architecture", content: project.architecture, accent: "border-coral" },
+    { id: PROJECT_SECTION_IDS.dataset, label: project.chapterLabels?.dataset ?? "Dataset", content: project.dataset, accent: "border-pine" },
+    { id: PROJECT_SECTION_IDS.training, label: project.chapterLabels?.training ?? "Training", content: project.training, accent: "border-slate" },
+    { id: PROJECT_SECTION_IDS.evaluation, label: project.chapterLabels?.evaluation ?? "Evaluation", content: project.evaluation, accent: "border-mustard" },
   ] as const;
 
   return (
@@ -37,6 +55,7 @@ export function ProjectDetailContent({ project }: { project: Project }) {
               </li>
             ))}
           </ol>
+          <IllustrationGrid illustrations={project.illustrations?.overview} />
         </div>
       </section>
 
@@ -51,9 +70,12 @@ export function ProjectDetailContent({ project }: { project: Project }) {
                 {chapter.label}
               </Typography>
             </div>
-            <Typography variant="text" className="max-w-3xl text-base leading-8 opacity-78 sm:text-lg sm:leading-9">
-              {chapter.content}
-            </Typography>
+            <div>
+              <Typography variant="text" className="max-w-3xl text-base leading-8 opacity-78 sm:text-lg sm:leading-9">
+                {chapter.content}
+              </Typography>
+              <IllustrationGrid illustrations={project.illustrations?.[chapter.id]} />
+            </div>
           </div>
         </section>
       ))}

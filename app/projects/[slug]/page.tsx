@@ -24,9 +24,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <div className="border-l-4 border-l-pine pl-4"><Typography as="p" variant="text" size="xs" className="tracking-[0.2em] opacity-55">PROJECT STATUS</Typography><Typography as="p" variant="header" size="xl" className="mt-2">{project.status}</Typography><div className="mt-4 flex flex-wrap gap-2">{project.tags.map((tag) => <span key={tag} className="border border-current/25 px-2 py-1 font-mono text-xs">{tag}</span>)}</div></div>
       </section>
       </CinematicPageChapter>
-      <ProjectChapterNavigation />
+      <ProjectChapterNavigation labels={project.chapterLabels} />
       <ProjectDetailContent project={project} />
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap gap-3 px-6 py-12"><Link href="/projects" className="rounded-xl border border-current px-4 py-2 font-mono text-sm hover:border-frame-green">Explore other projects</Link>{project.repositoryUrl ? <a href={project.repositoryUrl} target="_blank" rel="noreferrer" className="rounded-xl bg-pine px-4 py-2 font-mono text-sm text-text-on-dark">Open repository ↗</a> : null}</div>
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap gap-3 px-6 py-12"><Link href="/projects" className="rounded-xl border border-current px-4 py-2 font-mono text-sm hover:border-frame-green">Explore other projects</Link>{project.repositoryUrl ? <a href={project.repositoryUrl} target="_blank" rel="noreferrer" className="rounded-xl bg-pine px-4 py-2 font-mono text-sm text-text-on-dark">Open repository ↗</a> : null}{project.demoUrl ? <a href={project.demoUrl} target="_blank" rel="noreferrer" className="rounded-xl bg-coral px-4 py-2 font-mono text-sm text-text-on-dark">View live demo ↗</a> : null}</div>
       <Footer />
     </main>
   );

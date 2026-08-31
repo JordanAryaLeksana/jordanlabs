@@ -32,7 +32,15 @@ export const SKILL_CATEGORY_IDS = {
   collaboration: "collaboration",
 } as const;
 
-export const PROJECT_IDS = { emqnet: "emqnet", dermsight: "dermsight" } as const;
+export const PROJECT_IDS = {
+  emqnet: "emqnet",
+  dermsight: "dermsight",
+  ecsWebsite: "ecs-website",
+  teta: "teta",
+  jordanLabs: "jordan-labs",
+  seaCatering: "sea-catering",
+  chatty: "chatty",
+} as const;
 
 export const PROJECT_SECTION_IDS = {
   featured: "projects-featured",

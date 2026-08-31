@@ -1,11 +1,11 @@
 import {
   PAGE_ROUTES,
-  PROJECT_IDS,
   SECTION_IDS,
   type PageRoute,
   type ProjectId,
   type SectionId,
-} from "@/lib/tools/types";;
+} from "@/lib/tools/types";
+import { PROJECTS } from "@/lib/config/projects";
 
 const HIGHLIGHT_COMMAND_PATTERNS = [
   /\bhighlight\b/i,
@@ -25,10 +25,23 @@ const SCROLL_COMMAND_PATTERNS = [
   /\bscroll ke\b/i,
 ];
 
-const PROJECT_DETAIL_COMMAND_PATTERNS = [
-  /\b(?:open|view|visit|show|go to)\b.*\b(?:emqnet|dermsight)\b/i,
-  /\b(?:buka|lihat|kunjungi|tampilkan|pergi ke)\b.*\b(?:emqnet|dermsight)\b/i,
-];
+const PROJECT_DETAIL_COMMAND_PATTERN =
+  /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan|pergi ke)\b/i;
+
+function normalizeProjectName(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function getRequestedProject(userText: string) {
+  const normalizedText = normalizeProjectName(userText);
+
+  return PROJECTS.find((project) => {
+    const names = [project.id, project.slug, project.title, ...(project.aliases ?? [])]
+      .map(normalizeProjectName);
+
+    return names.some((name) => normalizedText.includes(name));
+  });
+}
 
 const PAGE_NAVIGATION_PATTERNS = [
   /\bopen\b/i,
@@ -76,10 +89,8 @@ export function getNavigationToolChoice(
    * daripada generic page navigation.
    */
   const isProjectDetailCommand =
-    PROJECT_DETAIL_COMMAND_PATTERNS.some(
-      (pattern) =>
-        pattern.test(userText)
-    );
+    PROJECT_DETAIL_COMMAND_PATTERN.test(userText) &&
+    getRequestedProject(userText) !== undefined;
 
   if (isProjectDetailCommand) {
     return {
@@ -172,31 +183,13 @@ export function getDeterministicNavigationAction(
   /*
    * Specific project detail.
    */
-  if (
-    /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan)\b.*\bemqnet\b/i.test(
-      text
-    )
-  ) {
-    return {
-      kind: "project",
-      projectId:
-        PROJECT_IDS.emqnet,
-      message:
-        "Opening EMQNET project…",
-    };
-  }
+  const requestedProject = getRequestedProject(text);
 
-  if (
-    /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan)\b.*\bdermsight\b/i.test(
-      text
-    )
-  ) {
+  if (PROJECT_DETAIL_COMMAND_PATTERN.test(text) && requestedProject) {
     return {
       kind: "project",
-      projectId:
-        PROJECT_IDS.dermsight,
-      message:
-        "Opening DermSight project…",
+      projectId: requestedProject.id,
+      message: `Opening ${requestedProject.title} project…`,
     };
   }
 
