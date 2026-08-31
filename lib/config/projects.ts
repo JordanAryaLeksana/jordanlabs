@@ -7,6 +7,13 @@ export interface ProjectIllustration {
   caption?: string;
 }
 
+export interface ProjectResource {
+  title: string;
+  href: string;
+  type: "paper" | "publication" | "report" | "poster" | "dataset" | "documentation" | "other";
+  description?: string;
+}
+
 export interface Project {
   id: ProjectId;
   slug: ProjectId;
@@ -28,6 +35,7 @@ export interface Project {
   evaluation: string;
   chapterLabels?: Partial<Record<Exclude<ProjectSectionId, "projects-featured" | "projects-all" | "overview">, string>>;
   illustrations?: Partial<Record<ProjectSectionId, readonly ProjectIllustration[]>>;
+  resources?: Partial<Record<ProjectSectionId, readonly ProjectResource[]>>;
 }
 
 export const PROJECTS: readonly Project[] = [

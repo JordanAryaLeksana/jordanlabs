@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Badge } from "@/components/interfaces/ui/Badge";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
-import type { Project, ProjectIllustration } from "@/lib/config/projects";
+import type { Project, ProjectIllustration, ProjectResource } from "@/lib/config/projects";
 import { PROJECT_SECTION_IDS } from "@/lib/tools/types";
 
 function IllustrationGrid({ illustrations }: { illustrations?: readonly ProjectIllustration[] }) {
@@ -17,6 +17,40 @@ function IllustrationGrid({ illustrations }: { illustrations?: readonly ProjectI
           {illustration.caption ? <figcaption className="px-4 py-3 font-mono text-[11px] leading-5 opacity-60">{illustration.caption}</figcaption> : null}
         </figure>
       ))}
+    </div>
+  );
+}
+
+function ResourceList({ resources }: { resources?: readonly ProjectResource[] }) {
+  if (!resources?.length) return null;
+
+  return (
+    <div className="mt-9 border-t border-current/12 pt-5">
+      <Typography as="h3" variant="text" size="xs" className="font-mono tracking-[0.18em] opacity-50">
+        SUPPORTING EVIDENCE
+      </Typography>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+        {resources.map((resource) => (
+          <li key={`${resource.type}-${resource.href}`}>
+            <a
+              href={resource.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex min-h-24 h-full flex-col rounded-2xl border border-current/14 p-4 transition-colors hover:border-frame-green focus-visible:outline-2 focus-visible:outline-frame-green"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-pine">
+                {resource.type}
+              </span>
+              <span className="mt-2 font-display text-base font-bold leading-5">
+                {resource.title} <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none">↗</span>
+              </span>
+              {resource.description ? (
+                <span className="mt-2 text-sm leading-5 opacity-62">{resource.description}</span>
+              ) : null}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -56,6 +90,7 @@ export function ProjectDetailContent({ project }: { project: Project }) {
             ))}
           </ol>
           <IllustrationGrid illustrations={project.illustrations?.overview} />
+          <ResourceList resources={project.resources?.overview} />
         </div>
       </section>
 
@@ -75,6 +110,7 @@ export function ProjectDetailContent({ project }: { project: Project }) {
                 {chapter.content}
               </Typography>
               <IllustrationGrid illustrations={project.illustrations?.[chapter.id]} />
+              <ResourceList resources={project.resources?.[chapter.id]} />
             </div>
           </div>
         </section>
