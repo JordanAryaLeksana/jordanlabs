@@ -8,11 +8,11 @@ function IllustrationGrid({ illustrations }: { illustrations?: readonly ProjectI
   if (!illustrations?.length) return null;
 
   return (
-    <div className="mt-9 grid gap-4 sm:grid-cols-2">
-      {illustrations.slice(0, 2).map((illustration) => (
-        <figure key={illustration.src} className="overflow-hidden rounded-2xl border border-current/12 bg-ink-panel">
+    <div className="mt-9 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
+      {illustrations.map((illustration, index) => (
+        <figure key={`${illustration.src}-${index}`} className="overflow-hidden rounded-2xl border border-current/12 bg-ink-panel">
           <div className="relative aspect-[16/10]">
-            <Image src={illustration.src} alt={illustration.alt} fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover" />
+            <Image src={illustration.src} alt={illustration.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
           </div>
           {illustration.caption ? <figcaption className="px-4 py-3 font-mono text-[11px] leading-5 opacity-60">{illustration.caption}</figcaption> : null}
         </figure>

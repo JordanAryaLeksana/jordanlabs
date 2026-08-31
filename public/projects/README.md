@@ -11,8 +11,10 @@ public/projects/
   chatty/
 ```
 
-The overview and each technical chapter support up to two optional images through the
-`illustrations` field in `lib/config/projects.ts`. Use paths such as
+The overview and each technical chapter support any number of optional images through
+the `illustrations` field in `lib/config/projects.ts`. The gallery adapts its column
+count to the available space, so adding images does not require component changes.
+Use paths such as
 `/projects/teta/telemetry-dashboard.webp` and provide a useful `alt` plus an
 optional short `caption`. Empty illustration arrays render no placeholder.
 
