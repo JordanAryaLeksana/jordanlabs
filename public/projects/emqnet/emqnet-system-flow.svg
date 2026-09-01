@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">EMQNET proposed system flow</title>
+  <desc id="desc">BMKG multi-station geomagnetic inputs are preprocessed into scalograms, encoded by a shared ResNet-18, fused through inter-station attention, then passed to precursor detection and magnitude classification heads.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#172322"/><stop offset="1" stop-color="#283f3b"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#e6b94c"/></marker>
+    <style>.eyebrow{font:700 18px monospace;letter-spacing:3px;fill:#e6b94c}.head{font:700 31px sans-serif;fill:#fff8e8}.body{font:18px monospace;fill:#dce7df}.box{fill:#20312f;stroke:#77998b;stroke-width:2}.accent{fill:#d96f55}.line{fill:none;stroke:#e6b94c;stroke-width:4;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1440" height="900" rx="36" fill="url(#bg)"/>
+  <text x="74" y="78" class="eyebrow">EMQNET / PROPOSED THESIS PIPELINE</text>
+  <text x="74" y="126" class="head">From multi-station geomagnetic signals to two verified tasks</text>
+  <g transform="translate(74 204)">
+    <rect class="box" width="250" height="214" rx="24"/><rect class="accent" width="12" height="214" rx="6"/>
+    <text x="34" y="48" class="eyebrow">01 / INPUT</text><text x="34" y="92" class="head">BMKG stations</text>
+    <text x="34" y="132" class="body">H · D · Z, 1 Hz</text><text x="34" y="165" class="body">2018–2025</text><text x="34" y="198" class="body">Quiet conditions</text>
+    <path class="line" d="M250 107h90"/>
+  </g>
+  <g transform="translate(414 204)">
+    <rect class="box" width="270" height="214" rx="24"/><text x="30" y="48" class="eyebrow">02 / SIGNAL</text><text x="30" y="92" class="head">Preprocessing</text>
+    <text x="30" y="132" class="body">Pc3 band filter</text><text x="30" y="165" class="body">CWT transform</text><text x="30" y="198" class="body">Scalogram windows</text>
+    <path class="line" d="M270 107h90"/>
+  </g>
+  <g transform="translate(774 204)">
+    <rect class="box" width="250" height="214" rx="24"/><text x="30" y="48" class="eyebrow">03 / ENCODE</text><text x="30" y="92" class="head">ResNet-18</text>
+    <text x="30" y="132" class="body">Shared backbone</text><text x="30" y="165" class="body">Residual features</text><text x="30" y="198" class="body">Per station</text>
+    <path class="line" d="M250 107h90"/>
+  </g>
+  <g transform="translate(1114 204)">
+    <rect class="box" width="252" height="214" rx="24"/><text x="30" y="48" class="eyebrow">04 / FUSE</text><text x="30" y="92" class="head">Station attention</text>
+    <text x="30" y="132" class="body">Cross-station</text><text x="30" y="165" class="body">evidence weighting</text><text x="30" y="198" class="body">Shared embedding</text>
+  </g>
+  <path class="line" d="M1240 418v96H960v62"/><path class="line" d="M1240 514h0v62"/>
+  <g transform="translate(760 576)"><rect class="box" width="400" height="206" rx="24"/><text x="30" y="48" class="eyebrow">05A / TASK HEAD</text><text x="30" y="94" class="head">Precursor detection</text><text x="30" y="137" class="body">Binary classification</text><text x="30" y="174" class="body">Test accuracy: 88.38%</text></g>
+  <g transform="translate(1176 576)"><rect class="box" width="190" height="206" rx="24"/><text x="24" y="48" class="eyebrow">05B</text><text x="24" y="90" class="head">Magnitude</text><text x="24" y="128" class="body">3 classes</text><text x="24" y="165" class="body">52.67%</text></g>
+  <text x="74" y="846" class="body">Interpretability layer: Grad-CAM checks stable activation patterns across stations.</text>
+</svg>

@@ -42,14 +42,20 @@ export const PROJECTS: readonly Project[] = [
   {
     id: PROJECT_IDS.emqnet, slug: PROJECT_IDS.emqnet, title: "EMQNET", category: "Deep Learning", tags: ["AI", "Research", "Earthquake precursors"], featured: true, status: "Research project", role: "Deep learning pipeline developer", thumbnail: "/illustrations/samsan-tech.png", repositoryUrl: `${GITHUB_URL}/EMQNET`,
     shortDescription: "A multi-task deep learning pipeline using electromagnetic data to explore earthquake precursor signals.",
-    overview: { problem: "Earthquake precursor analysis involves signals with multiple prediction targets and difficult-to-interpret patterns.", approach: "EMQNET uses a CNN pipeline with three classification heads for precursor detection, earthquake magnitude, and azimuth direction.", contribution: "Jordan designed and developed the multi-task pipeline using electromagnetic data from BMKG." },
-    architecture: "A shared convolutional representation feeds three task-specific classification heads. The project is implemented as a Python and PyTorch deep learning workflow.",
-    dataset: "The project uses electromagnetic data from BMKG. Further dataset size, split, and preprocessing details are not publicly documented in the available sources.",
-    training: "The documented workflow is a PyTorch neural-network training pipeline. Hyperparameters and experiment counts are not publicly documented yet.",
-    evaluation: "Evaluation details are not publicly documented yet. The three prediction targets define the areas that require separate task-level evaluation.",
+    overview: { problem: "Earthquake precursor analysis must distinguish complex ULF geomagnetic patterns while estimating useful event information across geographically distributed stations.", approach: "EMQNET transforms Pc3-band geomagnetic signals into scalograms and uses a multi-station, multi-task ResNet-18 pipeline for precursor detection and three-class magnitude estimation.", contribution: "Jordan designed and developed the thesis pipeline using BMKG geomagnetic observations and evaluated its predictions with task-level metrics and Grad-CAM interpretation." },
+    architecture: "H, D, and Z geomagnetic components are filtered to the Pc3 band and transformed with Continuous Wavelet Transform. A shared ResNet-18 representation processes multi-station scalograms, an inter-station attention stage combines their evidence, and two task heads predict precursor presence and magnitude class.",
+    dataset: "The thesis uses 1 Hz geomagnetic observations from BMKG stations across Indonesia from 2018–2025, paired with an earthquake catalogue. Data from 2018–2024 is used for training and validation, while 2025 observations support testing.",
+    training: "The PyTorch workflow selects stations near each epicentre under quiet geomagnetic conditions, extracts pre-seismic windows, applies Pc3 filtering and CWT, then optimizes the shared residual backbone and both task heads in a multi-task setting.",
+    evaluation: "The documented test result reports 88.38% precursor-detection accuracy with balanced precision and recall. Three-class magnitude estimation reaches 52.67% accuracy and remains limited by class imbalance and the weak direct relationship between anomaly amplitude and magnitude.",
+    illustrations: { architecture: [{ src: "/projects/emqnet/emqnet-system-flow.svg", alt: "EMQNET system flow from BMKG geomagnetic signals through preprocessing, multi-station ResNet-18 and attention to precursor and magnitude outputs", caption: "Proposed thesis pipeline, simplified from acquisition to the two multi-task outputs." }] },
+    resources: { overview: [
+      { type: "paper", title: "Undergraduate thesis paper", href: "/projects/emqnet/thesis-paper-jordan-arya-leksana.pdf", description: "Concise paper covering the method, evaluation, and Grad-CAM interpretation." },
+      { type: "documentation", title: "Thesis defence deck", href: "/projects/emqnet/thesis-defence-jordan-arya-leksana.pdf", description: "Presentation deck with the research flow, experiments, and findings." },
+    ] },
   },
   {
     id: PROJECT_IDS.dermsight, slug: PROJECT_IDS.dermsight, title: "DermSight", category: "Computer Vision", tags: ["AI", "CNN", "Screening support"], featured: true, status: "Prototype", role: "Computer vision developer", thumbnail: "/illustrations/sandbox-swing.png", repositoryUrl: `${GITHUB_URL}/DermSight`,
+    demoUrl: "https://dermsight.jordanlabs.my.id/",
     shortDescription: "An AI-assisted skin disease classification system designed to support early screening from dermatology images.",
     overview: { problem: "Early skin screening requires image classification that produces clear outputs while acknowledging the limits of an AI-assisted tool.", approach: "DermSight applies a CNN image-classification workflow with preprocessing and augmentation to improve robustness and generalization.", contribution: "Jordan developed and trained the computer-vision system and framed it as diagnostic support rather than a replacement for clinical judgment." },
     architecture: "The documented system is a Python computer-vision workflow built around CNN classification, image preprocessing, augmentation, and OpenCV utilities.",
@@ -76,6 +82,7 @@ export const PROJECTS: readonly Project[] = [
     training: "Device screens, gauges, parameter cards, connection states, and bird-detection state are composed as reusable mobile UI. Android builds are prepared through Expo Application Services.",
     evaluation: "The repository documents the integration and Android build workflow. Field-test results, sensor calibration, and a public app distribution link are not documented yet.",
     chapterLabels: { dataset: "Telemetry", training: "Mobile implementation", evaluation: "Field readiness" },
+    resources: { overview: [{ type: "publication", title: "Smart farming community-service paper", href: "/projects/teta/smart-farming-abmas-paper.pdf", description: "Integrated IoT soil monitoring and YOLOv5n bird-control system for Gapoktan Manunggal Rejeki." }] },
   },
   {
     id: PROJECT_IDS.jordanLabs, slug: PROJECT_IDS.jordanLabs, title: "Jordan Labs", category: "AI Product", tags: ["Next.js", "AI SDK", "RAG", "Tool calling"], featured: true, status: "Active product", role: "Product and full-stack AI engineer", thumbnail: "/illustrations/samsan-tech.png", repositoryUrl: `${GITHUB_URL}/jordanlabs`,

@@ -10,6 +10,7 @@ import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
 import type { Project } from "@/lib/config/projects";
 import { PROJECT_SECTION_IDS } from "@/lib/tools/types";
+import { ProjectDemoLink } from "@/components/pages/projects/ProjectDemoLink";
 
 interface FeaturedProjectsProps {
   projects: readonly Project[];
@@ -83,13 +84,13 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
                 <Badge key={tag} color="pine">{tag}</Badge>
               ))}
             </div>
-            <Link
-              href={`/projects/${activeProject.slug}`}
-              className="group mt-auto flex min-h-12 items-center justify-between border-t border-text-on-dark/12 pt-6 font-mono text-xs font-bold focus-visible:outline-2 focus-visible:outline-frame-green"
-            >
-              OPEN TECHNICAL CASE STUDY
-              <ArrowUpRightIcon className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none" size={19} />
-            </Link>
+            <div className="mt-auto flex flex-wrap items-center gap-3 border-t border-text-on-dark/12 pt-6">
+              <Link href={`/projects/${activeProject.slug}`} className="group flex min-h-11 flex-1 items-center justify-between font-mono text-xs font-bold focus-visible:outline-2 focus-visible:outline-frame-green">
+                OPEN CASE STUDY
+                <ArrowUpRightIcon className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none" size={19} />
+              </Link>
+              <ProjectDemoLink demoUrl={activeProject.demoUrl} compact />
+            </div>
           </div>
         </motion.article>
       </AnimatePresence>

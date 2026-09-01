@@ -9,6 +9,7 @@ import { ProjectDetailContent } from "@/components/pages/projects/ProjectDetailC
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { getProject } from "@/lib/projects/getProject";
 import { getProjects } from "@/lib/projects/getProjects";
+import { ProjectDemoLink } from "@/components/pages/projects/ProjectDemoLink";
 
 export function generateStaticParams() { return getProjects().map((project) => ({ slug: project.slug })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const project = getProject((await params).slug); return project ? { title: `${project.title} — Projects`, description: project.shortDescription, alternates: { canonical: `/projects/${project.slug}` } } : {}; }
@@ -26,7 +27,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       </CinematicPageChapter>
       <ProjectChapterNavigation labels={project.chapterLabels} />
       <ProjectDetailContent project={project} />
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap gap-3 px-6 py-12"><Link href="/projects" className="rounded-xl border border-current px-4 py-2 font-mono text-sm hover:border-frame-green">Explore other projects</Link>{project.repositoryUrl ? <a href={project.repositoryUrl} target="_blank" rel="noreferrer" className="rounded-xl bg-pine px-4 py-2 font-mono text-sm text-text-on-dark">Open repository ↗</a> : null}{project.demoUrl ? <a href={project.demoUrl} target="_blank" rel="noreferrer" className="rounded-xl bg-coral px-4 py-2 font-mono text-sm text-text-on-dark">View live demo ↗</a> : null}</div>
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-6 py-12"><Link href="/projects" className="inline-flex min-h-12 items-center rounded-xl border border-current px-4 py-2 font-mono text-sm hover:border-frame-green">Explore other projects</Link>{project.repositoryUrl ? <a href={project.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center rounded-xl bg-pine px-4 py-2 font-mono text-sm text-text-on-dark">Open repository ↗</a> : null}<ProjectDemoLink demoUrl={project.demoUrl} /></div>
       <Footer />
     </main>
   );
