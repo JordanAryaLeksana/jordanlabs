@@ -26,7 +26,7 @@ const SCROLL_COMMAND_PATTERNS = [
 ];
 
 const PROJECT_DETAIL_COMMAND_PATTERN =
-  /\b(?:open|view|visit|show|go to|buka|lihat|kunjungi|tampilkan|pergi ke)\b/i;
+  /\b(?:open|view|visit|show|go to|move to|move me to|take me to|buka|lihat|kunjungi|tampilkan|pergi ke|pindah ke|arahkan(?: saya)? ke)\b/i;
 
 function normalizeProjectName(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -46,11 +46,17 @@ function getRequestedProject(userText: string) {
 const PAGE_NAVIGATION_PATTERNS = [
   /\bopen\b/i,
   /\bgo to\b/i,
+  /\bmove(?: me)? to\b/i,
+  /\btake me to\b/i,
+  /\bshow me\b/i,
   /\bback to\b/i,
   /\breturn to\b/i,
   /\bnavigate to\b/i,
   /\bbuka halaman\b/i,
   /\bpergi ke\b/i,
+  /\bpindah ke\b/i,
+  /\barahkan(?: saya)? ke\b/i,
+  /\btampilkan\b/i,
   /\bkembali ke\b/i,
   /\bbalik ke\b/i,
 ];
@@ -197,7 +203,7 @@ export function getDeterministicNavigationAction(
    * Portfolio pages.
    */
   if (
-    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bprojects?\b/i.test(
+    /\b(?:go to|open|visit|navigate to|move(?: me)? to|take me to|show me|pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\bprojects?\b/i.test(
       text
     )
   ) {
@@ -211,10 +217,10 @@ export function getDeterministicNavigationAction(
   }
 
   if (
-    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\babout\b/i.test(
+    /\b(?:go to|open|visit|navigate to|move(?: me)? to|take me to|show me|pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\babout\b/i.test(
       text
     ) ||
-    /\b(?:pergi ke|buka)\b.*\b(?:tentang|profil)\b/i.test(
+    /\b(?:pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\b(?:tentang|profil)\b/i.test(
       text
     )
   ) {
@@ -228,10 +234,10 @@ export function getDeterministicNavigationAction(
   }
 
   if (
-    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bexperience\b/i.test(
+    /\b(?:go to|open|visit|navigate to|move(?: me)? to|take me to|show me|pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\bexperience\b/i.test(
       text
     ) ||
-    /\b(?:pergi ke|buka)\b.*\bpengalaman\b/i.test(
+    /\b(?:pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\bpengalaman\b/i.test(
       text
     )
   ) {
@@ -245,10 +251,10 @@ export function getDeterministicNavigationAction(
   }
 
   if (
-    /\b(?:go to|open|visit|navigate to|pergi ke|buka)\b.*\bcontact\b/i.test(
+    /\b(?:go to|open|visit|navigate to|move(?: me)? to|take me to|show me|pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\bcontact\b/i.test(
       text
     ) ||
-    /\b(?:pergi ke|buka)\b.*\bkontak\b/i.test(
+    /\b(?:pergi ke|pindah ke|arahkan(?: saya)? ke|buka|tampilkan)\b.*\bkontak\b/i.test(
       text
     )
   ) {
@@ -262,7 +268,7 @@ export function getDeterministicNavigationAction(
   }
 
   if (
-    /\b(?:go|back|return)\b.*\bhome\b/i.test(
+    /\b(?:go|back|return|move|take me)\b.*\bhome\b/i.test(
       text
     ) ||
     /\b(?:kembali|balik)\b.*\b(?:home|beranda)\b/i.test(
