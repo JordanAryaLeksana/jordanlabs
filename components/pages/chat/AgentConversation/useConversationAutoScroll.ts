@@ -8,17 +8,34 @@ type ChatStatus = ReturnType<typeof useChat>["status"];
 
 export function useConversationAutoScroll(
   messageCount: number,
-  status: ChatStatus
+  status: ChatStatus,
+  contained = false
 ) {
   const endReference = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    endReference.current?.scrollIntoView({
+    const endElement = endReference.current;
+
+    if (!endElement) return;
+
+    if (!contained) {
+      endElement.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "end",
+      });
+      return;
+    }
+
+    const scrollContainer = endElement.parentElement?.parentElement;
+
+    if (!scrollContainer) return;
+
+    scrollContainer.scrollTo({
+      top: scrollContainer.scrollHeight,
       behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "end",
     });
-  }, [messageCount, status, prefersReducedMotion]);
+  }, [contained, messageCount, status, prefersReducedMotion]);
 
   return endReference;
 }

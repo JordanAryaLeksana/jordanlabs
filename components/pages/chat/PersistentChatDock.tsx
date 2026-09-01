@@ -84,9 +84,7 @@ export function PersistentChatDock() {
 
     const previousOverflow = document.body.style.overflow;
 
-    if (window.matchMedia("(max-width: 639px)").matches) {
-      document.body.style.overflow = "hidden";
-    }
+    document.body.style.overflow = "hidden";
 
     panelRef.current?.querySelector("input")?.focus();
 

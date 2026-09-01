@@ -6,6 +6,7 @@ interface AgentWorkspaceProps {
   composer: ReactNode;
   conversationStarted?: boolean;
   className?: string;
+  contained?: boolean;
 }
 
 export function AgentWorkspace({
@@ -13,18 +14,20 @@ export function AgentWorkspace({
   composer,
   conversationStarted = false,
   className,
+  contained = false,
 }: AgentWorkspaceProps) {
   return (
     <section
       aria-label="Jordan AI portfolio assistant"
       data-conversation-active={conversationStarted}
       className={cn(
-        "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+        "flex min-h-0 min-w-0 flex-1 flex-col",
+        contained ? "overflow-hidden" : "overflow-visible",
         "text-current",
         className
       )}
     >
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className={cn("flex min-h-0 min-w-0 flex-1 flex-col", contained ? "overflow-hidden" : "overflow-visible")}>
         {conversation}
       </div>
 

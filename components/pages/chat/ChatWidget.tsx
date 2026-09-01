@@ -23,6 +23,7 @@ export function ChatWidget({
   return (
     <AgentWorkspace
       className={className}
+      contained={compact}
       conversationStarted={conversationStarted}
       conversation={<AgentConversation compact={compact} />}
       composer={<AgentComposer compact={compact} />}

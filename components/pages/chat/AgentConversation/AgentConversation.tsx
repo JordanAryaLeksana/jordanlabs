@@ -29,15 +29,16 @@ export function AgentConversation({
   const conversationStarted = hasConversationStarted(messages);
   const conversationEndReference = useConversationAutoScroll(
     messages.length,
-    status
+    status,
+    compact
   );
 
   return (
     <section
       aria-label="Conversation with Jordan AI"
       className={cn(
-        "flex min-h-0 flex-col",
-        compact ? "" : ""
+        "flex min-h-0 flex-1 flex-col",
+        compact ? "overflow-hidden" : "overflow-visible"
       )}
     >
       {compact ? <header className="flex shrink-0 items-center justify-between gap-4 border-b border-current/10 px-4 py-3">
@@ -56,8 +57,10 @@ export function AgentConversation({
 
       <div
         className={cn(
-          "min-h-0 flex-1 overflow-y-auto",
-          compact ? "px-3 py-3" : "px-5 py-3 sm:px-8"
+          "min-h-0 flex-1",
+          compact
+            ? "agent-conversation-scroll overscroll-contain overflow-y-auto px-3 py-3"
+            : "overflow-visible px-5 py-3 sm:px-8"
         )}
       >
         <div
