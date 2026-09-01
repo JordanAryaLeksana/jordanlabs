@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   title: "Jordan Arya Leksana — AI & Software Engineer",
   description:
     "Portfolio of Jordan Arya Leksana: AI systems that ship — pump anomaly detection at Pertamina, multi-task deep learning for earthquake precursors (EMQNET), and AI-based skin screening (DermSight). Ask the built-in AI assistant anything.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
