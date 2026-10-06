@@ -106,6 +106,9 @@ let cachedKnowledgeEmbeddings:
   readonly number[][] | null =
   null;
 
+let cachedEmbeddingModelId:
+  string | null = null;
+
 export async function retrievePortfolioEvidence({
   query,
   limit = 5,
@@ -280,8 +283,13 @@ export async function retrievePortfolioEvidence({
 
   console.time("RAG knowledge embed");
   try {
+    const embeddingModel =
+      getEmbeddingsModel();
+
     if (
       !cachedKnowledgeEmbeddings ||
+      cachedEmbeddingModelId !==
+      embeddingModel.modelId ||
       cachedKnowledgeEmbeddings.length !==
       knowledge.length
     ) {
@@ -289,7 +297,7 @@ export async function retrievePortfolioEvidence({
         embeddings,
       } = await embedMany({
         model:
-          getEmbeddingsModel(),
+          embeddingModel,
 
         values:
           knowledge.map(
@@ -304,7 +312,12 @@ export async function retrievePortfolioEvidence({
 
       cachedKnowledgeEmbeddings =
         embeddings;
+
+      cachedEmbeddingModelId =
+        embeddingModel.modelId;
     }
+    const knowledgeEmbeddings =
+      cachedKnowledgeEmbeddings;
     console.timeEnd("RAG knowledge embed");
 
     console.time("RAG query embed");
@@ -313,12 +326,26 @@ export async function retrievePortfolioEvidence({
       queryEmbedding,
     } = await embed({
       model:
-        getEmbeddingsModel(),
+        embeddingModel,
 
       value:
         `task: question answering | query: ${query}`,
     });
     console.timeEnd("RAG query embed");
+    if (
+      knowledgeEmbeddings.length !== knowledge.length ||
+      queryEmbedding.length === 0 ||
+      knowledgeEmbeddings.some(
+        (embedding) =>
+          embedding.length !== queryEmbedding.length
+      )
+    ) {
+      cachedKnowledgeEmbeddings = null;
+      cachedEmbeddingModelId = null;
+      throw new Error(
+        "SumoPod document/query embedding dimensions do not match."
+      );
+    }
     const semanticCandidates: {
       evidence:
       TrustedEvidence;
@@ -349,7 +376,7 @@ export async function retrievePortfolioEvidence({
         knowledge[index];
 
       const knowledgeEmbedding =
-        cachedKnowledgeEmbeddings[
+        knowledgeEmbeddings[
         index
         ];
 
@@ -552,7 +579,7 @@ export async function retrievePortfolioEvidence({
      * Semantic retrieval tidak boleh
      * menjatuhkan seluruh chat.
      *
-     * Jika Ollama embedding model gagal,
+     * Jika SumoPod embedding model gagal,
      * lexical retrieval tetap menjadi
      * deterministic fallback.
      */

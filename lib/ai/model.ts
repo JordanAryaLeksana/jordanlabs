@@ -1,46 +1,92 @@
+// import { createOllama } from "ai-sdk-ollama";
+
 import "server-only";
 
-import { createOllama } from "ai-sdk-ollama";
+import {
+  createOpenAICompatible,
+} from "@ai-sdk/openai-compatible";
 
-const ollama = createOllama({
-  baseURL:
-    process.env.OLLAMA_BASE_URL ??
-    "http://127.0.0.1:11434",
-});
+const sumopod =
+  createOpenAICompatible({
+    name: "sumopod",
 
-function isThinkingEnabled() {
-  return (
-    process.env.OLLAMA_THINKING ??
-    "true"
-  ).toLowerCase() === "true";
-}
+    apiKey:
+      process.env.SUMOPOD_API_KEY,
+
+    baseURL:
+      process.env.SUMOPOD_BASE_URL ??
+      "https://ai.sumopod.com/v1",
+
+    includeUsage: true,
+  });
 
 export function getChatModel() {
   const modelName =
-    process.env.OLLAMA_MODEL;
+    process.env.SUMOPOD_CHAT_MODEL;
 
   if (!modelName) {
     throw new Error(
-      "OLLAMA_MODEL belum dikonfigurasi."
+      "SUMOPOD_CHAT_MODEL belum dikonfigurasi."
     );
   }
 
-  return ollama(modelName, {
-    think: isThinkingEnabled(),
-  });
+  return sumopod(modelName);
 }
 
 export function getEmbeddingsModel() {
   const modelName =
-    process.env.OLLAMA_EMBEDDING_MODEL;
+    process.env.SUMOPOD_EMBEDDING_MODEL;
 
   if (!modelName) {
     throw new Error(
-      "OLLAMA_EMBEDDING_MODEL belum dikonfigurasi."
+      "SUMOPOD_EMBEDDING_MODEL belum dikonfigurasi."
     );
   }
 
-  return ollama.embeddingModel(
+  return sumopod.embeddingModel(
     modelName
   );
 }
+
+// const ollama = createOllama({
+//   baseURL:
+//     process.env.OLLAMA_BASE_URL ??
+//     "http://127.0.0.1:11434",
+// });
+
+// function isThinkingEnabled() {
+//   return (
+//     process.env.OLLAMA_THINKING ??
+//     "true"
+//   ).toLowerCase() === "true";
+// }
+
+// export function getChatModel() {
+//   const modelName =
+//     process.env.OLLAMA_MODEL;
+
+//   if (!modelName) {
+//     throw new Error(
+//       "OLLAMA_MODEL belum dikonfigurasi."
+//     );
+//   }
+
+//   return ollama(modelName, {
+//     think: isThinkingEnabled(),
+//   });
+// }
+
+// export function getEmbeddingsModel() {
+//   const modelName =
+//     process.env.OLLAMA_EMBEDDING_MODEL;
+
+//   if (!modelName) {
+//     throw new Error(
+//       "OLLAMA_EMBEDDING_MODEL belum dikonfigurasi."
+//     );
+//   }
+
+//   return ollama.embeddingModel(
+//     modelName
+//   );
+// }

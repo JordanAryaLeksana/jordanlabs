@@ -10,7 +10,10 @@ import { getLatestUserText } from "@/lib/ai/getLatestUserText";
 import { getChatModel } from "@/lib/ai/model";
 import { buildSystemPrompt } from "@/lib/rag/prompt";
 import { createPortfolioTools } from "@/lib/tools";
-import { getNavigationToolChoice, getDeterministicNavigationAction } from "@/lib/tools/navigation/getNavigationToolChoice";
+import {
+  getNavigationToolChoice,
+  getDeterministicNavigationAction,
+} from "@/lib/tools/navigation/getNavigationToolChoice";
 import { getResourceToolChoice } from "@/lib/tools/resources/getResourceToolChoice";
 import { createShowDownloadCardResponse } from "@/lib/tools/resources/createShowDownloadCardResponse";
 import { createExternalResourceResponse } from "@/lib/tools/resources/createExternalResourceResponse";
@@ -19,537 +22,419 @@ import { getOpenLinkedinOutput } from "@/lib/tools/resources/getOpenLinkedinOutp
 import { createContactCardResponse } from "@/lib/tools/resources/createContactCardResponse";
 import { getContentToolChoice } from "@/lib/tools/content/getContentToolChoice";
 import { createProjectFilterResponse } from "@/lib/tools/content/projects/createProjectFilterResponse";
-import {
-  createSkillFilterResponse,
-} from "@/lib/tools/content/skills/createSkillFilterResponse";
+import { createSkillFilterResponse } from "@/lib/tools/content/skills/createSkillFilterResponse";
 import { getEvaluationRole } from "@/lib/ai/evaluation/getEvaluationIntent";
-import {
-  getUnknownProjectEntity,
-} from "@/lib/ai/entity-guard/getUnknownProjectEntity";
+import { getUnknownProjectEntity } from "@/lib/ai/entity-guard/getUnknownProjectEntity";
 
-import {
-  createUnknownProjectResponse,
-} from "@/lib/ai/entity-guard/createUnknownProjectResponse";
-import {
-  createEvaluationResponse,
-} from "@/lib/ai/evaluation/createEvaluationResponse";
+import { createUnknownProjectResponse } from "@/lib/ai/entity-guard/createUnknownProjectResponse";
+import { createEvaluationResponse } from "@/lib/ai/evaluation/createEvaluationResponse";
 import { createSkillKnowledgeResponse } from "@/lib/ai/entity-guard/createSkillKnowledgeResponse";
 import { getSkillKnowledge } from "@/lib/ai/entity-guard/getSkillKnowledge";
-import {
-  getEmploymentKnowledge,
-} from "@/lib/ai/entity-guard/getEmploymentKnowledge";
+import { getEmploymentKnowledge } from "@/lib/ai/entity-guard/getEmploymentKnowledge";
 
-import {
-  createEmploymentKnowledgeResponse,
-} from "@/lib/ai/entity-guard/createEmploymentKnowledgeResponse";
+import { createEmploymentKnowledgeResponse } from "@/lib/ai/entity-guard/createEmploymentKnowledgeResponse";
 
-import {
-  getUnknownCertificationEntity,
-} from "@/lib/ai/entity-guard/getUnknownCertificationEntity";
+import { getUnknownCertificationEntity } from "@/lib/ai/entity-guard/getUnknownCertificationEntity";
 
-import {
-  createUnknownCertificationResponse,
-} from "@/lib/ai/entity-guard/createUnknownCertificationResponse";
-import {
-  isAiExperienceDurationQuery,
-} from "@/lib/ai/entity-guard/getAiExperienceDurationQuery";
+import { createUnknownCertificationResponse } from "@/lib/ai/entity-guard/createUnknownCertificationResponse";
+import { isAiExperienceDurationQuery } from "@/lib/ai/entity-guard/getAiExperienceDurationQuery";
 
-import {
-  createAiExperienceDurationResponse,
-} from "@/lib/ai/entity-guard/createAiExperienceDurationResponse";
+import { createAiExperienceDurationResponse } from "@/lib/ai/entity-guard/createAiExperienceDurationResponse";
 
-import {
-  getKnownProjectEntity,
-} from "@/lib/ai/entity-guard/getKnownProjectEntity";
+import { getKnownProjectEntity } from "@/lib/ai/entity-guard/getKnownProjectEntity";
 
-import {
-  createKnownProjectResponse,
-} from "@/lib/ai/entity-guard/createKnownProjectResponse";
+import { createKnownProjectResponse } from "@/lib/ai/entity-guard/createKnownProjectResponse";
 
-import {
-  getContextualProjectEntity,
-} from "@/lib/ai/entity-guard/getContextualProjectEntity";
+import { getContextualProjectEntity } from "@/lib/ai/entity-guard/getContextualProjectEntity";
 
-import {
-  retrievePortfolioEvidence,
-} from "@/lib/rag/retrieve";
+import { retrievePortfolioEvidence } from "@/lib/rag/retrieve";
 
 import { isRecuiterBriefRequest } from "@/lib/ai/recuiter/isRecuiterBriefRequest";
 import { createRecruiterBriefResponse } from "@/lib/ai/recuiter/createRecuiterBriefResponse";
+import {
+  checkAiRateLimit,
+  checkDailyTokenBudget,
+  addDailyTokenUsage,
+  getClientIp,
+} from "@/lib/ai/rateLimiter";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  let rateLimit;
+
+  try {
+    rateLimit = await checkAiRateLimit(request);
+  } catch (error) {
+    console.error("Rate limiter gagal:", error);
+
+    /*
+     * SumoPod menggunakan balance.
+     *
+     * Jika Redis bermasalah,
+     * lebih aman jangan panggil AI.
+     */
+    return Response.json(
+      {
+        error: "AI service sementara tidak tersedia.",
+      },
+      {
+        status: 503,
+      },
+    );
+  }
+
+  if (!rateLimit.allowed) {
+    const message =
+      rateLimit.reason === "day"
+        ? "Batas penggunaan AI harian telah tercapai. Coba lagi besok."
+        : "Terlalu banyak request. Coba lagi sebentar.";
+
+    return Response.json(
+      {
+        error: message,
+      },
+      {
+        status: 429,
+
+        headers: {
+          "Retry-After": String(rateLimit.retryAfter),
+
+          "X-RateLimit-Limit": String(rateLimit.limit),
+
+          "X-RateLimit-Remaining": String(rateLimit.remaining),
+
+          "X-RateLimit-Daily-Limit": String(rateLimit.dailyLimit),
+
+          "X-RateLimit-Daily-Remaining": String(rateLimit.dailyRemaining),
+        },
+      },
+    );
+  }
+
   const {
     messages,
   }: {
     messages: UIMessage[];
   } = await request.json();
 
-  const latestUserText =
-    getLatestUserText(messages);
+  const latestUserText = getLatestUserText(messages);
 
-  const recruiterBriefRequest =
-    isRecuiterBriefRequest(
-      latestUserText
-    );
+  const recruiterBriefRequest = isRecuiterBriefRequest(latestUserText);
 
   if (recruiterBriefRequest) {
     return createRecruiterBriefResponse({
       messages,
 
-      userText:
-        latestUserText,
+      userText: latestUserText,
     });
   }
 
-  const resourceToolChoice =
-    getResourceToolChoice(
-      latestUserText
-    );
+  const resourceToolChoice = getResourceToolChoice(latestUserText);
 
-  if (
-    resourceToolChoice?.toolName ===
-    "showDownloadCard"
-  ) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio deterministic resource:",
-        {
-          latestUserText,
-          resourceToolChoice,
-        }
-      );
+  if (resourceToolChoice?.toolName === "showDownloadCard") {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio deterministic resource:", {
+        latestUserText,
+        resourceToolChoice,
+      });
     }
 
-    return createShowDownloadCardResponse(
-      messages
-    );
+    return createShowDownloadCardResponse(messages);
   }
   if (resourceToolChoice?.toolName === "showContactCard") {
     return createContactCardResponse(messages);
   }
-  if (
-    resourceToolChoice?.toolName ===
-    "openGithub"
-  ) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio deterministic resource:",
-        {
-          latestUserText,
-          resourceToolChoice,
-        }
-      );
+  if (resourceToolChoice?.toolName === "openGithub") {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio deterministic resource:", {
+        latestUserText,
+        resourceToolChoice,
+      });
     }
 
     return createExternalResourceResponse({
       messages,
-      output:
-        getOpenGithubOutput(),
+      output: getOpenGithubOutput(),
     });
   }
-  if (
-    resourceToolChoice?.toolName ===
-    "openLinkedin"
-  ) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio deterministic resource:",
-        {
-          latestUserText,
-          resourceToolChoice,
-        }
-      );
+  if (resourceToolChoice?.toolName === "openLinkedin") {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio deterministic resource:", {
+        latestUserText,
+        resourceToolChoice,
+      });
     }
 
     return createExternalResourceResponse({
       messages,
-      output:
-        getOpenLinkedinOutput(),
+      output: getOpenLinkedinOutput(),
     });
   }
-  const contentToolChoice =
-    getContentToolChoice(
-      latestUserText
-    );
+  const contentToolChoice = getContentToolChoice(latestUserText);
 
-  if (
-    contentToolChoice?.toolName ===
-    "filterProjects"
-  ) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio deterministic content:",
-        {
-          latestUserText,
-          contentToolChoice,
-        }
-      );
+  if (contentToolChoice?.toolName === "filterProjects") {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio deterministic content:", {
+        latestUserText,
+        contentToolChoice,
+      });
     }
 
     return createProjectFilterResponse({
       messages,
-      userText:
-        latestUserText,
+      userText: latestUserText,
     });
-
   }
-  if (
-    contentToolChoice?.toolName ===
-    "filterSkills"
-  ) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio deterministic content:",
-        {
-          latestUserText,
-          contentToolChoice,
-        }
-      );
+  if (contentToolChoice?.toolName === "filterSkills") {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio deterministic content:", {
+        latestUserText,
+        contentToolChoice,
+      });
     }
 
     return createSkillFilterResponse({
       messages,
-      userText:
-        latestUserText,
+      userText: latestUserText,
     });
   }
-  const navigationAction =
-    getDeterministicNavigationAction(
-      latestUserText
-    );
+  const navigationAction = getDeterministicNavigationAction(latestUserText);
 
   if (navigationAction) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio deterministic navigation:",
-        {
-          latestUserText,
-          navigationAction,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio deterministic navigation:", {
+        latestUserText,
+        navigationAction,
+      });
     }
 
-    const stream =
-      createUIMessageStream({
-        originalMessages: messages,
+    const stream = createUIMessageStream({
+      originalMessages: messages,
 
-        execute: ({ writer }) => {
-          writer.write({
-            type: "data-navigationAction",
-            id: crypto.randomUUID(),
-            data: navigationAction,
-          });
-        },
-      });
+      execute: ({ writer }) => {
+        writer.write({
+          type: "data-navigationAction",
+          id: crypto.randomUUID(),
+          data: navigationAction,
+        });
+      },
+    });
 
     return createUIMessageStreamResponse({
       stream,
     });
   }
-  const evaluationRole =
-    getEvaluationRole(
-      latestUserText
-    );
+  const evaluationRole = getEvaluationRole(latestUserText);
 
   if (evaluationRole) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio grounded evaluation request:",
-        {
-          latestUserText,
-          evaluationRole,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio grounded evaluation request:", {
+        latestUserText,
+        evaluationRole,
+      });
     }
 
     return createEvaluationResponse({
       messages,
-      userText:
-        latestUserText,
-      role:
-        evaluationRole,
+      userText: latestUserText,
+      role: evaluationRole,
     });
   }
-  const knownProjectEntity =
-    getKnownProjectEntity(
-      latestUserText
-    );
+  const knownProjectEntity = getKnownProjectEntity(latestUserText);
 
   if (knownProjectEntity) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio known project request:",
-        {
-          latestUserText,
-          projectId:
-            knownProjectEntity.id,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio known project request:", {
+        latestUserText,
+        projectId: knownProjectEntity.id,
+      });
     }
 
     return createKnownProjectResponse({
       messages,
-      userText:
-        latestUserText,
-      project:
-        knownProjectEntity,
+      userText: latestUserText,
+      project: knownProjectEntity,
     });
   }
-  const unknownProjectEntity =
-    getUnknownProjectEntity(
-      latestUserText
-    );
+  const unknownProjectEntity = getUnknownProjectEntity(latestUserText);
 
   if (unknownProjectEntity) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio unknown project entity:",
-        {
-          latestUserText,
-          unknownProjectEntity,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio unknown project entity:", {
+        latestUserText,
+        unknownProjectEntity,
+      });
     }
 
     return createUnknownProjectResponse({
       messages,
-      entityName:
-        unknownProjectEntity.entityName,
+      entityName: unknownProjectEntity.entityName,
     });
   }
-  const contextualProjectEntity =
-    await getContextualProjectEntity({
-      messages,
-      userText:
-        latestUserText,
-    });
+  const contextualProjectEntity = await getContextualProjectEntity({
+    messages,
+    userText: latestUserText,
+  });
 
   if (contextualProjectEntity) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio contextual project request:",
-        {
-          latestUserText,
-          projectId:
-            contextualProjectEntity.id,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio contextual project request:", {
+        latestUserText,
+        projectId: contextualProjectEntity.id,
+      });
     }
 
     return createKnownProjectResponse({
       messages,
-      userText:
-        latestUserText,
-      project:
-        contextualProjectEntity,
+      userText: latestUserText,
+      project: contextualProjectEntity,
     });
   }
-  const skillKnowledge =
-    await getSkillKnowledge({
-      userText:
-        latestUserText,
+  const skillKnowledge = await getSkillKnowledge({
+    userText: latestUserText,
 
-      messages,
-    });
+    messages,
+  });
 
   if (skillKnowledge) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio skill knowledge:",
-        {
-          latestUserText,
-          skillKnowledge,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio skill knowledge:", {
+        latestUserText,
+        skillKnowledge,
+      });
     }
 
     return createSkillKnowledgeResponse({
       messages,
-      result:
-        skillKnowledge,
+      result: skillKnowledge,
     });
   }
-  const employmentKnowledge =
-    getEmploymentKnowledge(
-      latestUserText
-    );
+  const employmentKnowledge = getEmploymentKnowledge(latestUserText);
 
   if (employmentKnowledge) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio employment knowledge:",
-        {
-          latestUserText,
-          employmentKnowledge,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio employment knowledge:", {
+        latestUserText,
+        employmentKnowledge,
+      });
     }
 
     return createEmploymentKnowledgeResponse({
       messages,
-      result:
-        employmentKnowledge,
+      result: employmentKnowledge,
     });
   }
 
   const unknownCertificationEntity =
-    getUnknownCertificationEntity(
-      latestUserText
-    );
+    getUnknownCertificationEntity(latestUserText);
 
   if (unknownCertificationEntity) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio unknown certification:",
-        {
-          latestUserText,
-          unknownCertificationEntity,
-        }
-      );
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio unknown certification:", {
+        latestUserText,
+        unknownCertificationEntity,
+      });
     }
 
     return createUnknownCertificationResponse({
       messages,
-      certificationName:
-        unknownCertificationEntity
-          .certificationName,
+      certificationName: unknownCertificationEntity.certificationName,
     });
   }
-  if (
-    isAiExperienceDurationQuery(
-      latestUserText
-    )
-  ) {
-    if (
-      process.env.NODE_ENV ===
-      "development"
-    ) {
-      console.log(
-        "Portfolio AI experience duration:",
-        {
-          latestUserText,
-        }
-      );
+  if (isAiExperienceDurationQuery(latestUserText)) {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Portfolio AI experience duration:", {
+        latestUserText,
+      });
     }
 
     return createAiExperienceDurationResponse({
       messages,
     });
   }
-  const portfolioToolChoice =
-    getNavigationToolChoice(
-      latestUserText
-    );
+  const portfolioToolChoice = getNavigationToolChoice(latestUserText);
 
-  const portfolioTools =
-    createPortfolioTools();
+  const portfolioTools = createPortfolioTools();
 
-  if (
-    process.env.NODE_ENV ===
-    "development"
-  ) {
-    console.log(
-      "Portfolio tool routing:",
+  if (process.env.NODE_ENV === "development") {
+    console.log("Portfolio tool routing:", {
+      latestUserText,
+      portfolioToolChoice,
+    });
+  }
+
+  const clientIp = getClientIp(request);
+
+  let tokenBudget;
+
+  try {
+    tokenBudget = await checkDailyTokenBudget(clientIp);
+  } catch (error) {
+    console.error("Token budget check gagal:", error);
+
+    return Response.json(
       {
-        latestUserText,
-        portfolioToolChoice,
-      }
+        error: "AI service sementara tidak tersedia.",
+      },
+      {
+        status: 503,
+      },
     );
   }
-  const retrievedEvidence =
-    await retrievePortfolioEvidence({
-      query:
-        latestUserText,
 
-      limit:
-        5,
-    });
-
-  if (
-    process.env.NODE_ENV ===
-    "development"
-  ) {
-    console.log(
-      "Portfolio RAG retrieval:",
+  if (!tokenBudget.allowed) {
+    return Response.json(
       {
-        query:
-          latestUserText,
+        error: "Batas penggunaan AI harian telah tercapai. Coba lagi besok.",
+      },
+      {
+        status: 429,
 
-        evidence:
-          retrievedEvidence.map(
-            (item) => ({
-              sourceId:
-                item.sourceId,
+        headers: {
+          "X-AI-Token-Limit": String(tokenBudget.limit),
 
-              title:
-                item.title,
-            })
-          ),
-      }
+          "X-AI-Tokens-Used": String(tokenBudget.used),
+
+          "X-AI-Tokens-Remaining": "0",
+        },
+      },
     );
+  }
+
+  const retrievedEvidence = await retrievePortfolioEvidence({
+    query: latestUserText,
+
+    limit: 5,
+  });
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("Portfolio RAG retrieval:", {
+      query: latestUserText,
+
+      evidence: retrievedEvidence.map((item) => ({
+        sourceId: item.sourceId,
+
+        title: item.title,
+      })),
+    });
   }
 
   const result = streamText({
     model: getChatModel(),
 
-    instructions:
-      buildSystemPrompt({
-        evidence:
-          retrievedEvidence,
-      }),
+    instructions: buildSystemPrompt({
+      evidence: retrievedEvidence,
+    }),
 
-    messages: await convertToModelMessages(
-      messages,
-      {
-        tools: portfolioTools,
+    messages: await convertToModelMessages(messages, {
+      tools: portfolioTools,
 
-        /*
-         * Safety net agar satu tool call rusak tidak
-         * mengunci seluruh percakapan berikutnya.
-         */
-        ignoreIncompleteToolCalls: true,
-      }
-    ),
+      /*
+       * Safety net agar satu tool call rusak tidak
+       * mengunci seluruh percakapan berikutnya.
+       */
+      ignoreIncompleteToolCalls: true,
+    }),
 
     tools: portfolioTools,
 
@@ -567,16 +452,14 @@ export async function POST(request: Request) {
     ],
     toolChoice: portfolioToolChoice,
 
-    onStepFinish: ({
-      text,
-      toolCalls,
-      toolResults,
-      finishReason,
-    }) => {
-      if (
-        process.env.NODE_ENV !==
-        "development"
-      ) {
+    /*
+     * Mencegah satu request menghasilkan
+     * output terlalu besar / mahal.
+     */
+    maxOutputTokens: 500,
+
+    onStepFinish: ({ text, toolCalls, toolResults, finishReason }) => {
+      if (process.env.NODE_ENV !== "development") {
         return;
       }
 
@@ -590,15 +473,53 @@ export async function POST(request: Request) {
             finishReason,
           },
           null,
-          2
-        )
+          2,
+        ),
       );
     },
+
+    /*
+     * Token usage dari SumoPod.
+     */
+
+    onFinish: async ({ totalUsage, finishReason }) => {
+      const totalTokens = totalUsage.totalTokens ?? 0;
+
+      console.log("SumoPod usage:", {
+        model: process.env.SUMOPOD_CHAT_MODEL,
+
+        inputTokens: totalUsage.inputTokens,
+
+        outputTokens: totalUsage.outputTokens,
+
+        totalTokens,
+
+        finishReason,
+      });
+
+      /*
+       * Simpan pemakaian token
+       * ke Redis.
+       */
+      if (totalTokens > 0) {
+        try {
+          const dailyTotal = await addDailyTokenUsage(clientIp, totalTokens);
+
+          if (process.env.NODE_ENV === "development") {
+            console.log("Daily AI token usage:", {
+              clientIp,
+              added: totalTokens,
+              dailyTotal,
+            });
+          }
+        } catch (error) {
+          console.error("Gagal menyimpan token usage:", error);
+        }
+      }
+    },
+
     onError: ({ error }) => {
-      console.error(
-        "streamText gagal:",
-        error
-      );
+      console.error("streamText gagal:", error);
     },
   });
 
@@ -606,10 +527,7 @@ export async function POST(request: Request) {
     originalMessages: messages,
 
     onError: (error) => {
-      console.error(
-        "Stream error diteruskan ke client:",
-        error
-      );
+      console.error("Stream error diteruskan ke client:", error);
 
       return "Asisten AI sedang tidak bisa dihubungi. Coba lagi sebentar lagi.";
     },
