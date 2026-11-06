@@ -28,6 +28,15 @@ const LINKEDIN_COMMAND_PATTERNS = [
 
   /\b(?:buka|tampilkan|lihat|kunjungi)\b.*\blinkedin\b/i,
 ];
+const UPWORK_COMMAND_PATTERNS = [
+  /\bupwork\b/i,
+
+  /\b(?:hire|book|work with)\s+jordan\b.*\b(?:freelance|freelancer|contract|gig)\b/i,
+
+  /\b(?:freelance|freelancer)\b.*\b(?:profile|hire|available|availability)\b/i,
+
+  /\b(?:sewa|rekrut|pakai jasa)\b.*\bjordan\b.*\b(?:freelance|lepas)\b/i,
+];
 const CONTACT_COMMAND_PATTERNS = [
   /\b(?:contact|email|reach)\s+jordan\b/i,
   /\bhow\s+(?:can|do)\s+i\s+(?:contact|email|reach)\s+jordan\b/i,
@@ -104,6 +113,19 @@ export function getResourceToolChoice(
     return {
       type: "tool",
       toolName: "openLinkedin",
+    } as const;
+  }
+
+  const isUpworkCommand =
+    UPWORK_COMMAND_PATTERNS.some(
+      (pattern) =>
+        pattern.test(userText)
+    );
+
+  if (isUpworkCommand) {
+    return {
+      type: "tool",
+      toolName: "openUpwork",
     } as const;
   }
   const isContactCommand =

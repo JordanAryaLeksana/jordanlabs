@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { DemoCard } from "./DemoCard";
 import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { Button } from "@/components/interfaces/ui/Button";
@@ -15,12 +14,10 @@ import { StaggerItem } from "@/components/interfaces/motion/StaggerItem";
 import { HoverLift } from "@/components/interfaces/motion/HoverLift";
 import { ParallaxShape } from "@/components/interfaces/motion/ParallaxShape";
 import { ColorBlockReveal } from "@/components/interfaces/motion/ColorBlockReveal";
-import { OpeningSequence } from "@/components/pages/layout/OpeningSequence";
 
 const STAGGER_ITEM_COLORS = ["bg-coral", "bg-pine", "bg-slate", "bg-mustard"];
 
 export function AnimationShowcase() {
-  const [loaderKey, setLoaderKey] = useState(0);
 
   return (
     <div className="flex flex-1 flex-col gap-10 bg-ink-base px-6 py-16 text-text-on-dark">
@@ -154,21 +151,16 @@ export function AnimationShowcase() {
       </DemoCard>
 
       <div className="flex flex-col gap-3 border border-ink-raised p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Typography variant="header" size="xl">
-            OpeningSequence — six-scene intro
-          </Typography>
-          <Button variant="secondary" onClick={() => setLoaderKey((previous) => previous + 1)}>
-            Replay opening sequence
-          </Button>
-        </div>
-        <Typography variant="text" size="sm">
-          Intro Home memakai enam chapter sinematik, scene mapping terpusat, colorful typography, dan chapter controls.
-          Komponen ini murni presentational; lifecycle session dan akses skip tetap dikendalikan oleh IntroSequence.
+        <Typography variant="header" size="xl">
+          Home intro — six-chapter 3D sequence
         </Typography>
-        <div className="relative h-[360px] overflow-hidden">
-          <OpeningSequence key={loaderKey} onComplete={() => {}} />
-        </div>
+        <Typography variant="text" size="sm">
+          The intro is a full-screen WebGL world (React Three Fiber) driven by lib/config/intro.ts and lib/intro/introStore.ts.
+          Preview it on Home with the intro frozen open, or replay it from the Jordan AI home screen.
+        </Typography>
+        <Button href="/?freezeIntro=intro" variant="secondary" className="w-fit">
+          Open intro preview
+        </Button>
       </div>
     </div>
   );

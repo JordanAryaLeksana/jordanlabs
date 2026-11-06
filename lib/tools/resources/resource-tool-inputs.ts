@@ -7,5 +7,8 @@ export type OpenGithubInput =
 export type OpenLinkedinInput =
   Record<string, never>;
 
+export type OpenUpworkInput =
+  Record<string, never>;
+
 export type ShowContactCardInput =
   Record<string, never>;

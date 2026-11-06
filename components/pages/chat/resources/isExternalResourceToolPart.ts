@@ -7,7 +7,8 @@ export type ExternalResourceToolPart =
   MessagePart & {
     type:
     | "tool-openGithub"
-    | "tool-openLinkedin";
+    | "tool-openLinkedin"
+    | "tool-openUpwork";
 
     toolCallId: string;
 
@@ -27,6 +28,7 @@ export function isExternalResourceToolPart(
 ): part is ExternalResourceToolPart {
   return (
     part.type === "tool-openGithub" ||
-    part.type === "tool-openLinkedin"
+    part.type === "tool-openLinkedin" ||
+    part.type === "tool-openUpwork"
   );
 }

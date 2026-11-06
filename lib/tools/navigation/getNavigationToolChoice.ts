@@ -5,7 +5,7 @@ import {
   type ProjectId,
   type SectionId,
 } from "@/lib/tools/types";
-import { PROJECTS } from "@/lib/config/projects";
+import { findMentionedProjects } from "@/lib/projects/matchProjects";
 
 const HIGHLIGHT_COMMAND_PATTERNS = [
   /\bhighlight\b/i,
@@ -28,19 +28,8 @@ const SCROLL_COMMAND_PATTERNS = [
 const PROJECT_DETAIL_COMMAND_PATTERN =
   /\b(?:open|view|visit|show|go to|move to|move me to|take me to|buka|lihat|kunjungi|tampilkan|pergi ke|pindah ke|arahkan(?: saya)? ke)\b/i;
 
-function normalizeProjectName(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-}
-
 function getRequestedProject(userText: string) {
-  const normalizedText = normalizeProjectName(userText);
-
-  return PROJECTS.find((project) => {
-    const names = [project.id, project.slug, project.title, ...(project.aliases ?? [])]
-      .map(normalizeProjectName);
-
-    return names.some((name) => normalizedText.includes(name));
-  });
+  return findMentionedProjects(userText)[0];
 }
 
 const PAGE_NAVIGATION_PATTERNS = [

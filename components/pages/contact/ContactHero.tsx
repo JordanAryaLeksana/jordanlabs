@@ -12,7 +12,7 @@ export function ContactHero() {
             Let&apos;s build something <span className="text-coral">worth discussing.</span>
           </Typography>
           <Typography variant="text" size="sm" className="mt-6 max-w-xl leading-7 text-text-on-dark/68">
-            AI engineering, software collaboration, or a thoughtful role conversation—start with the channel that feels natural.
+            A software or AI engineering role, a freelance project, or a remote team—start with the channel that feels natural.
           </Typography>
         </div>
         <ArrowDownRightIcon size={42} className="hidden text-mustard sm:block" aria-hidden="true" />

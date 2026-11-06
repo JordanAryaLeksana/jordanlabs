@@ -14,6 +14,11 @@ import type {
   EvaluationOutput,
 } from "@/lib/ai/evaluation/getRoleEvaluation";
 
+import { PROJECTS } from "@/lib/config/projects";
+
+const PROJECT_TITLES =
+  PROJECTS.map((project) => project.title).join(", ");
+
 interface EvaluationRewrite {
   responseLanguage: string;
   summary: string;
@@ -115,11 +120,10 @@ FACTUAL SAFETY:
 ENTITY SAFETY:
 
 - Preserve exact names and technical identifiers.
-- Keep EMQNET exactly as EMQNET.
-- Keep DermSight exactly as DermSight.
+- Keep every project name exactly as written: ${PROJECT_TITLES}.
 - Preserve company names, role names when appropriate, technologies,
   frameworks, metrics, and proper nouns.
-- Do not create aliases such as EMQ, MEQ, or MQNET.
+- Do not create aliases or abbreviations for project names.
 
 WRITING:
 

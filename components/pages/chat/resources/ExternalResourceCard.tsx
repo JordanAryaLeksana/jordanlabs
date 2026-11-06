@@ -4,7 +4,7 @@ import { Typography } from "@/components/interfaces/ui/Typography/Typography";
 import { ToolResultSurface } from "@/components/pages/chat/ToolResultSurface";
 import type { ExternalResourceOutput } from "@/lib/tools/resources/resource-tool-outputs";
 
-const PLATFORM_LABEL: Record<ExternalResourceOutput["platform"], string> = { github: "GitHub", linkedin: "LinkedIn" };
+const PLATFORM_LABEL: Record<ExternalResourceOutput["platform"], string> = { github: "GitHub", linkedin: "LinkedIn", upwork: "Upwork" };
 
 export function ExternalResourceCard({ data }: { data: ExternalResourceOutput }) {
   const platform = PLATFORM_LABEL[data.platform];

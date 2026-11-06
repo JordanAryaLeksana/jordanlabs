@@ -1,85 +1,100 @@
-
 import { SKILL_CATEGORY_IDS } from "@/lib/tools/types";
 
+/*
+ * Mirrors the "Technical Skills" section of
+ * "Jordan Arya Leksana - Software Engineer Resume.pdf".
+ * Category ids stay stable because tools and filters depend on them.
+ */
 export const SKILLS_BY_CATEGORY = {
   [SKILL_CATEGORY_IDS.programming]: {
-    label: "Programming",
+    label: "Languages",
     items: [
-      "Python",
       "TypeScript",
       "JavaScript",
+      "Python",
       "SQL",
-      "Go",
+      "Go (basic)",
     ],
   },
 
   [SKILL_CATEGORY_IDS.frontend]: {
-    label: "Frontend",
+    label: "Frontend & Mobile",
     items: [
       "React",
       "Next.js",
       "Tailwind CSS",
+      "React Native",
+      "Three.js / React Three Fiber",
     ],
   },
 
   [SKILL_CATEGORY_IDS.backend]: {
-    label: "Backend",
+    label: "Backend & APIs",
     items: [
       "Node.js",
       "Express",
       "NestJS",
       "FastAPI",
-      "Django",
+      "Flask",
+      "REST APIs",
+      "NextAuth",
+      "Prisma",
+      "SQLAlchemy",
     ],
   },
 
   [SKILL_CATEGORY_IDS.database]: {
-    label: "Database",
+    label: "Databases",
     items: [
+      "PostgreSQL",
       "MySQL",
       "MongoDB",
+      "Redis",
     ],
   },
 
   [SKILL_CATEGORY_IDS.ai]: {
     label: "AI / ML",
     items: [
-      "TensorFlow",
-      "PyTorch",
-      "Scikit-learn",
-      "OpenCV",
+      "LLM integration (OpenAI, Anthropic, Ollama)",
+      "Vercel AI SDK",
       "LangChain",
-      "Pandas",
-      "NumPy",
       "Retrieval-Augmented Generation (RAG)",
-      "ResNet-style CNNs",
-      "Autoencoder + LSTM",
+      "PyTorch",
+      "TensorFlow (Keras)",
+      "scikit-learn",
+      "OpenCV",
+      "LSTM Autoencoder",
+      "ResNet CNNs",
       "EfficientNet",
-      "Random Forest",
-      "Neural Networks",
-      "Rule-based expert systems",
+      "YOLOv5",
     ],
   },
 
   [SKILL_CATEGORY_IDS.tooling]: {
-    label: "Tooling",
+    label: "DevOps, Cloud & Tools",
     items: [
-      "Git",
       "Docker",
-      "Prisma",
-      "Supabase",
+      "Docker Compose",
+      "GitHub Actions (CI/CD)",
+      "GHCR",
+      "Nginx",
+      "Linux (Ubuntu) VPS",
+      "Vercel",
+      "Cloudflare",
+      "FFmpeg",
+      "Git",
       "Postman",
-      "Ollama",
-      "TensorBoard",
     ],
   },
 
   [SKILL_CATEGORY_IDS.collaboration]: {
     label: "Leadership & Collaboration",
     items: [
-      "Agile project management",
-      "Technical mentoring",
-      "Cross-team coordination",
+      "Agile / Scrum",
+      "Technical leadership",
+      "Cross-functional coordination",
+      "Technical writing",
     ],
   },
 } as const;

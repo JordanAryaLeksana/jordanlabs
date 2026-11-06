@@ -12,7 +12,7 @@ import { FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
 type StackId = (typeof ABOUT_TECH_STACK)[number]["id"];
 
 export function AboutChapterStage() {
-  const [activeStack, setActiveStack] = useState<StackId>("ai");
+  const [activeStack, setActiveStack] = useState<StackId>(ABOUT_TECH_STACK[0].id);
   const tabReferences = useRef<Array<HTMLButtonElement | null>>([]);
   const reducedMotion = useReducedMotion();
   const selectedStack = ABOUT_TECH_STACK.find((stack) => stack.id === activeStack) ?? ABOUT_TECH_STACK[0];
@@ -38,7 +38,7 @@ export function AboutChapterStage() {
               THE THROUGH LINE
             </Typography>
             <Typography as="h2" variant="header" size="3xl" className="mt-2 max-w-xl">
-              Software foundations. AI direction.
+              Physics roots. Full-stack focus.
             </Typography>
           </div>
           <Typography variant="text" size="sm" className="max-w-sm leading-6 opacity-65">

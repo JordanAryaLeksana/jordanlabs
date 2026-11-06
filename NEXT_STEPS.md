@@ -1,6 +1,24 @@
 # UI Redesign — Next Steps
 
-## Completed in the current unit
+## Latest unit (Nov 2026): 3D intro + "now" refresh
+
+- Replaced the photo-based intro (K-drama *Start-Up* stills, now deleted) with a six-chapter interactive 3D intro; see `AGENTS_INTRO_DESIGN.md`.
+- Canonical data now mirrors the new CV (`public/Jordan Arya Leksana - Software Engineer Resume.pdf`):
+  - headline "Software Engineer · Full-Stack & AI";
+  - graduated from ITS (2022 – Oct 2026);
+  - a "looking for" list with software engineering first.
+- New projects: IntentCut, PumpSentinel, and Station Parfume (marked in development, not in production).
+- Every project thumbnail is now a real screenshot or a generated cover; the Start-Up logos are removed.
+- Jordan AI changes:
+  - Upwork tool;
+  - config-derived role evaluation;
+  - word-boundary project matching;
+  - descriptor-aware unknown-project guard;
+  - skill catalog that covers CV skills, project tags and role technologies;
+  - short employer names;
+  - knowledge base rewritten to match the CV.
+
+## Earlier units (historical; the six-scene photo intro below has been replaced)
 
 - Replaced the old loading/brand intro with a data-driven six-scene opening sequence that appears on each Home load, supports direct chapter controls and skip, and presents a static final chapter for reduced-motion users.
 - Added a reusable scene backdrop and centralized page-to-scene mapping.
@@ -34,7 +52,7 @@
 
 1. With Ollama running, repeat live project-filter and grounded evaluation regression; then verify client scroll/highlight execution in a browser conversation. The service was rechecked at `127.0.0.1:11434` and was still unavailable.
 2. Complete visual responsive regression for the new editorial pages in a real browser, including narrow mobile, tablet, desktop, and reduced-motion modes.
-3. Confirm licensing for every owner intro scene before public production use and replace the low-resolution Home/About exports when better sources are available.
+3. ~~Confirm licensing for owner intro scenes~~ — resolved: the intro no longer uses photos other than Jordan's own portrait.
 
 ## Validation status
 

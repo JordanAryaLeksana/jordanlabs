@@ -5,6 +5,9 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { INTRO_SEEN_STORAGE_KEY } from "@/lib/intro/introSession";
+
+export { INTRO_REPLAY_EVENT } from "@/lib/intro/introSession";
 
 export type IntroPhase = "intro" | "exiting" | "done";
 
@@ -23,14 +26,16 @@ function getStaticSkipServerSnapshot(): boolean {
   return false;
 }
 
+function getSeenSnapshot(): boolean {
+  return document.documentElement.dataset.introSeen === "1";
+}
+
 const FREEZABLE_PHASES: readonly IntroPhase[] = ["intro"];
 
 /**
  * Dibaca di klien: fase tempat urutan intro dibekukan bila URL memuat
  * ?freezeIntro=intro -- dipakai HANYA untuk kebutuhan development saat
- * mengedit OpeningSequence, supaya
- * fase itu tidak keburu berpindah/keluar ke Home selagi diedit. Kembalikan
- * null bila parameter tidak ada, artinya urutan berjalan normal.
+ * mengedit intro, supaya fase itu tidak keburu berpindah ke Home.
  */
 function getFreezePhaseSnapshot(): IntroPhase | null {
   const requestedPhase = new URLSearchParams(window.location.search).get("freezeIntro");
@@ -41,35 +46,32 @@ function getFreezePhaseServerSnapshot(): IntroPhase | null {
   return null;
 }
 
+export function markIntroSeen() {
+  // Also flag the document, so client-side navigation back to Home skips it.
+  document.documentElement.dataset.introSeen = "1";
+  try {
+    window.sessionStorage.setItem(INTRO_SEEN_STORAGE_KEY, "1");
+  } catch {
+    // Storage can be unavailable (private mode); the intro then replays on reload.
+  }
+}
+
 interface UseIntroSequenceResult {
   phase: IntroPhase;
-  /**
-   * Dipanggil dari OpeningSequence atau wipe keluar di IntroSequence untuk
-   * berpindah ke fase berikutnya.
-   */
+  /** intro -> exiting -> done, called when each animation finishes. */
   advancePhase: () => void;
   skipSequence: () => void;
+  replay: () => void;
 }
 
 /**
- * Hook ini digunakan untuk mengatur urutan fase IntroSequence (intro ->
- * exiting -> done) sebagai satu-satunya sumber kebenaran urutan
- * fase, sehingga komponen controller (IntroSequence.tsx) tidak perlu
- * mendefinisikan state machine sendiri (CLAUDE.md §9).
+ * Owns the Home intro lifecycle (intro -> exiting -> done).
  *
- * Perpindahan antar-fase TIDAK digerakkan oleh timer tetap -- advancePhase()
- * hanya dipanggil oleh komponen presentational saat animasinya sendiri
- * selesai (CLAUDE.md §11), sehingga durasi total intro mengikuti durasi
- * animasi sesungguhnya, bukan angka yang dihardcode di sini.
- *
- * URL ?skipIntro=1 dapat mempercepat langsung ke "done" untuk kebutuhan
- * development. Kunjungan dan refresh normal selalu mulai dari intro agar
- * server render dan hydration tidak berbeda lalu menimbulkan flash ke Home.
- *
- * ?freezeIntro=intro membekukan urutan tepat di
- * fase itu (mengabaikan advancePhase() dan skip apa pun) -- alat bantu
- * development saat mengedit OpeningSequence tanpa terus-terusan
- * kehilangan tampilannya ke transisi keluar/Home.
+ * - Plays once per session: a returning visit in the same session starts at
+ *   "done" (the bootstrap script hides the overlay before first paint).
+ * - ?skipIntro=1 jumps straight to "done" (development).
+ * - ?freezeIntro=intro keeps the intro open while editing it (development).
+ * - replay() plays it again on demand.
  */
 export function useIntroSequence(): UseIntroSequenceResult {
   const shouldSkipStatically = useSyncExternalStore(
@@ -77,12 +79,18 @@ export function useIntroSequence(): UseIntroSequenceResult {
     getStaticSkipSnapshot,
     getStaticSkipServerSnapshot
   );
+  const seenThisSession = useSyncExternalStore(
+    subscribeToNothing,
+    getSeenSnapshot,
+    getStaticSkipServerSnapshot
+  );
   const freezePhase = useSyncExternalStore(
     subscribeToNothing,
     getFreezePhaseSnapshot,
     getFreezePhaseServerSnapshot
   );
-  const shouldSkip = freezePhase === null && shouldSkipStatically;
+  const [replayRequested, setReplayRequested] = useState(false);
+  const shouldSkip = freezePhase === null && (shouldSkipStatically || (seenThisSession && !replayRequested));
 
   const [timerPhase, setTimerPhase] = useState<IntroPhase>("intro");
 
@@ -91,13 +99,20 @@ export function useIntroSequence(): UseIntroSequenceResult {
       if (current === freezePhase) return current;
 
       const nextPhase = PHASE_ORDER[PHASE_ORDER.indexOf(current) + 1];
+      if (nextPhase === "done") markIntroSeen();
       return nextPhase ?? current;
     });
   }, [freezePhase]);
 
   const skipSequence = useCallback(() => {
-    if (freezePhase === null) setTimerPhase("exiting");
+    if (freezePhase === null) setTimerPhase((current) => (current === "intro" ? "exiting" : current));
   }, [freezePhase]);
 
-  return { phase: shouldSkip ? "done" : timerPhase, advancePhase, skipSequence };
+  const replay = useCallback(() => {
+    delete document.documentElement.dataset.introSeen;
+    setReplayRequested(true);
+    setTimerPhase("intro");
+  }, []);
+
+  return { phase: shouldSkip ? "done" : timerPhase, advancePhase, skipSequence, replay };
 }

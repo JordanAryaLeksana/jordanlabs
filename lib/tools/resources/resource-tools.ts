@@ -8,10 +8,12 @@ import {
   externalResourceOutputSchema,
   openGithubInputSchema,
   openLinkedinInputSchema,
+  openUpworkInputSchema,
   showDownloadCardInputSchema,
   showDownloadCardOutputSchema,
 } from "@/lib/tools/resources/resource-tool-schemas";
 import { getOpenLinkedinOutput } from "@/lib/tools/resources/getOpenLinkedinOutput";
+import { getOpenUpworkOutput } from "@/lib/tools/resources/getOpenUpworkOutput";
 import { getShowContactCardOutput } from "@/lib/tools/resources/getShowContactCardOutput";
 import { contactCardOutputSchema, showContactCardInputSchema } from "@/lib/tools/resources/resource-tool-schemas";
 export function createResourceTools() {
@@ -58,6 +60,18 @@ export function createResourceTools() {
       execute: async () => {
         return getOpenLinkedinOutput();
       },
+    }),
+    openUpwork: tool({
+      description:
+        "Provide Jordan Arya Leksana's official Upwork freelancer profile when the visitor asks to open Jordan's Upwork or wants to hire him for a freelance project.",
+
+      inputSchema:
+        openUpworkInputSchema,
+
+      outputSchema:
+        externalResourceOutputSchema,
+
+      execute: async () => getOpenUpworkOutput(),
     }),
     showContactCard: tool({
       description: "Show Jordan Arya Leksana's trusted email contact card when a visitor asks how to contact or email Jordan.",

@@ -1,9 +1,7 @@
 import "server-only";
 
-import {
-  PROJECTS,
-  type Project,
-} from "@/lib/config/projects";
+import type { Project } from "@/lib/config/projects";
+import { findMentionedProjects } from "@/lib/projects/matchProjects";
 
 const PROJECT_KNOWLEDGE_PATTERNS = [
   /\btell me about\b/i,
@@ -30,25 +28,8 @@ export function getKnownProjectEntity(
     return null;
   }
 
-  const normalizedText =
-    userText.toLowerCase();
-
   const matchingProjects =
-    PROJECTS.filter(
-      (project) =>
-        normalizedText.includes(
-          project.title.toLowerCase()
-        ) ||
-        normalizedText.includes(
-          project.id.toLowerCase()
-        ) ||
-        normalizedText.includes(
-          project.slug.toLowerCase()
-        ) ||
-        project.aliases?.some((alias) =>
-          normalizedText.includes(alias.toLowerCase())
-        )
-    );
+    findMentionedProjects(userText);
 
   /*
    * Satu entity harus dapat di-resolve

@@ -1,35 +1,35 @@
 # Experience
 
-## AI Engineer Internship — PT. Pertamina EP Cepu
+## AI Engineer Intern — PT Pertamina EP Cepu (Jan 2025 – May 2025)
 
-Surabaya, Indonesia · January – April 2025
+Location: Cepu, Central Java, Indonesia.
 
-- Developed an integrated deep learning system to anticipate recurring leak failures in Solvent Pumps 9027 A/B that were impacting production.
-- Contributed to research and technical documentation for a study on deep learning-based predictive maintenance.
-- Implemented anomaly detection and classification models to identify early-stage failures and failure types.
+- Built an LSTM-Autoencoder anomaly-detection pipeline in Python and TensorFlow on multivariate sensor data from three industrial solvent pumps, flagging early signs of mechanical-seal failure. It contributed to zero lost production hours on the monitored pump.
+- Processed 5,000+ anomaly events, validated them with field operators, and trained a supervised classifier that categorized them at 85% validation accuracy.
+- Turned pump specifications and operator knowledge into a rule-based early-warning and prescriptive-maintenance layer, with estimated potential cost savings of up to USD 476K.
+- Contributed to the methodology, experiments and manuscript later presented as SPE-224966-MS (LEADS: Leading Equipment Anomaly Detection System). The project is documented in the portfolio as PumpSentinel.
 
-This work is detailed further in the PumpSentinel project writeup.
+## Deep Learning Researcher — Embedded System and Cyber-Physical Laboratory (ECS), ITS (Dec 2025 – Jul 2026)
 
-## IT Project Manager — Embedded System and Cyber Physical Laboratory (ECS)
+Location: Surabaya, Indonesia.
 
-Surabaya, Indonesia · January – July 2025
+- Built a ResNet-based PyTorch pipeline (EMQNET, his undergraduate thesis) that detects geomagnetic earthquake precursors across 25,000+ events from 24 stations in Indonesia, reaching 88.25% accuracy and 88.4% F1 and automating a manual analysis method.
 
-- Led the end-to-end development of ECS Website 2.0, overseeing feature design, timelines, and team coordination using Agile methodology.
-- Managed a cross-functional team of developers and designers to build the new official ECS website and event platforms (e.g., the EPTA dashboard).
-- Ensured timely delivery, user-centered design, and maintainability for future expansion.
+## Software Development Lead — ECS, ITS (Jun 2025 – Nov 2025)
 
-## Tech Lead Frontend — Embedded System and Cyber Physical Laboratory (ECS)
+- Designed the end-to-end architecture of the TETA smart-farming system: React Native mobile app, backend server, ESP32–LoRa–MQTT communication and Raspberry Pi edge devices.
+- Shipped it to a 1-hectare rice field in Tuban, East Java (5 IoT nodes): real-time pH, NPK, EC, temperature and humidity monitoring plus 24/7 YOLOv5 computer-vision bird-pest deterrence, reducing fertilizer waste and manual field guarding.
+- Wrote the user guide (registered copyright No. 001036674) so non-technical farmers can run the system on their own.
 
-Surabaya, Indonesia · June 2024 – November 2024
+## IT Project Manager — ECS, ITS (Jan 2025 – Jul 2025)
 
-- Directed the frontend development of the first version of the ECS official website and event portals.
-- Built responsive, reusable UI components using Next.js and Tailwind CSS.
-- Collaborated closely with the backend team for seamless API integration and performance optimization.
+- Led delivery of ECS Website 2.0 and the EPTA event dashboard with a cross-functional team of developers and designers, owning scope, sprint planning and timelines in an Agile process.
 
-## Tech Lead Frontend — Engineering Physics Week 2025
+## Frontend Tech Lead — ECS, ITS (Jun 2024 – Nov 2024)
 
-Surabaya, Indonesia · July 2024 – December 2024
+- Led frontend development of the ECS website and the EPTA event portal in Next.js and Tailwind CSS, serving 100+ event participants.
+- Built reusable UI components and integrated REST APIs for authentication, registration, module and certificate uploads, assignments and task submissions.
 
-- Led development of the official event website for Engineering Physics Week 2025, supporting participant registration, user authentication, and multi-level user access.
-- Used Next.js and Tailwind CSS to build responsive, maintainable, and accessible user interfaces.
-- Coordinated a small team of frontend developers, providing guidance, code reviews, and knowledge sharing to improve overall code quality and workflow.
+## Independent projects (2025 – now)
+
+Alongside these roles Jordan builds and ships his own products: IntentCut (Meta Global AI Developer Hackathon 2026, solo), Jordan Labs (this portfolio and its AI assistant), SEA Catering (live meal-subscription platform), DermSight (live AI skin-screening web app) and the Station Parfume backend (in development, not in production yet). He takes freelance work through Upwork.

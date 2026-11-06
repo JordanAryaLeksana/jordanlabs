@@ -1,37 +1,38 @@
 # Skills
 
-## Programming Languages
+## Languages and frontend
 
-- Python
-- TypeScript / JavaScript
+- Languages: TypeScript, JavaScript, Python, SQL; Go (basic, used in the Station Parfume backend).
+- Frontend and mobile: React, Next.js, Tailwind CSS, React Native, Three.js / React Three Fiber (used for IntentCut's landing page and this portfolio's 3D intro).
+- Spoken languages: English (fluent), Indonesian (native).
 
-## AI / Machine Learning
+## Backend, APIs and databases
 
-- Deep learning architectures: ResNet-style CNNs (built from scratch), Autoencoder + LSTM for anomaly detection, EfficientNet for image classification.
-- Classical ML: Random Forest, Neural Networks.
-- Rule-based / expert systems: threshold rules and interlock conditions encoding domain knowledge.
-- Frameworks: PyTorch, TensorFlow / Keras.
-- Data tooling: Pandas, NumPy.
-- Retrieval-Augmented Generation (RAG) with Ollama (applied in the DermSight project).
+- Backend and APIs: Node.js, Express, NestJS, FastAPI, Flask, REST APIs, NextAuth, Prisma, SQLAlchemy, Pydantic.
+- Databases: PostgreSQL, MySQL, MongoDB, Redis.
+- Backend patterns he has implemented: background job workers with database leases and heartbeats (IntentCut), idempotent uploads, transactional checkout with price snapshots (Station Parfume), rate limiting and token budgets with Redis (Jordan Labs), JWT authentication with refresh tokens and Google OAuth.
 
-## Web Development
+## DevOps and cloud
 
-- Frontend: Next.js, React, Tailwind CSS.
-- Backend: Django, migrating toward Nest.js; FastAPI (used in DermSight).
-- Databases: MySQL, migrating toward MongoDB.
+- Docker and Docker Compose, GitHub Actions (CI/CD), GitHub Container Registry (GHCR), Nginx, Linux (Ubuntu) VPS, Vercel, Cloudflare.
+- Media tooling: FFmpeg and FFprobe (IntentCut rendering pipeline).
+- Tools: Git, Postman.
 
-## Leadership & Collaboration
+## AI and machine learning
 
-- Agile project management across cross-functional teams.
-- Technical mentoring: code review and knowledge sharing for junior frontend developers.
-- Cross-team coordination between design, frontend, and backend disciplines.
+- LLM integration: OpenAI, Anthropic and Ollama models, Meta Muse models (IntentCut), the Vercel AI SDK and LangChain.
+- Retrieval-Augmented Generation (RAG): Jordan Labs (hybrid lexical + embedding retrieval) and DermSight (local LLM grounded by a curated knowledge base).
+- Deep learning and ML: PyTorch, TensorFlow / Keras, scikit-learn, OpenCV, Pandas, NumPy.
+- Model families he has built with: ResNet CNNs (EMQNET), LSTM Autoencoder (Pertamina pump anomaly detection), EfficientNet-B2 (DermSight), YOLOv5 (TETA bird-pest deterrence), supervised classifiers and rule-based expert systems.
 
-## Certifications & Learning
+## Leadership and collaboration
 
-- Bootcamp Advanced Web Programming (August 2024 – September 2024).
-- Compfest Software Engineering Mentee (July 2025 – September 2025).
-- Dicoding x DBS Foundation Coding Camp — AI Engineer Path (March 2026 – Present).
+- Agile / Scrum delivery: scope, sprint planning and timelines as IT Project Manager.
+- Technical leadership: Frontend Tech Lead and Software Development Lead at the ECS laboratory.
+- Technical writing: SPE-224966-MS manuscript contribution, the registered TETA user guide, a first-author research manuscript in preparation.
 
-## Languages
+## Certifications and learning
 
-- English — Upper Intermediate (B2), not yet certified.
+- Bootcamp Advanced Web Programming (August – September 2024).
+- COMPFEST Software Engineering Mentee (July – September 2025).
+- Dicoding x DBS Foundation Coding Camp, AI Engineer path (2026).

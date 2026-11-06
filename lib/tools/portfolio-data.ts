@@ -5,6 +5,7 @@ import {
   CV_URL,
   GITHUB_URL,
   LINKEDIN_URL,
+  UPWORK_URL,
   EMAIL_ADDRESS,
   EMAIL_MAILTO_URL,
 } from "@/lib/config/links";
@@ -27,7 +28,7 @@ export interface ContactResource {
 export function getContactResource(): ContactResource {
   return {
     ownerName: PROFILE.fullName,
-    role: PROFILE.role,
+    role: PROFILE.headline,
     emailAddress: EMAIL_ADDRESS,
     mailtoUrl: EMAIL_MAILTO_URL,
   };
@@ -36,7 +37,7 @@ export function getContactResource(): ContactResource {
 export function getCvResource(): CvResource {
   return {
     ownerName: PROFILE.fullName,
-    role: PROFILE.role,
+    role: PROFILE.headline,
     fileName: CV_FILE_NAME,
     url: CV_URL,
   };
@@ -58,5 +59,12 @@ export function getLinkedinResource(): ExternalResource {
   return {
     label: "Jordan Arya Leksana on LinkedIn",
     url: LINKEDIN_URL,
+  };
+}
+
+export function getUpworkResource(): ExternalResource {
+  return {
+    label: "Jordan Arya Leksana on Upwork",
+    url: UPWORK_URL,
   };
 }

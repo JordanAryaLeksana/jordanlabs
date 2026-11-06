@@ -12,13 +12,59 @@ import {
 } from "@/lib/ai/model";
 
 import {
-  SKILLS_BY_CATEGORY,
-} from "@/lib/config/skills";
+  findDocumentedSkill,
+  normalizeSkillName,
+} from "@/lib/ai/entity-guard/skillCatalog";
+
+import { findMentionedProjects } from "@/lib/projects/matchProjects";
 
 export interface SkillKnowledgeResult {
   skillName: string;
   documented: boolean;
   resolved: boolean;
+  /** Where the skill is documented: CV skill group, project titles or roles. */
+  evidence?: string;
+}
+
+/*
+ * "FastAPI in DermSight" -> skill "FastAPI", qualifier "DermSight".
+ * Questions scoped to a specific project are answered by retrieval,
+ * which knows that project's actual stack.
+ */
+const SKILL_QUALIFIER_PATTERN =
+  /\s+(?:in|for|on|at|with|during|inside|di|untuk|pada|dalam)\s+(.+)$/i;
+
+function splitSkillQualifier(requestedSkill: string) {
+  const match = requestedSkill.match(SKILL_QUALIFIER_PATTERN);
+
+  if (!match || match.index === undefined) {
+    return { skill: requestedSkill, qualifier: null };
+  }
+
+  return {
+    skill: requestedSkill.slice(0, match.index).trim(),
+    qualifier: match[1].trim(),
+  };
+}
+
+function toDocumentedResult(
+  requestedSkill: string
+): SkillKnowledgeResult {
+  const entry =
+    findDocumentedSkill(requestedSkill);
+
+  return entry
+    ? {
+        skillName: entry.display,
+        documented: true,
+        resolved: true,
+        evidence: entry.sources.slice(0, 3).join(", "),
+      }
+    : {
+        skillName: requestedSkill,
+        documented: false,
+        resolved: true,
+      };
 }
 
 interface ContextualSkillResolution {
@@ -69,23 +115,6 @@ const CONTEXTUAL_SKILL_REFERENCES =
     "tool itu",
   ]);
 
-function normalizeSkillName(
-  value: string
-): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
-}
-
-const DOCUMENTED_SKILLS =
-  Object.values(
-    SKILLS_BY_CATEGORY
-  ).flatMap(
-    (category) =>
-      category.items
-  );
-
 interface GetSkillKnowledgeOptions {
   userText: string;
   messages: UIMessage[];
@@ -103,11 +132,27 @@ export async function getSkillKnowledge({
     const match =
       userText.match(pattern);
 
-    const requestedSkill =
+    const rawRequestedSkill =
       match?.[1]?.trim();
 
-    if (!requestedSkill) {
+    if (!rawRequestedSkill) {
       continue;
+    }
+
+    const {
+      skill: requestedSkill,
+      qualifier,
+    } = splitSkillQualifier(rawRequestedSkill);
+
+    /*
+     * Project-scoped question ("FastAPI in DermSight"):
+     * let retrieval answer from that project's documented stack.
+     */
+    if (
+      qualifier &&
+      findMentionedProjects(qualifier).length > 0
+    ) {
+      return null;
     }
 
     const normalizedRequestedSkill =
@@ -126,27 +171,9 @@ export async function getSkillKnowledge({
         normalizedRequestedSkill
       )
     ) {
-      const documentedSkill =
-        DOCUMENTED_SKILLS.find(
-          (skill) =>
-            normalizeSkillName(
-              skill
-            ) ===
-            normalizedRequestedSkill
-        );
-
-      return {
-        skillName:
-          documentedSkill ??
-          requestedSkill,
-
-        documented:
-          documentedSkill !==
-          undefined,
-
-        resolved:
-          true,
-      };
+      return toDocumentedResult(
+        requestedSkill
+      );
     }
 
     /*
@@ -315,13 +342,9 @@ If the reference cannot be resolved clearly, return an empty string.
         };
       }
 
-      const documentedSkill =
-        DOCUMENTED_SKILLS.find(
-          (skill) =>
-            normalizeSkillName(
-              skill
-            ) ===
-            normalizedResolvedSkill
+      const result =
+        toDocumentedResult(
+          resolvedSkill
         );
 
       if (
@@ -334,27 +357,14 @@ If the reference cannot be resolved clearly, return an empty string.
             userText,
             requestedSkill,
             resolvedSkill:
-              documentedSkill ??
-              resolvedSkill,
+              result.skillName,
             documented:
-              documentedSkill !==
-              undefined,
+              result.documented,
           }
         );
       }
 
-      return {
-        skillName:
-          documentedSkill ??
-          resolvedSkill,
-
-        documented:
-          documentedSkill !==
-          undefined,
-
-        resolved:
-          true,
-      };
+      return result;
     } catch (error) {
       console.error(
         "Portfolio contextual skill resolution failed:",

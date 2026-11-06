@@ -1,37 +1,24 @@
 # PumpSentinel
 
-## Project Overview
+## Project overview
 
-PumpSentinel is an industrial pump failure prediction system built during an AI Engineer internship at PT. Pertamina EP Cepu, designed to anticipate recurring leak failures in Solvent Pumps 9027 A/B that were affecting production.
-
-## Timeline
-
-January – April 2025.
+PumpSentinel is the anomaly-detection and early-warning system Jordan Arya Leksana built during his AI Engineer internship at PT Pertamina EP Cepu (January – May 2025, Cepu, Central Java). It targets frequent mechanical-seal leaks in the plant's solvent pumps (including pumps 9027 A/B) that disrupted production. The research was presented as SPE-224966-MS, LEADS: Leading Equipment Anomaly Detection System. Source code is not public because of corporate confidentiality.
 
 ## Approach
 
-The system combines three complementary layers:
+Three subsystems are connected to the plant's Distributed Control System (DCS):
 
-### Anomaly Detection
+- Anomaly detection: an LSTM Autoencoder trained on about one year of multivariate sensor data (pressure, flow rate, temperature) from three solvent pumps flags anomalies when the reconstruction error (MAE) exceeds a threshold.
+- Anomaly classification: a supervised model categorizes anomalies into failure types (for example seal wear or overpressure) using historical logs.
+- Rule-based expert system: pump specifications, engineering best practice and operator knowledge become rules that trigger real-time early warnings and prescriptive-maintenance actions.
 
-An unsupervised deep learning model (Autoencoder with an LSTM layer) detects early-stage anomalies. Anomaly scores are visualized and streamed live via the plant's DCS (Distributed Control System) dashboard.
+## Results and impact
 
-### Classification Model
-
-Supervised models (Random Forest, Neural Network) classify failure types (e.g., seal wear, overpressure), trained on over one year of labeled downtime logs, achieving 85% validation accuracy.
-
-### Rule-Based AI
-
-Domain knowledge from expert engineers is encoded into dynamic threshold rules and interlock conditions, triggering real-time alarms or recommendations when combinations of sensor inputs match known failure patterns.
-
-## Future Direction
-
-Planned improvements include moving toward production mode with a single unified pipeline and additional user interfaces.
+- 5,000+ anomaly events processed and validated with field operators.
+- 85% validation accuracy for anomaly classification.
+- Contributed to zero lost production hours on the monitored pump.
+- Estimated potential cost savings of up to USD 476K.
 
 ## Technologies
 
-Python, TensorFlow, Pandas, Python Rule Engine. Fully integrated with the company's Distributed Control System (DCS).
-
-## Impact
-
-Improved pump reliability and reduced unplanned downtime.
+Python, TensorFlow, LSTM Autoencoder, supervised machine learning, Pandas, a Python rule engine and DCS integration.

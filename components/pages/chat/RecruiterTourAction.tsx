@@ -5,7 +5,7 @@ import { usePortfolioChat } from "@/components/pages/chat/usePortfolioChat";
 import { isChatBusy } from "@/components/pages/chat/isChatBusy";
 
 const RECRUITER_TOUR_PROMPT =
-  "Give me a concise 30-second recruiter tour of Jordan: his strongest project, relevant experience, verified skill evidence, and the best way to contact him or view his CV. Keep the tour in this conversation and do not navigate unless I ask.";
+  "Give me a concise 30-second recruiter tour of Jordan: what he does now, what roles he is looking for, a representative project, relevant experience, verified skill evidence, and the best way to contact him, view his CV or hire him on Upwork. Keep the tour in this conversation and do not navigate unless I ask.";
 
 export function RecruiterTourAction() {
   const { sendMessage, status } = usePortfolioChat();

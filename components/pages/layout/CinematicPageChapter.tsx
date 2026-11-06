@@ -4,8 +4,7 @@ import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { SceneBackdrop } from "@/components/interfaces/scenes/SceneBackdrop";
 import { FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
-import { INTRO_MOTION_PRESETS } from "@/lib/config/introMotion";
-import type { IntroMotionPreset } from "@/lib/config/brand";
+import { INTRO_MOTION_PRESETS, type IntroMotionPreset } from "@/lib/config/introMotion";
 import type { PageScene } from "@/lib/config/scenes";
 import { cn } from "@/lib/cn";
 

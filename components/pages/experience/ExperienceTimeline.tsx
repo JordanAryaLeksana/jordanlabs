@@ -24,7 +24,7 @@ export function ExperienceTimeline() {
           Growth through <span className="text-coral">ownership.</span>
         </Typography>
         <Typography variant="text" size="sm" className="mt-5 max-w-xl leading-7 text-text-on-dark/70">
-          A connected path through AI engineering, delivery, frontend leadership, and responsibility.
+          A connected path through frontend leadership, delivery, IoT systems, industrial AI and deep learning research.
         </Typography>
       </div>
 

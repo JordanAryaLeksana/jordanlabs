@@ -9,4 +9,5 @@ export const EXTERNAL_RESOURCE_HOSTNAME: Record<
 > = {
   github: "github.com",
   linkedin: "www.linkedin.com",
+  upwork: "www.upwork.com",
 };

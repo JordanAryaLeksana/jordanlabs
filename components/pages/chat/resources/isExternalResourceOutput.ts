@@ -23,7 +23,8 @@ export function isExternalResourceOutput(
     candidate.kind !== "external-resource" ||
     (
       candidate.platform !== "github" &&
-      candidate.platform !== "linkedin"
+      candidate.platform !== "linkedin" &&
+      candidate.platform !== "upwork"
     ) ||
     typeof candidate.label !== "string" ||
     candidate.label.trim() === "" ||

@@ -10,8 +10,8 @@ import { getGitHubContributions } from "@/lib/about/getGitHubContributions";
 import { PROFILE } from "@/lib/config/profile";
 
 export const metadata: Metadata = {
-  title: `About ${PROFILE.fullName} — AI Engineering Focus`,
-  description: "Meet Jordan Arya Leksana, a software engineer focused on deep learning and applied AI systems.",
+  title: `About ${PROFILE.fullName} — ${PROFILE.headline}`,
+  description: "Meet Jordan Arya Leksana, an Engineering Physics graduate from ITS and a software engineer focused on full-stack development, LLM integration and production deployment.",
   alternates: { canonical: "/about" },
 };
 

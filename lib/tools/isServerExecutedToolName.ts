@@ -3,8 +3,10 @@ const SERVER_EXECUTED_TOOL_NAMES =
     "showDownloadCard",
     "openGithub",
     "openLinkedin",
+    "openUpwork",
     "showContactCard",
     "filterProjects",
+    "filterSkills",
   ]);
 export function isServerExecutedToolName(
   toolName: string

@@ -1,5 +1,17 @@
 import type { Variants } from "framer-motion";
-import type { IntroMotionPreset } from "@/lib/config/brand";
+
+/*
+ * Motion vocabulary for page chapters (CinematicPageChapter). The Home intro
+ * itself is a 3D sequence (components/interfaces/intro3d); these presets
+ * only drive the backdrop entrance of content pages.
+ */
+export type IntroMotionPreset =
+  | "sandbox-entry"
+  | "hackathon-build"
+  | "technical-trace"
+  | "demo-day"
+  | "after-hours"
+  | "product-reveal";
 
 interface IntroMotionDefinition {
   backdrop: Variants;

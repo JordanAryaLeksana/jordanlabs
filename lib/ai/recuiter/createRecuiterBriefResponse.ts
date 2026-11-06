@@ -26,6 +26,21 @@ import {
     SKILLS_BY_CATEGORY,
 } from "@/lib/config/skills";
 
+import {
+    LOOKING_FOR,
+    PROFILE,
+} from "@/lib/config/profile";
+
+import {
+    PROJECTS,
+} from "@/lib/config/projects";
+
+/*
+ * PROJECTS is ordered newest / most relevant first.
+ */
+const LATEST_PROJECT =
+    PROJECTS[0];
+
 interface CreateRecruiterBriefResponseOptions {
     messages: UIMessage[];
     userText: string;
@@ -39,11 +54,13 @@ read in roughly 30 seconds.
 
 Prioritize:
 
-1. Jordan's professional focus.
-2. One representative project that best demonstrates relevant capability.
-3. One or two pieces of relevant documented experience.
-4. Three to five verified technical skills.
-5. The best next step for a recruiter: contact Jordan or ask to view his CV.
+1. Jordan's professional focus and current status (from CANONICAL_RECRUITER_CONTEXT).
+2. What Jordan is looking for, in the documented priority order.
+3. One representative project that best demonstrates relevant capability.
+4. One or two pieces of relevant documented experience.
+5. Three to five verified technical skills.
+6. The best next step for a recruiter: contact Jordan, view his CV, or
+   open his Upwork profile for freelance work.
 
 GROUNDING RULES:
 
@@ -69,7 +86,8 @@ BEHAVIOR:
   1. "Can I get Jordan's CV?"
   2. "How can I contact Jordan?"
   3. "Show me Jordan's LinkedIn."
-  4. "Show me Jordan's GitHub."
+  4. "Open Jordan's Upwork profile."
+  5. "Show me Jordan's GitHub."
 - Present them only as optional prompts.
 - Do not execute, navigate, open, or trigger any resource automatically.
 - Match the suggested prompt language to the visitor's language.
@@ -87,6 +105,15 @@ const VERIFIED_SKILLS =
 const RECRUITER_CANONICAL_CONTEXT = `
 <CANONICAL_RECRUITER_CONTEXT>
 
+HEADLINE:
+${PROFILE.headline}
+
+CURRENT_STATUS:
+${PROFILE.education.degree}, ${PROFILE.education.institution} (${PROFILE.education.period}, GPA ${PROFILE.education.gpa}). Latest project: ${LATEST_PROJECT.title} (${LATEST_PROJECT.status}, ${LATEST_PROJECT.period}).
+
+LOOKING_FOR (priority order):
+${LOOKING_FOR.map((item, index) => `${index + 1}. ${item.label} (${item.type}): ${item.detail}`).join("\n")}
+
 VERIFIED_SKILLS:
 ${VERIFIED_SKILLS.join(", ")}
 
@@ -100,6 +127,7 @@ Response note: ${CONTACT_PROFILE.responseNote}
 AVAILABLE_PORTFOLIO_ACTIONS:
 - Jordan's CV is available through the portfolio CV action.
 - Jordan's contact card is available through the portfolio contact action.
+- Jordan's Upwork profile is available through the portfolio Upwork action.
 - Do not claim either action has already been opened.
 - Do not navigate or trigger those actions from this recruiter brief.
 

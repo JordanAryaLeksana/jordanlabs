@@ -15,8 +15,8 @@ const CAPABILITIES = [
     accent: "pine",
     description: "Ask naturally about Jordan's work, skills, experience, or documented portfolio evidence.",
     prompts: [
-      "What does Jordan work on?",
-      "What AI skills does Jordan have?",
+      "What is Jordan working on now?",
+      "What roles is Jordan looking for?",
     ],
   },
   {
@@ -35,8 +35,8 @@ const CAPABILITIES = [
     accent: "slate",
     description: "Compare a role with verified experience, strengths, evidence, and honest limitations.",
     prompts: [
+      "Evaluate Jordan for a Software Engineer role",
       "Evaluate Jordan for an AI Engineer role",
-      "What are Jordan's limitations for this role?",
     ],
   },
   {
@@ -46,7 +46,7 @@ const CAPABILITIES = [
     description: "Open a trusted resource or prepare the next step without leaving the conversation behind.",
     prompts: [
       "Get Jordan's CV",
-      "Help me contact Jordan",
+      "Open Jordan's Upwork profile",
     ],
   },
 ] as const;

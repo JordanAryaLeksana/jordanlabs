@@ -1,70 +1,23 @@
 # DermSight
 
-## Project Overview
+## Project overview
 
-DermSight is an AI-powered skin disease education platform that combines deep learning, modern backend services, and Retrieval-Augmented Generation (RAG) to deliver educational information about skin diseases. The project is designed as an end-to-end AI application, demonstrating the integration of computer vision, API development, large language models, and user-facing interfaces.
+DermSight is a live, mobile-first AI web application that gives early educational insight into skin conditions from a photo (https://dermsight.jordanlabs.my.id, repository https://github.com/JordanAryaLeksana/DermSight). It classifies 22 skin-condition categories with an EfficientNet-B2 model and explains the result with a local LLM grounded by RAG. It is an education tool, not a medical diagnosis. Jordan Arya Leksana built it as a self-initiated project in 2026 (role: AI/ML and full-stack engineer).
 
-## Objectives
+## Features
 
-- Classify skin diseases from uploaded images.
-- Provide confidence scores for predictions.
-- Retrieve medically curated educational information.
-- Generate natural-language recommendations using an LLM.
-- Expose functionality through REST APIs and a web interface.
+- AI skin screening: users upload or capture a skin photo and receive a predicted condition with a confidence score across 22 supported categories.
+- Educational AI analysis: after the prediction, users can request a detailed explanation generated from a curated skin-knowledge base with RAG and a locally hosted LLM (Ollama).
+- Aspiration form: people and communities in Indonesia's remote (3T) regions can send concerns and feedback, which are forwarded to the designated stakeholder by email.
 
-## High-Level Architecture
+## Architecture and tech stack
 
-User → Web Interface → FastAPI Backend → Image Preprocessing → EfficientNet Classification → Prediction Result → RAG Retriever → LLM → Final Educational Response
+Python, TensorFlow, EfficientNet-B2, OpenCV, Flask, Gunicorn, Nginx, Ollama, RAG, Docker and GitHub Actions. The model runs CPU inference inside a Flask web application. Deployment uses Docker images and GitHub Actions to a Linux VPS.
 
-## Main Components
+## Privacy and production design
 
-### API Layer
-The `api/` directory contains the FastAPI application, routers, dependency management, and inference endpoints. It exposes prediction and recommendation services while separating routing from business logic.
+Images are validated before inference, processed in memory and never stored. The production app has upload limits, CSRF protection, security headers, rate limiting and health monitoring.
 
-### Machine Learning
-The `src/` directory contains the training pipeline, datasets, scripts, model definitions, experiment outputs, and utilities required to train and evaluate the EfficientNet-based classifier.
+## What Jordan learned
 
-### LLM Module
-The `llm/` directory implements Retrieval-Augmented Generation. It contains prompt templates, an Ollama client, a retriever that searches curated medical knowledge, and the knowledge base used to enrich responses.
-
-### Web Interface
-The `web/` directory provides the Streamlit application that allows users to upload skin images, view predictions, and receive AI-generated educational recommendations.
-
-### Testing
-The `tests/` directory contains validation and testing code to ensure prediction, API, and retrieval components function correctly.
-
-### Documentation
-The `docs/` directory stores documentation assets and supporting materials.
-
-## AI Pipeline
-
-1. User uploads an image.
-2. Image preprocessing prepares it for inference.
-3. EfficientNet predicts the most probable skin disease.
-4. Prediction confidence is computed.
-5. The retriever searches the curated knowledge base for relevant information.
-6. The retrieved context is inserted into a prompt.
-7. Ollama generates a natural-language explanation and recommendations.
-8. The combined prediction and explanation are returned to the user.
-
-## Technologies
-
-- TensorFlow / Keras
-- EfficientNet
-- FastAPI
-- Streamlit
-- Ollama
-- Retrieval-Augmented Generation (RAG)
-- Python
-- Pandas
-- NumPy
-- OpenCV
-- Pillow
-
-## Engineering Principles
-
-The project emphasizes modularity, maintainability, separation of concerns, reproducibility, and clear boundaries between machine learning, API services, user interface, and LLM components. It is designed so that individual modules can evolve independently while maintaining a consistent inference pipeline.
-
-## Purpose
-
-DermSight demonstrates practical AI engineering by integrating computer vision, backend development, and generative AI into a single production-oriented educational application. Rather than acting as a standalone classifier, it serves as an intelligent assistant capable of explaining predictions using curated domain knowledge.
+Training and evaluating a deep learning model systematically, from data preparation and augmentation to transfer learning, validation, hyperparameter tuning and evaluation, and connecting model predictions with a curated knowledge base and a local LLM.

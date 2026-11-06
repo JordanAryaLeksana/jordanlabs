@@ -41,7 +41,7 @@ export function createSkillKnowledgeResponse({
               !result.resolved
                 ? `I could not determine which technology "${result.skillName}" refers to from the recent conversation.`
                 : result.documented
-                  ? `${result.skillName} is documented in Jordan's portfolio skills.`
+                  ? `${result.skillName} is documented in Jordan's portfolio${result.evidence ? ` (${result.evidence})` : ""}.`
                   : `${result.skillName} is not documented in Jordan's verified portfolio skills.`,
           },
         });

@@ -19,6 +19,7 @@ import { createShowDownloadCardResponse } from "@/lib/tools/resources/createShow
 import { createExternalResourceResponse } from "@/lib/tools/resources/createExternalResourceResponse";
 import { getOpenGithubOutput } from "@/lib/tools/resources/getOpenGithubOutput";
 import { getOpenLinkedinOutput } from "@/lib/tools/resources/getOpenLinkedinOutput";
+import { getOpenUpworkOutput } from "@/lib/tools/resources/getOpenUpworkOutput";
 import { createContactCardResponse } from "@/lib/tools/resources/createContactCardResponse";
 import { getContentToolChoice } from "@/lib/tools/content/getContentToolChoice";
 import { createProjectFilterResponse } from "@/lib/tools/content/projects/createProjectFilterResponse";
@@ -168,6 +169,12 @@ export async function POST(request: Request) {
     return createExternalResourceResponse({
       messages,
       output: getOpenLinkedinOutput(),
+    });
+  }
+  if (resourceToolChoice?.toolName === "openUpwork") {
+    return createExternalResourceResponse({
+      messages,
+      output: getOpenUpworkOutput(),
     });
   }
   const contentToolChoice = getContentToolChoice(latestUserText);
@@ -446,6 +453,7 @@ export async function POST(request: Request) {
       "showDownloadCard",
       "openGithub",
       "openLinkedin",
+      "openUpwork",
       "showContactCard",
       "filterProjects",
       "filterSkills",

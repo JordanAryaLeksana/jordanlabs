@@ -1,6 +1,8 @@
 import {
   ArrowUpRightIcon,
+  BriefcaseIcon,
   EnvelopeSimpleIcon,
+  FileArrowDownIcon,
   GithubLogoIcon,
   LinkedinLogoIcon,
 } from "@phosphor-icons/react/dist/ssr";
@@ -14,6 +16,20 @@ const CHANNELS = [
     href: CONTACT_PROFILE.emailUrl,
     icon: <EnvelopeSimpleIcon size={21} />,
     accent: "text-coral",
+  },
+  {
+    label: "CV / RESUME",
+    value: "Download the Software Engineer resume (PDF)",
+    href: CONTACT_CHANNELS.cv.url,
+    icon: <FileArrowDownIcon size={21} />,
+    accent: "text-mustard",
+  },
+  {
+    label: "UPWORK",
+    value: CONTACT_CHANNELS.upwork.handle,
+    href: CONTACT_CHANNELS.upwork.url,
+    icon: <BriefcaseIcon size={21} />,
+    accent: "text-green",
   },
   {
     label: "GITHUB",

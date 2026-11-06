@@ -11,6 +11,7 @@ import { FUNCTIONAL_EASE } from "@/components/interfaces/motion/motionConfig";
 import type { Project } from "@/lib/config/projects";
 import { PROJECT_SECTION_IDS } from "@/lib/tools/types";
 import { ProjectDemoLink } from "@/components/pages/projects/ProjectDemoLink";
+import { ProjectCover } from "@/components/pages/projects/ProjectCover";
 
 interface FeaturedProjectsProps {
   projects: readonly Project[];
@@ -55,14 +56,18 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
           transition={transition}
         >
           <div className="relative min-h-64 overflow-hidden bg-slate sm:min-h-80 lg:min-h-[26rem]">
-            <Image
-              src={activeProject.thumbnail}
-              alt={`${activeProject.title} project visual`}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="object-cover opacity-90"
-            />
+            {activeProject.thumbnail ? (
+              <Image
+                src={activeProject.thumbnail}
+                alt={`${activeProject.title} project visual`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className="object-cover object-left-top opacity-90"
+              />
+            ) : (
+              <ProjectCover project={activeProject} />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-ink-base/65 via-transparent to-transparent" />
             <Badge color="mustard" className="absolute left-5 top-5">
               {activeProject.category}
@@ -89,7 +94,7 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
                 OPEN CASE STUDY
                 <ArrowUpRightIcon className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none" size={19} />
               </Link>
-              <ProjectDemoLink demoUrl={activeProject.demoUrl} compact />
+              <ProjectDemoLink demoUrl={activeProject.demoUrl} label={activeProject.demoLabel} compact />
             </div>
           </div>
         </motion.article>
@@ -107,7 +112,7 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
               onClick={() => setActiveId(project.id)}
               className={`grid w-full grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b border-text-on-dark/12 py-4 text-left text-text-on-dark transition-colors hover:text-coral focus-visible:outline-2 focus-visible:outline-frame-green ${selected ? "text-coral" : "text-text-on-dark/62"}`}
             >
-              <span className="font-mono text-[10px]">0{index + 1}</span>
+              <span className="font-mono text-[10px]">{String(index + 1).padStart(2, "0")}</span>
               <span className="font-display text-lg font-bold">{project.title}</span>
               <span className="hidden font-mono text-[10px] tracking-[0.12em] sm:block">{project.category.toUpperCase()}</span>
             </button>

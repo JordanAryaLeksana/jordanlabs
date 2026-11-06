@@ -16,6 +16,8 @@ import {
   getChatModel,
 } from "@/lib/ai/model";
 
+import { findMentionedProjects } from "@/lib/projects/matchProjects";
+
 interface ContextualProjectResolution {
   projectId: string;
 }
@@ -62,26 +64,12 @@ export async function getContextualProjectEntity({
   messages,
   userText,
 }: GetContextualProjectEntityOptions): Promise<Project | null> {
-  const normalizedUserText =
-    userText.toLowerCase();
-
   /*
    * Explicit project sudah ditangani
    * oleh known-project resolver.
    */
   const hasExplicitProject =
-    PROJECTS.some(
-      (project) =>
-        normalizedUserText.includes(
-          project.title.toLowerCase()
-        ) ||
-        normalizedUserText.includes(
-          project.id.toLowerCase()
-        ) ||
-        normalizedUserText.includes(
-          project.slug.toLowerCase()
-        )
-    );
+    findMentionedProjects(userText).length > 0;
 
   if (hasExplicitProject) {
     return null;
@@ -160,27 +148,16 @@ export async function getContextualProjectEntity({
    * memilih project yang tidak punya
    * conversational evidence.
    */
+  const mentionedProjectIds = new Set(
+    recentConversation.flatMap((message) =>
+      findMentionedProjects(message.text).map((project) => project.id)
+    )
+  );
+
   const candidateProjects =
     PROJECTS.filter(
       (project) =>
-        recentConversation.some(
-          (message) => {
-            const normalizedMessage =
-              message.text.toLowerCase();
-
-            return (
-              normalizedMessage.includes(
-                project.title.toLowerCase()
-              ) ||
-              normalizedMessage.includes(
-                project.id.toLowerCase()
-              ) ||
-              normalizedMessage.includes(
-                project.slug.toLowerCase()
-              )
-            );
-          }
-        )
+        mentionedProjectIds.has(project.id)
     );
 
   if (

@@ -27,7 +27,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       </CinematicPageChapter>
       <ProjectChapterNavigation labels={project.chapterLabels} />
       <ProjectDetailContent project={project} />
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-6 py-12"><Link href="/projects" className="inline-flex min-h-12 items-center rounded-xl border border-current px-4 py-2 font-mono text-sm hover:border-frame-green">Explore other projects</Link>{project.repositoryUrl ? <a href={project.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center rounded-xl bg-pine px-4 py-2 font-mono text-sm text-text-on-dark">Open repository ↗</a> : null}<ProjectDemoLink demoUrl={project.demoUrl} /></div>
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-6 py-12"><Link href="/projects" className="inline-flex min-h-12 items-center rounded-xl border border-current px-4 py-2 font-mono text-sm hover:border-frame-green">Explore other projects</Link>{project.repositoryUrl ? <a href={project.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center rounded-xl bg-pine px-4 py-2 font-mono text-sm text-text-on-dark">Open repository ↗</a> : null}<ProjectDemoLink demoUrl={project.demoUrl} label={project.demoLabel} /></div>
       <Footer />
     </main>
   );

@@ -1,5 +1,5 @@
 export const CV_FILE_NAME =
-  "Jordan Arya Leksana_CV2026.pdf";
+  "Jordan Arya Leksana - Software Engineer Resume.pdf";
 
 export const CV_URL =
   encodeURI(`/${CV_FILE_NAME}`);
@@ -7,6 +7,10 @@ export const CV_URL =
 export const LINKEDIN_URL = "https://www.linkedin.com/in/jordanaryaleksana";
 
 export const GITHUB_URL = "https://github.com/JordanAryaLeksana";
+
+export const UPWORK_URL = "https://www.upwork.com/freelancers/~011c633605dbef8dcd";
+
+export const PORTFOLIO_URL = "https://jordanlabs.my.id/";
 
 export const EMAIL_ADDRESS = "jordanaryaleksana41@gmail.com";
 

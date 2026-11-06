@@ -33,12 +33,15 @@ export const SKILL_CATEGORY_IDS = {
 } as const;
 
 export const PROJECT_IDS = {
-  emqnet: "emqnet",
-  dermsight: "dermsight",
-  ecsWebsite: "ecs-website",
-  teta: "teta",
+  intentcut: "intentcut",
   jordanLabs: "jordan-labs",
   seaCatering: "sea-catering",
+  dermsight: "dermsight",
+  teta: "teta",
+  ecsWebsite: "ecs-website",
+  emqnet: "emqnet",
+  pumpsentinel: "pumpsentinel",
+  stationParfume: "station-parfume",
   chatty: "chatty",
 } as const;
 
@@ -60,7 +63,7 @@ export const PORTFOLIO_TOOL_NAMES = [
   "showDownloadCard",
   "openGithub",
   "openLinkedin",
-  "openProjectDemo",
+  "openUpwork",
   "showContactCard",
   "filterProjects",
   "filterSkills",

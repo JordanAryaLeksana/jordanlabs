@@ -12,7 +12,8 @@ export interface ExternalResourceOutput {
 
   platform:
     | "github"
-    | "linkedin";
+    | "linkedin"
+    | "upwork";
 
   label: string;
   url: string;

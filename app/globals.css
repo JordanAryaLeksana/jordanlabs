@@ -186,46 +186,32 @@ body {
   transition: opacity 600ms ease;
 }
 
-.scene-backdrop-intro {
-  object-position: var(--scene-position, center);
+/* ---------- Home intro (3D) ---------- */
+
+/* Set before first paint by the Home bootstrap script when this session already saw the intro. */
+html[data-intro-seen="1"] [data-intro-overlay] {
+  display: none;
 }
 
-@media (max-width: 639px) {
-  .scene-backdrop-intro {
-    object-position: var(--scene-position-mobile, var(--scene-position, center));
-  }
+@keyframes intro-rail-fill {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
-@media (max-height: 680px) {
-  [data-opening-sequence] h1 {
-    font-size: 2.25rem;
-    line-height: 0.9;
+/* Short landscape screens: tighten the chapter copy so controls stay visible. */
+@media (max-height: 700px) and (min-width: 768px) {
+  [data-opening-sequence] h2 {
+    font-size: 2.75rem;
   }
 
-  [data-opening-sequence] h1 + p {
-    margin-top: 0.75rem;
-    font-size: 0.7rem;
-    line-height: 1.15rem;
-  }
-
-  [data-opening-sequence] section > div,
-  [data-opening-content] > div:last-child {
-    margin-top: 0.75rem;
-  }
-
-  [data-opening-sequence] section > button {
-    margin-top: 0.875rem;
+  [data-opening-sequence] section p {
+    line-height: 1.5rem;
   }
 }
 
-@media (max-height: 520px) and (min-width: 600px) {
-  [data-opening-content] {
-    padding-top: max(1.25rem, env(safe-area-inset-top));
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-  }
-
-  [data-opening-sequence] h1 {
-    font-size: 3rem;
+@media (max-height: 560px) {
+  [data-opening-sequence] h2 {
+    font-size: 2rem;
   }
 }
 

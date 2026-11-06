@@ -39,14 +39,24 @@ export function getEmploymentKnowledge(
       requestedOrganization
         .toLowerCase()
         .replace(/[.,!?]+$/g, "")
+        .replace(/^(?:the|pt\.?)\s+/, "")
         .trim();
+
+    /*
+     * Accept the full organization name, its short name
+     * ("Pertamina", "ECS") or any whole-word part of it.
+     */
+    const requestedPattern =
+      normalizedRequested.length >= 3
+        ? new RegExp(`(?:^|[^a-z0-9])${normalizedRequested.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|[^a-z0-9])`, "i")
+        : null;
 
     const documentedOrganization =
       EXPERIENCE.find(
         (experience) =>
-          experience.organization
-            .toLowerCase() ===
-          normalizedRequested
+          experience.organization.toLowerCase() === normalizedRequested ||
+          experience.shortName.toLowerCase() === normalizedRequested ||
+          (requestedPattern?.test(experience.organization.toLowerCase()) ?? false)
       );
 
     return {

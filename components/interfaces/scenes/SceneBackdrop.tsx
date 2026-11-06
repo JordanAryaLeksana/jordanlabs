@@ -1,41 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 import { PAGE_SCENES, type PageScene } from "@/lib/config/scenes";
 
 interface SceneBackdropProps {
   scene: PageScene;
-  variant?: "page" | "intro";
   priority?: boolean;
   subdued?: boolean;
   className?: string;
 }
 
-export function SceneBackdrop({ scene, variant = "page", priority = false, subdued = false, className }: SceneBackdropProps) {
+export function SceneBackdrop({ scene, priority = false, subdued = false, className }: SceneBackdropProps) {
   const config = PAGE_SCENES[scene];
-  const src = variant === "intro" ? config.introSrc : config.pageSrc;
-  const introStyle = variant === "intro"
-    ? ({
-        "--scene-position": config.introPosition,
-        "--scene-position-mobile": config.introMobilePosition,
-      } as CSSProperties)
-    : undefined;
 
   return (
     <div aria-hidden="true" data-scene-backdrop className={cn("pointer-events-none absolute inset-0 overflow-hidden bg-ink-base", className)}>
       <Image
-        src={src}
+        src={config.pageSrc}
         alt=""
         fill
         priority={priority}
         sizes="100vw"
-        style={introStyle}
         className={cn(
-          "scene-backdrop-base object-cover object-center",
-          variant === "page" && "motion-safe:animate-[scene-drift_18s_ease-out_both]",
-          variant === "intro" && "scene-backdrop-intro",
+          "scene-backdrop-base object-cover object-center motion-safe:animate-[scene-drift_18s_ease-out_both]",
           subdued ? "opacity-20" : "opacity-65"
         )}
       />

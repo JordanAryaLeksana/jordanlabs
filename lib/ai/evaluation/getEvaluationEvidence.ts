@@ -22,7 +22,7 @@ export function getEvaluationEvidence() {
       currentFocus:
         ABOUT_PROFILE.title,
 
-      previousExperience:
+      background:
         ABOUT_PROFILE.previousExperience,
 
       focusAreas: [
@@ -43,8 +43,17 @@ export function getEvaluationEvidence() {
           project.status,
         role:
           project.role,
+        isLive:
+          /\blive\b/i.test(project.status),
+        isInDevelopment:
+          /not in production|in development/i.test(project.status),
+        highlights: [
+          ...(project.highlights ?? []),
+        ],
         description:
           project.shortDescription,
+        approach:
+          project.overview.approach,
         contribution:
           project.overview
             .contribution,
@@ -64,7 +73,7 @@ export function getEvaluationEvidence() {
         label: group.label,
         items: [
           ...group.items,
-        ],
+        ] as string[],
       })
     ),
 
@@ -73,6 +82,9 @@ export function getEvaluationEvidence() {
         (experience) => ({
           organization:
             experience.organization,
+
+          shortName:
+            experience.shortName,
 
           location:
             experience.location,
@@ -88,11 +100,11 @@ export function getEvaluationEvidence() {
 
                 contributions: [
                   ...role.contributions,
-                ],
+                ] as string[],
 
                 technologies: [
                   ...role.technologies,
-                ],
+                ] as string[],
               })
             ),
         })

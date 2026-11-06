@@ -4,6 +4,7 @@ import type {
   OpenGithubInput,
   ShowDownloadCardInput,
   OpenLinkedinInput,
+  OpenUpworkInput,
   ShowContactCardInput,
 } from "@/lib/tools/resources/resource-tool-inputs";
 
@@ -75,6 +76,13 @@ export const openLinkedinInputSchema =
     additionalProperties: false,
   });
 
+export const openUpworkInputSchema =
+  jsonSchema<OpenUpworkInput>({
+    type: "object",
+    properties: {},
+    additionalProperties: false,
+  });
+
 export const externalResourceOutputSchema =
   jsonSchema<ExternalResourceOutput>({
     type: "object",
@@ -90,6 +98,7 @@ export const externalResourceOutputSchema =
         enum: [
           "github",
           "linkedin",
+          "upwork",
         ],
       },
 

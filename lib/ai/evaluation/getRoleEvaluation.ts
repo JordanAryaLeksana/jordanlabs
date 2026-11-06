@@ -25,273 +25,312 @@ type EvaluationEvidence =
     typeof getEvaluationEvidence
   >;
 
-function getAiEngineerEvaluation(
+type EvidenceProject =
+  EvaluationEvidence["projects"][number];
+
+/*
+ * Every strength and limitation below is derived from the canonical
+ * config (lib/config/*). No project, employer or metric is hardcoded,
+ * so adding a project or a role updates the evaluation automatically.
+ */
+
+const BACKEND_TAGS = new Set([
+  "Backend",
+  "FastAPI",
+  "PostgreSQL",
+  "Redis",
+  "Go",
+  "Gin",
+  "Prisma",
+  "NextAuth",
+  "Flask",
+  "Docker",
+  "REST API",
+]);
+
+const AI_ROLE_PATTERN =
+  /\b(?:ai|machine learning|deep learning|ml)\b/i;
+
+const LEADERSHIP_ROLE_PATTERN =
+  /\b(?:lead|manager)\b/i;
+
+const ACADEMIC_ORGANIZATION_PATTERN =
+  /\b(?:laborator(?:y|ium)|university|institut|ITS)\b/i;
+
+function joinNames(names: string[]) {
+  if (names.length <= 1) {
+    return names.join("");
+  }
+
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+function describeProject(project: EvidenceProject) {
+  const proof = project.highlights.slice(0, 2);
+
+  return proof.length > 0
+    ? `${project.title} (${project.role}, ${project.status.toLowerCase()}): ${proof.join("; ")}.`
+    : `${project.title} (${project.role}, ${project.status.toLowerCase()}): ${project.description}`;
+}
+
+function getSkillGroup(
+  evidence: EvaluationEvidence,
+  category: string
+) {
+  return evidence.skills.find(
+    (group) => group.category === category
+  );
+}
+
+function getAssessment(score: number, max: number): EvaluationAssessment {
+  if (score >= max - 1) {
+    return "strong";
+  }
+
+  return score >= 2 ? "moderate" : "limited";
+}
+
+function getSharedLimitations(
   evidence: EvaluationEvidence
-): EvaluationOutput {
-  const hasAiInternship =
+) {
+  const limitations = [
+    "The portfolio documents projects, skills and roles; it does not establish proficiency, mastery or seniority levels beyond that evidence.",
+  ];
+
+  const hasFullTimeIndustryRole =
     evidence.experience.some(
       (experience) =>
+        !ACADEMIC_ORGANIZATION_PATTERN.test(experience.organization) &&
         experience.roles.some(
-          (role) =>
-            role.title ===
-            "AI Engineer Intern"
+          (role) => !/\bintern\b/i.test(role.title)
         )
     );
 
-  const aiProjects =
-    evidence.projects.filter(
-      (project) =>
-        project.category ===
-          "Deep Learning" ||
-        project.category ===
-          "Computer Vision"
-    );
-
-  const aiSkills =
-    evidence.skills.find(
-      (group) =>
-        group.category === "ai"
-    );
-
-  const programmingSkills =
-    evidence.skills.find(
-      (group) =>
-        group.category ===
-        "programming"
-    );
-
-  const hasPython =
-    programmingSkills?.items.includes(
-      "Python"
-    ) ?? false;
-
-  const evidenceScore = [
-    hasAiInternship,
-    aiProjects.length >= 2,
-    (aiSkills?.items.length ?? 0) > 0,
-    hasPython,
-  ].filter(Boolean).length;
-
-  const assessment:
-    EvaluationAssessment =
-      evidenceScore === 4
-        ? "strong"
-        : evidenceScore >= 2
-          ? "moderate"
-          : "limited";
-
-  const strengths: string[] = [];
-
-  if (hasAiInternship) {
-    strengths.push(
-      "Jordan has documented AI engineering experience through an AI Engineer internship at PT. Pertamina EP Cepu, including LSTM Autoencoder anomaly detection, supervised machine learning, and rule-based maintenance logic."
+  if (!hasFullTimeIndustryRole) {
+    limitations.push(
+      "Documented professional experience is an industry internship plus university laboratory roles; no full-time industry position is documented yet."
     );
   }
 
-  const emqnet =
-    evidence.projects.find(
-      (project) =>
-        project.id === "emqnet"
-    );
-
-  if (emqnet) {
-    strengths.push(
-      "EMQNET documents Jordan's work on a multi-task deep learning pipeline using Python and PyTorch for earthquake precursor analysis."
-    );
-  }
-
-  const dermsight =
-    evidence.projects.find(
-      (project) =>
-        project.id === "dermsight"
-    );
-
-  if (dermsight) {
-    strengths.push(
-      "DermSight documents computer-vision work involving CNN classification, image preprocessing, augmentation, and OpenCV."
-    );
-  }
-
-  if (aiSkills) {
-    strengths.push(
-      `Jordan's documented AI / ML skills include ${aiSkills.items.join(", ")}.`
-    );
-  }
-
-  if (hasPython) {
-    strengths.push(
-      "Python is documented in Jordan's programming skill set."
-    );
-  }
-
-  return {
-    assessment,
-
-    summary:
-      assessment === "strong"
-        ? "Jordan has strong documented evidence of relevance to an AI Engineer role."
-        : assessment === "moderate"
-          ? "Jordan has meaningful documented evidence of relevance to an AI Engineer role, with important gaps remaining."
-          : "Jordan's documented portfolio currently provides limited evidence for an AI Engineer role.",
-
-    strengths,
-
-    limitations: [
-      "The portfolio does not establish proficiency, mastery, seniority, or expertise levels beyond the documented projects, skills, and experience.",
-      "EMQNET is documented as a research project and DermSight as a prototype.",
-      "Final hiring suitability depends on the specific role requirements, seniority expectations, interview performance, and evidence outside the portfolio.",
-    ],
-  };
+  return limitations;
 }
 
 function getSoftwareEngineerEvaluation(
   evidence: EvaluationEvidence
 ): EvaluationOutput {
-  const hasSoftwareBackground =
-    evidence.profile
-      .previousExperience ===
-    "Software Engineer";
+  const liveProjects =
+    evidence.projects.filter(
+      (project) => project.isLive
+    );
 
-  const hasFrontendLeadership =
-    evidence.experience.some(
+  const backendProjects =
+    evidence.projects.filter(
+      (project) =>
+        !project.isInDevelopment &&
+        project.tags.some((tag) => BACKEND_TAGS.has(tag))
+    );
+
+  const leadershipRoles =
+    evidence.experience.flatMap(
       (experience) =>
-        experience.roles.some(
-          (role) =>
-            role.title ===
-            "Tech Lead Frontend"
-        )
+        experience.roles
+          .filter((role) => LEADERSHIP_ROLE_PATTERN.test(role.title))
+          .map((role) => `${role.title} at ${experience.shortName} (${role.period})`)
     );
 
-  const programmingSkills =
-    evidence.skills.find(
-      (group) =>
-        group.category ===
-        "programming"
-    );
+  const programming = getSkillGroup(evidence, "programming");
+  const frontend = getSkillGroup(evidence, "frontend");
+  const backend = getSkillGroup(evidence, "backend");
+  const database = getSkillGroup(evidence, "database");
+  const tooling = getSkillGroup(evidence, "tooling");
 
-  const frontendSkills =
-    evidence.skills.find(
-      (group) =>
-        group.category ===
-        "frontend"
-    );
+  const hasFullStackSkills =
+    (frontend?.items.length ?? 0) > 0 &&
+    (backend?.items.length ?? 0) > 0 &&
+    (database?.items.length ?? 0) > 0;
 
-  const backendSkills =
-    evidence.skills.find(
-      (group) =>
-        group.category ===
-        "backend"
-    );
+  const hasDeploymentTooling =
+    tooling?.items.some((item) => /docker|ci\/cd|github actions/i.test(item)) ?? false;
 
-  const toolingSkills =
-    evidence.skills.find(
-      (group) =>
-        group.category ===
-        "tooling"
-    );
-
-  const hasProgrammingFoundation =
-    (
-      programmingSkills
-        ?.items.length ?? 0
-    ) > 0;
-
-  const hasWebEngineeringSkills =
-    (
-      frontendSkills
-        ?.items.length ?? 0
-    ) > 0 &&
-    (
-      backendSkills
-        ?.items.length ?? 0
-    ) > 0;
-
-  const evidenceScore = [
-    hasSoftwareBackground,
-    hasFrontendLeadership,
-    hasProgrammingFoundation,
-    hasWebEngineeringSkills,
+  const score = [
+    liveProjects.length >= 2,
+    backendProjects.length >= 2,
+    hasFullStackSkills,
+    hasDeploymentTooling,
+    leadershipRoles.length > 0,
   ].filter(Boolean).length;
 
-  const assessment:
-    EvaluationAssessment =
-      evidenceScore === 4
-        ? "strong"
-        : evidenceScore >= 2
-          ? "moderate"
-          : "limited";
+  const assessment = getAssessment(score, 5);
 
   const strengths: string[] = [];
 
-  if (hasSoftwareBackground) {
+  if (liveProjects.length > 0) {
     strengths.push(
-      "Jordan's profile documents previous experience in software engineering before his current focus on AI engineering."
+      `Jordan has ${liveProjects.length} documented web applications live in production: ${joinNames(liveProjects.map((project) => project.title))}.`
     );
   }
 
-  if (hasFrontendLeadership) {
+  for (const project of backendProjects.slice(0, 2)) {
+    strengths.push(describeProject(project));
+  }
+
+  if (hasFullStackSkills) {
     strengths.push(
-      "Jordan has documented Tech Lead Frontend experience at the Embedded System and Cyber Physical Laboratory, including reusable UI development and REST API integration."
+      `Documented full-stack skills: ${frontend?.items.slice(0, 4).join(", ")} on the frontend; ${backend?.items.slice(0, 5).join(", ")} on the backend; ${database?.items.join(", ")} for data.`
     );
   }
 
-  const projectManagementExperience =
-    evidence.experience.find(
-      (experience) =>
-        experience.roles.some(
-          (role) =>
-            role.title ===
-            "IT Project Manager"
-        )
-    );
-
-  if (
-    projectManagementExperience
-  ) {
+  if (hasDeploymentTooling && tooling) {
     strengths.push(
-      "Jordan has documented software-delivery experience through IT Project Manager responsibilities involving Agile planning, requirements, developers, designers, and development priorities."
+      `Deployment and DevOps tooling used in shipped projects: ${tooling.items.slice(0, 6).join(", ")}.`
     );
   }
 
-  if (programmingSkills) {
+  if (leadershipRoles.length > 0) {
     strengths.push(
-      `Jordan's documented programming skills include ${programmingSkills.items.join(", ")}.`
+      `Documented software leadership and delivery roles: ${joinNames(leadershipRoles)}.`
     );
   }
 
-  if (
-    frontendSkills &&
-    backendSkills
-  ) {
-    strengths.push(
-      `Jordan's documented web-development skills include frontend technologies such as ${frontendSkills.items.join(", ")} and backend technologies such as ${backendSkills.items.join(", ")}.`
+  const limitations = getSharedLimitations(evidence);
+
+  const basicSkills =
+    programming?.items.filter((item) => /\(basic\)/i.test(item)) ?? [];
+
+  if (basicSkills.length > 0) {
+    limitations.push(
+      `${joinNames(basicSkills.map((item) => item.replace(/\s*\(basic\)/i, "")))} is documented at a basic level.`
     );
   }
 
-  if (toolingSkills) {
-    strengths.push(
-      `Documented development tooling includes ${toolingSkills.items.join(", ")}.`
+  const inDevelopment =
+    evidence.projects.filter(
+      (project) => project.isInDevelopment
+    );
+
+  if (inDevelopment.length > 0) {
+    limitations.push(
+      `${joinNames(inDevelopment.map((project) => project.title))} is still in development and not in production yet.`
     );
   }
+
+  limitations.push(
+    "Final hiring suitability depends on the specific role requirements, seniority expectations, interviews and evidence outside the portfolio."
+  );
 
   return {
     assessment,
 
     summary:
       assessment === "strong"
-        ? "Jordan has strong documented evidence of relevance to a Software Engineer role."
+        ? "Jordan has strong documented evidence of relevance to a Software Engineer role, including shipped full-stack products and backend work."
         : assessment === "moderate"
-          ? "Jordan has meaningful documented evidence of relevance to a Software Engineer role, with important gaps remaining."
+          ? "Jordan has meaningful documented evidence of relevance to a Software Engineer role, with some gaps remaining."
           : "Jordan's documented portfolio currently provides limited evidence for a Software Engineer role.",
 
     strengths,
+    limitations,
+  };
+}
 
-    limitations: [
-      "The portfolio does not establish proficiency, mastery, seniority, or expertise levels beyond the documented skills and experience.",
-      "Some backend and tooling technologies are documented as skills without detailed professional contribution records for every technology.",
-      "The current featured project catalog is primarily AI-focused and does not represent every software engineering contribution documented in Jordan's experience.",
-      "Final hiring suitability depends on the specific role requirements, seniority expectations, interview performance, and evidence outside the portfolio.",
-    ],
+function getAiEngineerEvaluation(
+  evidence: EvaluationEvidence
+): EvaluationOutput {
+  const aiRoles =
+    evidence.experience.flatMap(
+      (experience) =>
+        experience.roles
+          .filter((role) => AI_ROLE_PATTERN.test(role.title))
+          .map((role) => ({ ...role, organization: experience.organization }))
+    );
+
+  const aiProjects =
+    evidence.projects.filter(
+      (project) => project.tags.includes("AI")
+    );
+
+  const liveAiProjects =
+    aiProjects.filter(
+      (project) => project.isLive
+    );
+
+  const llmProjects =
+    aiProjects.filter(
+      (project) =>
+        project.tags.some((tag) => /rag|llm/i.test(tag)) ||
+        /\b(?:llm|rag|muse|language model)\b/i.test(`${project.approach} ${project.architecture}`)
+    );
+
+  const aiSkills = getSkillGroup(evidence, "ai");
+
+  const score = [
+    aiRoles.length > 0,
+    aiProjects.length >= 2,
+    liveAiProjects.length > 0,
+    llmProjects.length > 0,
+    (aiSkills?.items.length ?? 0) > 0,
+  ].filter(Boolean).length;
+
+  const assessment = getAssessment(score, 5);
+
+  const strengths: string[] = [];
+
+  for (const role of aiRoles) {
+    strengths.push(
+      `${role.title} at ${role.organization} (${role.period}): ${role.contributions[0]}`
+    );
+  }
+
+  if (llmProjects.length > 0) {
+    strengths.push(
+      `LLM and RAG integration in real products: ${joinNames(llmProjects.map((project) => project.title))}.`
+    );
+  }
+
+  const featuredAiProject =
+    aiProjects.find(
+      (project) => project.highlights.length > 0
+    );
+
+  if (featuredAiProject) {
+    strengths.push(describeProject(featuredAiProject));
+  }
+
+  if (aiSkills) {
+    strengths.push(
+      `Documented AI / ML skills: ${aiSkills.items.join(", ")}.`
+    );
+  }
+
+  const limitations = getSharedLimitations(evidence);
+
+  const nonProductionAiProjects =
+    aiProjects.filter(
+      (project) => !project.isLive
+    );
+
+  if (nonProductionAiProjects.length > 0) {
+    limitations.push(
+      `Not every AI project runs in production: ${joinNames(nonProductionAiProjects.map((project) => `${project.title} (${project.status.toLowerCase()})`))}.`
+    );
+  }
+
+  limitations.push(
+    "Final hiring suitability depends on the specific role requirements, seniority expectations, interviews and evidence outside the portfolio."
+  );
+
+  return {
+    assessment,
+
+    summary:
+      assessment === "strong"
+        ? "Jordan has strong documented evidence of relevance to an AI Engineer role, from industrial ML to LLM products."
+        : assessment === "moderate"
+          ? "Jordan has meaningful documented evidence of relevance to an AI Engineer role, with some gaps remaining."
+          : "Jordan's documented portfolio currently provides limited evidence for an AI Engineer role.",
+
+    strengths,
+    limitations,
   };
 }
 

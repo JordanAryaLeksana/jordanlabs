@@ -19,6 +19,9 @@ export const bigHeaderFont = localFont({
   ],
   variable: "--font-aliens-cows",
   display: "swap",
+  // Trial font (CC BY-NC) used only by the dev-only /docs-visualization page:
+  // never preload it on public routes. The browser fetches it only if rendered.
+  preload: false,
 });
 
 /**
