@@ -45,3 +45,5 @@ next-env.d.ts
 **/AGENTS.md
 /docs
 /docs-visualization
+NEXT_STEPS.md
+AGENTS_INTRO_DESIGN.md
