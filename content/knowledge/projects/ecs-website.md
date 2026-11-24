@@ -6,8 +6,8 @@ The ECS Website is a group project that represents the Embedded System and Cyber
 
 ## Jordan's roles and contributions
 
-- Frontend Tech Lead (June – November 2024): designed the component architecture, chose the frontend stack (Next.js, Tailwind CSS), built reusable UI components and integrated REST APIs for authentication, registration, module and certificate uploads, assignments and task submissions. The EPTA portal served 100+ participants.
-- IT Project Manager (January – July 2025): led delivery of ECS Website 2.0 and the EPTA dashboard with a cross-functional team of developers and designers, owning scope, sprint planning and timelines in an Agile process.
+- Frontend Tech Lead (June – November 2024): designed the component architecture, chose the frontend stack (Next.js, Tailwind CSS), built reusable UI components and integrated REST APIs for authentication, registration, module and certificate uploads, assignments and task submissions. The EPTA portal served 100+ participants. He mentored 18+ mostly first-time developers and reviewed their code.
+- IT Project Manager (January – July 2025): planned the scope, sprints and timeline for ECS Website 2.0 with developers and designers; the next lab cohort will build it.
 - He collaborated with backend developers who worked with Django (EPTA) and Firebase (recruitment).
 
 ## What Jordan learned
