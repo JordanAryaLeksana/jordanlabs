@@ -6,7 +6,7 @@
 
 ## Publications and manuscripts
 
-- SPE-224966-MS, LEADS: Leading Equipment Anomaly Detection System. Jordan was a research and technical-writing contributor, based on his AI Engineer internship at PT Pertamina EP Cepu.
+- SPE-224966-MS, LEADS: Leading Equipment Anomaly Detection System. Jordan contributed to the methodology and technical writing during his internship at PT Pertamina EP Cepu; he is not a listed author.
 - A CNN-Based Approach for Earthquake Precursor Detection Using Geomagnetic Data: Jordan is first author; the manuscript is in preparation (2026). It is based on his EMQNET thesis.
 - IoT-Based Soil Quality and Pest Monitoring for Sustainable Farming (Gapoktan Manunggal Rejeki): co-author, BIMA/ITS community-service publication (2025), from the TETA project.
 
