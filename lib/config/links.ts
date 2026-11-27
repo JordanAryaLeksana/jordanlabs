@@ -1,5 +1,5 @@
 export const CV_FILE_NAME =
-  "Jordan Arya Leksana - Software Engineer Resume.pdf";
+  "Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf";
 
 export const CV_URL =
   encodeURI(`/${CV_FILE_NAME}`);

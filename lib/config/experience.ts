@@ -1,5 +1,5 @@
 /*
- * Source of truth: "Jordan Arya Leksana - Software Engineer CV.pdf" (Nov 2026).
+ * Source of truth: "Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf" (Nov 2026).
  * Newest role first inside each organization, as on the CV.
  */
 export const EXPERIENCE = [

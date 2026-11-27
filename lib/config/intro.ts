@@ -3,7 +3,7 @@
  *
  * Every fact is derived from canonical config (profile, projects,
  * experience, skills, links), which mirrors
- * "Jordan Arya Leksana - Software Engineer Resume.pdf". Do not hardcode
+ * "Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf". Do not hardcode
  * metrics or claims here; add them to the canonical config first.
  */
 import { EXPERIENCE } from "@/lib/config/experience";

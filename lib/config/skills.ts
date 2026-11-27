@@ -2,7 +2,7 @@ import { SKILL_CATEGORY_IDS } from "@/lib/tools/types";
 
 /*
  * Mirrors the "Technical Skills" section of
- * "Jordan Arya Leksana - Software Engineer Resume.pdf".
+ * "Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf".
  * Category ids stay stable because tools and filters depend on them.
  */
 export const SKILLS_BY_CATEGORY = {

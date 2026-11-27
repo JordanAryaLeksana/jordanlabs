@@ -46,7 +46,7 @@ export interface Project {
 
 /*
  * Source of truth, in priority order:
- * 1. "Jordan Arya Leksana - Software Engineer Resume.pdf" (public/)
+ * 1. "Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf" (public/)
  * 2. Upwork portfolio submission (Jordan Labs, DermSight, ECS, TETA, Pertamina)
  * 3. Public GitHub repositories and their READMEs
  * Array order is display order (software engineering first).

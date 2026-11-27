@@ -135,7 +135,7 @@ flowchart TD
 | --- | --- | --- |
 | `lib/config/*.ts` | UI pages, guards, filters, role evaluation, the 3D intro, the recruiter brief | Canonical structured data: `profile`, `projects`, `experience`, `skills`, `links`, `contact`, `intro` |
 | `content/knowledge/**/*.md` | RAG retrieval | Narrative depth for the assistant. Facts must match the config |
-| `public/Jordan Arya Leksana - Software Engineer Resume.pdf` | Humans (CV download) | Authority when facts conflict; config mirrors it |
+| `public/Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf` | Humans (CV download) | Authority when facts conflict; config mirrors it |
 
 Shared identifiers (`PROJECT_IDS`, `SECTION_IDS`, `PAGE_ROUTES`, `SKILL_CATEGORY_IDS`) live in `lib/tools/types.ts`. Tool schemas, routes and client validators are derived from them, so they cannot drift apart.
 

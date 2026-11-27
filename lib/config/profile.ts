@@ -1,7 +1,7 @@
 /**
  * Canonical identity. Every surface (header, intro, metadata, chat cards,
  * contact) reads the role line from here so the positioning never drifts.
- * Source of truth: "Jordan Arya Leksana - Software Engineer Resume.pdf".
+ * Source of truth: "Jordan Arya Leksana - Software Engineer CV (2 Pages).pdf".
  */
 export const PROFILE = {
   fullName: "Jordan Arya Leksana",
